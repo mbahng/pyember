@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <cassert>
+#include <iostream>
 #include <eigen3/Eigen/Dense>
 
 class Matrix {
@@ -10,9 +11,6 @@ private:
   Eigen::MatrixXd data; 
 
 public: 
-  Matrix(const size_t rows, const size_t cols) {
-    data = Eigen::MatrixXd::Zero(rows, cols); 
-  }; 
 
   const int rows() {
     return data.rows(); 
@@ -22,14 +20,14 @@ public:
     return data.cols(); 
   }
 
-  Matrix(const std::vector<std::vector<double>>& vec) {
-    data = Eigen::MatrixXd::Zero(rows(), cols()); 
-    for (size_t i = 0; i < rows(); ++i) {
-      for (size_t j = 0; j < cols(); ++j) {
-        data(i, j) = vec[i][j];
-      }
-    }
-  }
+  Matrix(const size_t rows, const size_t cols) {
+    std::cout << "First\n"; 
+    data = Eigen::MatrixXd::Zero(rows, cols); 
+  }; 
+
+  Matrix(Eigen::MatrixXd input) {
+    data = input; 
+  }; 
 
   const std::tuple<int, int> shape() {
     return std::tuple<int, int>(rows(), cols()); 
@@ -45,8 +43,43 @@ public:
     }
     return data(row_idx, col_idx); 
   }
-}; 
 
+  void setitem(size_t row_idx, size_t col_idx, double val) {
+    if (row_idx >= rows() || col_idx >= cols()) {
+      throw std::out_of_range("Index out of range");
+    }
+    data(row_idx, col_idx) = val;
+  }
+
+  operator std::string() const { 
+  std::stringstream ss;
+    ss << data;
+    return ss.str();
+  }
+
+  Matrix add(Matrix other) {
+    assert(rows() == other.rows() && cols() == other.cols());
+    return Matrix(data + other.data); 
+  }
+
+  Matrix scalar_mul(double other) {
+    return Matrix(other * data); 
+  }
+
+  Matrix elem_mul(Matrix other) {
+    assert(rows() == other.rows() && cols() == other.cols());
+    return Matrix(data.cwiseProduct(other.data)); 
+  }
+
+  Matrix mat_mul(Matrix other) {
+    assert(cols() == other.rows());
+    return Matrix(data * other.data); 
+  }
+
+  Matrix transpose() {
+    return Matrix(data.transpose()); 
+  }
+}; 
 
 class Vector {
 private: 
