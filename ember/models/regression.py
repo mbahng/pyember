@@ -1,6 +1,5 @@
-from .tensor_cpp import Tensor 
-from .model import Model 
-from .dataset import Dataset
+from . import Model
+from .. import Dataset
 
 class Regression(Model): 
 

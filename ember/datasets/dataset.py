@@ -1,8 +1,8 @@
-from .tensor_cpp import Tensor 
+from .. import Matrix
 
 class Dataset(): 
 
-    def __init__(self, X: Tensor, Y: Tensor) -> None: 
+    def __init__(self, X: Matrix, Y: Matrix) -> None: 
         self.index = 0
         self.X = X 
         self.Y = Y 
@@ -12,6 +12,9 @@ class Dataset():
               match length of output ({len(self.Y)})."
 
         self.limit = len(self.X)
+
+    def __len__(self): 
+        return self.limit
 
     def __iter__(self): 
         return self 

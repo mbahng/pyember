@@ -1,6 +1,6 @@
-from .tensor_cpp import Tensor
-from .model import Model 
-from .dataset import Dataset
+from .tensor_cpp import Matrix, Vector
+from .datasets.dataset import Dataset
+from .models.model import Model 
 
-__all__ = ['Tensor', 'Model', 'Dataset']
+__all__ = ['Matrix', 'Vector', 'Model', 'Dataset']
 
