@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import pybind11
 from pybind11.setup_helpers import Pybind11Extension, build_ext
-import sys
+import sys, os, shutil
 
 package_name = "ember" 
 version = "0.0.1" 
@@ -25,15 +25,15 @@ if is_macos_arm64:
     extra_compile_args.extend(['-arch', 'arm64'])
     extra_link_args.extend(['-arch', 'arm64'])
 
-ext_modules = [
-    Pybind11Extension(
-        "ember/tensor_cpp",
-        ["ember/tensor.cpp", "ember/tensor_binding.cpp"],
-        include_dirs=[pybind11.get_include()],
-        extra_compile_args=extra_compile_args,
-        extra_link_args=extra_link_args,
-    ),
-]
+# ext_modules = [
+#     Pybind11Extension(
+#         "ember/tensor_cpp",
+#         ["ember/tensor.cpp", "ember/tensor_binding.cpp"],
+#         include_dirs=[pybind11.get_include()],
+#         extra_compile_args=extra_compile_args,
+#         extra_link_args=extra_link_args,
+#     ),
+# ]
 
 setup(
     name = package_name, 
@@ -42,7 +42,7 @@ setup(
     long_description = long_description, 
     author = author, 
     author_email = author_email, 
-    ext_modules = ext_modules,
+    # ext_modules = ext_modules,
     cmdclass = {"build_ext" : build_ext}, 
     zip_safe = False,
     packages = find_packages(), 
@@ -50,4 +50,6 @@ setup(
     install_requires = install_requires
 )
 
+# compiled_cpp_package = os.path.join("ember", "_CPP", "build", "tensor_cpp.cpython-312-darwin.so")
+# shutil.copy(compiled_cpp_package, "ember")
 

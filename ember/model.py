@@ -1,6 +1,6 @@
-from .tensor import Tensor
+from .tensor_cpp import Tensor 
 
 class Model(): 
 
     def __init__(self): 
-        pass
+        self.data = Tensor([1., 2. ])
