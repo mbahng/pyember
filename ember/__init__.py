@@ -1,6 +1,12 @@
-from .tensor_cpp import Matrix, Vector
-from .datasets.dataset import Dataset
-from .models.model import Model 
+from .tensor_cpp import Tensor
+from .datasets import Dataset
+from .models import Model, Regression, LinearRegression
 
-__all__ = ['Matrix', 'Vector', 'Model', 'Dataset']
+__all__ = [
+    "Tensor", 
+    "Dataset", 
+    "Model", 
+    "Regression", 
+    "LinearRegression"
+]
 

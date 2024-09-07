@@ -1,12 +1,10 @@
 from setuptools import setup, find_packages
-import pybind11
-from pybind11.setup_helpers import Pybind11Extension, build_ext
-import sys, os, shutil
+from pybind11.setup_helpers import build_ext
+import sys
 
 package_name = "ember" 
 version = "0.0.1" 
 description = "Lightweight ML library for my personal use."
-long_description = "To be done. " 
 
 author = "Muchang Bahng"
 author_email = "bahngmc@gmail.com"
@@ -39,7 +37,6 @@ setup(
     name = package_name, 
     version = version, 
     description = description, 
-    long_description = long_description, 
     author = author, 
     author_email = author_email, 
     # ext_modules = ext_modules,

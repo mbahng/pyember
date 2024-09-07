@@ -1,17 +1,17 @@
-from .. import Matrix
+from .. import Tensor 
 
 class Dataset(): 
 
-    def __init__(self, X: Matrix, Y: Matrix) -> None: 
+    def __init__(self, X: Tensor, Y: Tensor) -> None: 
         self.index = 0
         self.X = X 
         self.Y = Y 
 
-        assert len(self.X) == len(self.Y), \
-            f"Length of input ({len(self.X)}) does not \
-              match length of output ({len(self.Y)})."
+        assert self.X.shape[0] == self.Y.shape[0], \
+            f"Length of input ({self.X.shape[0]}) does not \
+              match length of output ({self.Y.shape[0]})."
 
-        self.limit = len(self.X)
+        self.limit = self.X.shape[0]
 
     def __len__(self): 
         return self.limit

@@ -1,3 +1,2 @@
-from .model import *
-from .classification import * 
-from .regression import *
+from .model import Model
+from .regression import Regression, LinearRegression
