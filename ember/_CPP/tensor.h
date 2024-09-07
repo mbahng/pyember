@@ -6,6 +6,8 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath> 
+#include <random> 
+#include <ctime>
 #include <eigen3/Eigen/Dense>
 
 int shape_to_length(std::vector<int> shape); 
@@ -17,17 +19,18 @@ public:
   int length; 
 
   // Constructors
-
+  // Should be passed by value? Since we want it to be independent. 
+  
+  // initializes an array of size (...)
   Tensor(std::vector<int> input_shape) : shape(input_shape) {
-    // initializes an array of size (...)
     int len = shape_to_length(input_shape); 
     std::vector<double> res(len, 0.); 
     data = res; 
     length = len; 
   }
 
+  // automatic reshape 1D arrays into (...) arrays
   Tensor(std::vector<double> input_data, std::vector<int> input_shape) {
-    // automatic reshape 1D arrays into (...) arrays
     int len = shape_to_length(input_shape); 
     if (len != input_data.size()) {
       std::cout << len; 
@@ -39,15 +42,15 @@ public:
     length = len; 
   }
 
+  // constructor for 1D arrays
   Tensor(std::vector<double> input_data) {
-    // constructor for 1D arrays
     length = input_data.size(); 
     data = input_data; 
     shape = std::vector<int> {length};
   }
 
+  // constructor for 2D arrays
   Tensor(std::vector<std::vector<double>> input_data) {
-    // constructor for 2D arrays
     // check first if viable size 
     shape = std::vector<int> {(int)input_data.size(), (int)input_data[0].size()}; 
     for (int i = 0; i < shape[0]; ++i) {
@@ -65,11 +68,8 @@ public:
     data = res; 
   }
 
-  Tensor(std::vector<
-           std::vector<
-             std::vector<double> 
-         >> input_data) {
-    // constructor for 3D arrays
+  // constructor for 3D arrays
+  Tensor(std::vector<std::vector<std::vector<double>>> input_data) {
     shape = std::vector<int> {
       (int)input_data.size(), 
       (int)input_data[0].size(), 
@@ -100,6 +100,34 @@ public:
 
   int dimension() {
     return length; 
+  }
+
+  // Equality operator
+  bool operator==(const Tensor& other) const {
+    // First, compare shapes
+    if (this->shape != other.shape) {
+        return false;
+    }
+
+    // Then, compare data
+    if (this->data.size() != other.data.size()) {
+        return false;
+    }
+
+    // Compare each element, considering floating-point precision
+    const double epsilon = std::numeric_limits<double>::epsilon();
+    for (size_t i = 0; i < this->data.size(); ++i) {
+        if (std::abs(this->data[i] - other.data[i]) > epsilon) {
+            return false;
+        }
+    }
+
+    return true;
+  }
+
+  // Inequality operator (for completeness)
+  bool operator!=(const Tensor& other) const {
+      return !(*this == other);
   }
 
   operator std::string() const { 
@@ -143,7 +171,6 @@ public:
   }
 
   // Indexing and slicing 
-
   const double& at(const std::vector<size_t>& indices) const {
     if (indices.size() != shape.size()) {
       throw std::out_of_range("Number of indices does not match tensor dimensions.");
@@ -175,51 +202,52 @@ public:
     };
 
   Tensor slice(const std::vector<Slice>& slices) const {
-      std::vector<int> new_shape;
-      std::vector<int> start_indices;
-      std::vector<int> steps;
+    std::vector<int> new_shape;
+    std::vector<int> start_indices;
+    std::vector<int> steps;
 
-      for (size_t i = 0; i < shape.size(); ++i) {
-          if (i < slices.size()) {
-              const auto& s = slices[i];
-              int start = (s.start >= 0) ? s.start : shape[i] + s.start;
-              int stop = (s.stop >= 0) ? s.stop : shape[i] + s.stop;
-              start = std::max(0, std::min(start, shape[i]));
-              stop = std::max(0, std::min(stop, shape[i]));
-              int slice_length = (stop - start + s.step - 1) / s.step;
-              new_shape.push_back(slice_length);
-              start_indices.push_back(start);
-              steps.push_back(s.step);
-          } else {
-              new_shape.push_back(shape[i]);
-              start_indices.push_back(0);
-              steps.push_back(1);
-          }
+    for (size_t i = 0; i < shape.size(); ++i) {
+      if (i < slices.size()) {
+        const auto& s = slices[i];
+        int start = (s.start >= 0) ? s.start : shape[i] + s.start;
+        int stop = (s.stop >= 0) ? s.stop : shape[i] + s.stop;
+        start = std::max(0, std::min(start, shape[i]));
+        stop = std::max(0, std::min(stop, shape[i]));
+        int slice_length = (stop - start + s.step - 1) / s.step;
+        new_shape.push_back(slice_length);
+        start_indices.push_back(start);
+        steps.push_back(s.step);
+      } 
+      else {
+        new_shape.push_back(shape[i]);
+        start_indices.push_back(0);
+        steps.push_back(1);
       }
+    }
 
-      Tensor result(new_shape);
+    Tensor result(new_shape);
 
-      std::function<void(size_t, std::vector<size_t>&, std::vector<size_t>&)> copy_data = 
-          [&](size_t dim, std::vector<size_t>& src_indices, std::vector<size_t>& dst_indices) {
-              if (dim == shape.size()) {
-                  result.at(dst_indices) = this->at(src_indices);
-                  return;
-              }
-              int start = start_indices[dim];
-              int step = steps[dim];
-              int end = start + new_shape[dim] * step;
-              for (int i = start; i < end; i += step) {
-                  src_indices[dim] = i;
-                  dst_indices[dim] = (i - start) / step;
-                  copy_data(dim + 1, src_indices, dst_indices);
-              }
-          };
+    std::function<void(size_t, std::vector<size_t>&, std::vector<size_t>&)> copy_data = 
+      [&](size_t dim, std::vector<size_t>& src_indices, std::vector<size_t>& dst_indices) {
+        if (dim == shape.size()) {
+          result.at(dst_indices) = this->at(src_indices);
+          return;
+        }
+        int start = start_indices[dim];
+        int step = steps[dim];
+        int end = start + new_shape[dim] * step;
+        for (int i = start; i < end; i += step) {
+          src_indices[dim] = i;
+          dst_indices[dim] = (i - start) / step;
+          copy_data(dim + 1, src_indices, dst_indices);
+        }
+      };
 
-      std::vector<size_t> src_indices(shape.size());
-      std::vector<size_t> dst_indices(shape.size());
-      copy_data(0, src_indices, dst_indices);
+    std::vector<size_t> src_indices(shape.size());
+    std::vector<size_t> dst_indices(shape.size());
+    copy_data(0, src_indices, dst_indices);
 
-      return result;
+    return result;
   }
 
   // Tensor Operations 
@@ -361,7 +389,7 @@ public:
     return res; 
   } 
 
-  Tensor transpose(int dim1, int dim2) const {
+  Tensor transpose(int dim1 = 0, int dim2 = 1) const {
     if (dim1 < 0 || dim2 < 0 || dim1 >= shape.size() || dim2 >= shape.size()) {
       throw std::out_of_range("Dimension indices out of range");
     }
@@ -483,3 +511,7 @@ public:
     return result;
     }
 }; 
+
+Tensor gaussian(std::vector<int> shape, double mean = 0.0, double stddev = 1.0); 
+
+Tensor uniform(std::vector<int> shape, double min = 0.0, double max= 1.0); 
