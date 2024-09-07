@@ -1,4 +1,4 @@
-from .. import Tensor 
+from .. import Tensor, gaussian
 
 class Dataset(): 
 
@@ -25,3 +25,8 @@ class Dataset():
         tmp = (self.X[self.index], self.Y[self.index]) 
         self.index += 1 # self.index is an int so passed by value 
         return tmp
+
+def generate_toy_dataset(N: int, noise: float) -> Dataset: 
+    X = gaussian([N, 1]) 
+    Y = 1.24 * X + 0.4 + gaussian([N, 1], 0.0, noise)
+    return Dataset(X, Y)
