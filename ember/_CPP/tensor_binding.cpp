@@ -6,97 +6,157 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(tensor_cpp, m) {
 
-  py::class_<Matrix>(m, "Matrix") 
-    .def(py::init([](const size_t rows, const size_t cols) {
-      return Matrix(rows, cols); 
+  py::class_<Tensor>(m, "Tensor") 
+    /* .def(py::init([](std::vector<int> input_shape) { */
+    /*   return Tensor(input_shape);  */
+    /* })) */
+
+    .def(py::init([](std::vector<double> input_data, std::vector<int> input_shape) {
+      return Tensor(input_data, input_shape); 
     }))
 
-    .def(py::init([](Eigen::MatrixXd input) {
-      return Matrix(input); 
+    .def(py::init([](std::vector<double> input_data) {
+      return Tensor(input_data); 
     }))
 
-    .def(py::init([](const std::vector<std::vector<double>>& input) {
-      size_t rows = input.size(); 
-      size_t cols = input[0].size(); 
-      Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(rows, cols); 
-      for (size_t i = 0; i < rows; ++i) {
-        for (size_t j = 0; j < cols; ++j) {
-          matrix(i, j) = input[i][j]; 
-        }
-      }
-      return Matrix(matrix);
+    .def(py::init([](std::vector<std::vector<double>> input_data) {
+      return Tensor(input_data); 
     }))
 
-    .def("__len__", &Matrix::dimension) 
+    .def(py::init([](std::vector<std::vector<std::vector<double>>> input_data) {
+      return Tensor(input_data); 
+    }))
 
-    .def("shape", 
-      [](Matrix &t) {
-        return py::make_tuple(std::get<0>(t.shape()), std::get<1>(t.shape())); 
-      })
-
-    .def("__getitem__", 
-      [](Matrix &t, py::tuple index) {
-        if (index.size() != 2)
-          throw py::index_error("Invalid number of indices");
-        return t.getitem(index[0].cast<size_t>(), index[1].cast<size_t>()); 
-      })
-
-    .def("__setitem__", 
-      [](Matrix &t, py::tuple index, double value) {
-        if (index.size() != 2)
-          throw py::index_error("Invalid number of indices");
-        return t.setitem(index[0].cast<size_t>(), index[1].cast<size_t>(), value);
-      })
+    .def_readwrite("shape", &Tensor::shape)
+    .def_readwrite("data", &Tensor::data)
 
     .def("__repr__",
-      [](Matrix &a) {
+      [](Tensor &a) {
+        return static_cast<std::string>(a);
+      })
+    
+    .def("__str__",
+      [](Tensor &a) {
         return static_cast<std::string>(a);
       })
 
-    .def("__str__",
-      [](Matrix &a) {
-        return static_cast<std::string>(a);
-      })
+    .def("__getitem__", [](const Tensor& self, py::object index) {
+      if (py::isinstance<py::tuple>(index)) {
+          std::vector<Tensor::Slice> slices;
+          for (auto item : index) {
+              if (py::isinstance<py::slice>(item)) {
+                  py::slice slice = item.cast<py::slice>();
+                  py::ssize_t start, stop, step, slicelength;
+                  if (!slice.compute(self.shape[slices.size()], &start, &stop, &step, &slicelength)) {
+                      throw py::error_already_set();
+                  }
+                  slices.emplace_back(start, stop, step);
+              } else {
+                  int idx = item.cast<int>();
+                  slices.emplace_back(idx, idx + 1, 1);
+              }
+          }
+          return self.slice(slices);
+      } else if (py::isinstance<py::slice>(index)) {
+          py::slice slice = index.cast<py::slice>();
+          py::ssize_t start, stop, step, slicelength;
+          if (!slice.compute(self.shape[0], &start, &stop, &step, &slicelength)) {
+              throw py::error_already_set();
+          }
+          return self.slice({Tensor::Slice(start, stop, step)});
+      } else {
+        // For single integer index, return a tensor with the indexed value
+        std::vector<size_t> indices = {index.cast<size_t>()};
+        return Tensor(std::vector<double>{self.at(indices)}, std::vector<int>{1});
+      }
+        })
+
+    .def("__setitem__", [](Tensor& self, py::object index, double value) {
+      if (py::isinstance<py::tuple>(index)) {
+        std::vector<size_t> indices;
+        for (auto item : index.cast<py::tuple>()) {
+          indices.push_back(item.cast<size_t>());
+        }
+        self.at(indices) = value;
+      } else {
+        self.at({index.cast<size_t>()}) = value;
+      }
+    })
 
     .def("__add__", 
-      [](Matrix &a , Matrix &b) {
+      [](Tensor &a , Tensor &b) {
         return a.add(b); 
       })
-
+    
+    .def("__add__", 
+      [](Tensor &a , double &b) {
+        return a.add(b); 
+      })
+    
+    .def("__add__", 
+      [](double &a , Tensor &b) {
+        return b.add(a); 
+      })
+    
+    .def("__sub__", 
+      [](Tensor &a , Tensor &b) {
+        return a.sub(b); 
+      })
+    
+    .def("__sub__", 
+      [](Tensor &a , double &b) {
+        return a.sub(b); 
+      })
+    
+    .def("__sub__", 
+      [](double &a , Tensor &b) {
+        // To do, fix this since it's not symmetric. 
+        return b.sub(a); 
+      })
+    
     .def("__mul__", 
-      [](Matrix &a , Matrix &b) {
-        return a.mat_mul(b); 
+      [](Tensor &a , Tensor &b) {
+        return a.mul(b); 
       })
-
+    
     .def("__mul__", 
-      [](Matrix &a , double b) {
-         return a.scalar_mul(b); 
+      [](Tensor &a , double b) {
+        return a.mul(b); 
+      })
+    
+    .def("__rmul__", 
+      [](Tensor &a , double b) {
+        return a.mul(b); 
       })
 
-    .def("mat_mul", 
-      [](Matrix &a , Matrix &b) {
-        return a.mat_mul(b); 
+    .def("__pow__", 
+      [](Tensor &a , double &b) {
+        return a.pow(b); 
       })
 
-    .def("elem_mul", 
-      [](Matrix &a , Matrix &b) {
-        return a.elem_mul(b); 
+    .def("sum", 
+      [](Tensor &b) {
+        return b.sum(); 
       })
-
-    .def("transpose", 
-      [](Matrix &a) {
-        return a.transpose(); 
+    
+    .def("mean", 
+      [](Tensor &b) {
+        return b.mean(); 
       })
-  ;
-
-
-  py::class_<Vector>(m, "Vector") 
-    .def(py::init<std::vector<double>&>()) 
-    .def("__len__", &Vector::dimension) 
-    .def("__getitem__", [](Vector &t, size_t index) {
-      return t.getitem(index); 
-    })
-    .def("norm", &Vector::norm)
-    .def("dot", &Vector::dot) ; 
-} 
-
+    
+    .def("norm", 
+      [](Tensor &b) {
+        return b.norm(); 
+      })
+    
+    .def("dot", 
+      [](Tensor &a, Tensor &b) {
+        return a.dot(b); 
+      })
+    
+    .def("reshape", &Tensor::reshape)
+    .def("matmul", &Tensor::matmul)
+    .def("transpose", &Tensor::transpose)
+    .def("T", &Tensor::transpose)
+    ; 
+}
