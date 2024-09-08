@@ -131,13 +131,13 @@ public:
   }
 
   operator std::string() const { 
-    /* std::cout << std::fixed << std::setprecision(2);  */
     
     std::ostringstream oss; 
+    oss << std::fixed << std::setprecision(2);
 
     if (shape.size() == 1) {
       for (int i = 0; i < length; ++i) {
-        oss << std::setw(4) << data[i]; 
+        oss << std::setw(8) << data[i]; 
       }
     }
     else if (shape.size() == 2) {
@@ -145,7 +145,7 @@ public:
       int cols = shape[1]; 
       for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-          oss << std::setw(4) << data[(i * cols) + j]; 
+          oss << std::setw(8) << data[(i * cols) + j]; 
         }
         oss << '\n'; 
       }
@@ -157,7 +157,7 @@ public:
       for (int start = 0; start < length; start += rows * cols) {
         for (int i = 0; i < rows; ++i) {
           for (int j = 0; j < cols; ++j) {
-              oss << std::setw(4) << data[start + (i * cols) + j]; 
+              oss << std::setw(8) << data[start + (i * cols) + j]; 
           }
           oss << '\n'; 
         }
