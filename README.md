@@ -2,13 +2,12 @@
 
 Ember is a lightweight statistics and ML library for my personal use with C++ and Python. 
 
-# Table of Contents
-- [Installation] (#installation) 
-- [Getting Started] (#getting-started)
-  - [Ember Tensors] (#ember-tensors)
-  - [Datasets] (#datasets)
-  - [Models and Training] (#modelstand-training)
-  - [Monte Carlo Samplers] (#monte-carlo-samplers)
+- [Installation](#installation) 
+- [Getting Started](#getting-started)
+  - [Ember Tensors](#ember-tensors)
+  - [Datasets](#datasets)
+  - [Models and Training](#models-and-training)
+  - [Monte Carlo Samplers](#monte-carlo-samplers)
 
 ## Installation
 
