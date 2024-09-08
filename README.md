@@ -1,8 +1,17 @@
-# ember
+# 🔥 Ember
 
-Lightweight ML library for my personal use with C++ and Python. 
+Ember is a lightweight statistics and ML library for my personal use with C++ and Python. 
 
-Copy the `pybind11` repo into `_CPP` directory. 
+- [Installation](#installation) 
+- [Getting Started](#getting-started)
+  - [Ember Tensors](#ember-tensors)
+  - [Datasets](#datasets)
+  - [Models and Training](#models-and-training)
+  - [Monte Carlo Samplers](#monte-carlo-samplers)
+
+## Installation
+
+Once you git pull, copy the `pybind11` repo into `_CPP` directory. 
 ```
 cd ember/_CPP 
 git submodule add https://github.com/pybind/pybind11.git
@@ -16,3 +25,14 @@ cmake ..
 make 
 ```
 Copy the `.so` file to `ember`. Then it is accessible by the python modules. Finally, run `pip install -e .` in the root directory to install the package. 
+
+## Getting Started 
+
+### Ember Tensors 
+
+### Datasets
+
+### Models and Training
+
+### Monte Carlo Samplers
+
