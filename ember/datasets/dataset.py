@@ -1,4 +1,5 @@
-from .. import Tensor, gaussian
+from .. import Tensor 
+from ..import random 
 
 class Dataset(): 
 
@@ -27,6 +28,6 @@ class Dataset():
         return tmp
 
 def generate_toy_dataset(N: int, noise: float) -> Dataset: 
-    X = gaussian([N, 1]) 
-    Y = 1.24 * X + 0.4 + gaussian([N, 1], 0.0, noise)
+    X = random.gaussian([N, 1]) 
+    Y = 1.24 * X + 0.4 + random.gaussian([N, 1], 0.0, noise)
     return Dataset(X, Y)
