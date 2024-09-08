@@ -158,8 +158,18 @@ PYBIND11_MODULE(tensor_cpp, m) {
         return a.dot(b); 
       })
     
+    .def("matmul", 
+       [](Tensor &a, Tensor &b) {
+         return a.matmul(b); 
+       })
+
+    .def("__matmul__", 
+       [](Tensor &a, Tensor &b) {
+         return a.matmul(b); 
+       })
+
     .def("reshape", &Tensor::reshape)
-    .def("matmul", &Tensor::matmul)
+
     .def("transpose", &Tensor::transpose, 
          py::arg("dim1") = 0, 
          py::arg("dim2") = 1)

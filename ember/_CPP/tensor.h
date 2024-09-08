@@ -270,7 +270,7 @@ public:
       }
       std::vector<double> sum(length); 
       for (int i = 0; i < length; ++i) {
-        sum[i] = data[i] + b.data[i / b.length]; 
+        sum[i] = data[i] + b.data[i % b.length]; 
       }
       return Tensor(sum, shape); 
     }
@@ -309,7 +309,7 @@ public:
       }
       std::vector<double> sum(length); 
       for (int i = 0; i < length; ++i) {
-        sum[i] = data[i] - b.data[i / b.length]; 
+        sum[i] = data[i] - b.data[i % b.length]; 
       }
       return Tensor(sum, shape); 
     }
