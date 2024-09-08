@@ -1,6 +1,7 @@
 from . import Model
 from .. import Dataset
-from .. import Tensor, gaussian 
+from .. import Tensor 
+from .. import random
 
 class Regression(Model): 
 
@@ -13,7 +14,7 @@ class LinearRegression(Regression):
     def __init__(self, input_dim: int, output_dim: int, compute_least_squares: bool = True): 
         super().__init__() 
         self.params = {
-            "lin_map" : gaussian([output_dim, input_dim]), 
+            "lin_map" : random.gaussian([output_dim, input_dim]), 
             "bias" : Tensor([[0]])
         }
         self.compute_least_squares = compute_least_squares
