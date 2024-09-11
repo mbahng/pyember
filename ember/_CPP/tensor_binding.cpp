@@ -28,6 +28,7 @@ PYBIND11_MODULE(tensor_cpp, m) {
     // Attributes
       .def_readwrite("shape", &Tensor::shape)
       .def_readwrite("data", &Tensor::data)
+      .def_readwrite("grad", &Tensor::grad)
 
     .def("__repr__",
       [](Tensor &a) {
@@ -177,6 +178,13 @@ PYBIND11_MODULE(tensor_cpp, m) {
     .def("T", &Tensor::transpose, 
          py::arg("dim1") = 0, 
          py::arg("dim2") = 1)
+
+    .def("get_gradient", &Tensor::get_gradient)
+
+    .def("set_gradient", 
+       [](Tensor &a, Tensor &b) {
+         return a.set_gradient(b); 
+       })
     ; 
 
   m.def("gaussian", &gaussian, 
@@ -188,4 +196,7 @@ PYBIND11_MODULE(tensor_cpp, m) {
         py::arg("shape"), 
         py::arg("min") = 0.0, 
         py::arg("max") = 1.0); 
+
+  m.def("ones", &ones, py::arg("shape")); 
+  m.def("zeros", &ones, py::arg("shape")); 
 }
