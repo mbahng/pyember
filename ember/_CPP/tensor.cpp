@@ -56,3 +56,13 @@ Tensor uniform(std::vector<int> shape, double min, double max) {
 
   return Tensor(result, shape);
 }
+
+Tensor ones(std::vector<int> shape) {
+  std::vector<double> data(shape_to_length(shape), 1.0); 
+  return Tensor(data, shape); 
+}
+
+Tensor zeros(std::vector<int> shape) {
+  std::vector<double> data(shape_to_length(shape), 0.0); 
+  return Tensor(data, shape); 
+}

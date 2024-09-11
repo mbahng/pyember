@@ -15,6 +15,7 @@ int shape_to_length(std::vector<int> shape);
 class Tensor {
 public: 
   std::vector<double> data; 
+  std::vector<double> grad; 
   std::vector<int> shape; 
   int length; 
 
@@ -27,6 +28,7 @@ public:
     std::vector<double> res(len, 0.); 
     data = res; 
     length = len; 
+    grad = data; 
   }
 
   // automatic reshape 1D arrays into (...) arrays
@@ -40,6 +42,7 @@ public:
     data = input_data; 
     shape = input_shape; 
     length = len; 
+    grad = data; 
   }
 
   // constructor for 1D arrays
@@ -47,6 +50,7 @@ public:
     length = input_data.size(); 
     data = input_data; 
     shape = std::vector<int> {length};
+    grad = data; 
   }
 
   // constructor for 2D arrays
@@ -66,6 +70,7 @@ public:
       }
     }
     data = res; 
+    grad = data; 
   }
 
   // constructor for 3D arrays
@@ -96,6 +101,7 @@ public:
       }
     }
     data = res; 
+    grad = data; 
   }
 
   int dimension() {
@@ -248,6 +254,17 @@ public:
     copy_data(0, src_indices, dst_indices);
 
     return result;
+  }
+
+  Tensor get_gradient() {
+    return Tensor(grad, shape); 
+  }
+
+  void set_gradient(Tensor new_grad) {
+    if (shape != new_grad.shape) {
+      throw std::logic_error("Not same shape. "); 
+    }
+    grad = new_grad.grad; 
   }
 
   // Tensor Operations 
@@ -515,3 +532,7 @@ public:
 Tensor gaussian(std::vector<int> shape, double mean = 0.0, double stddev = 1.0); 
 
 Tensor uniform(std::vector<int> shape, double min = 0.0, double max= 1.0); 
+
+Tensor zeros(std::vector<int> shape); 
+
+Tensor ones(std::vector<int> shape); 
