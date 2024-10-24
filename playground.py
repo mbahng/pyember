@@ -1,6 +1,7 @@
 import ember 
 import networkx as nx
 import matplotlib.pyplot as plt 
+from pprint import pprint
 
 def to_str(data: list, grad: list) -> str: 
     grad_str = str(grad)[2:-2]
@@ -66,8 +67,11 @@ def third():
         for t in node.prev: 
             adj_list[to_str(t.data, t.grad)].append(to_str(node.data, node.grad))
 
+    pprint(a.grad)
+    pprint(b.grad)
 
     G = nx.DiGraph(adj_list) 
     nx.draw_planar(G, with_labels=True, node_size=8000)
     plt.show() 
-third() 
+
+first()
