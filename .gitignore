@@ -2,3 +2,4 @@ ember.egg-info/
 **/build/
 **/__pycache__/
 **/*.so
+**/playground.py
