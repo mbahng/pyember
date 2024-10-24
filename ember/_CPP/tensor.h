@@ -495,7 +495,6 @@ public:
           for (int i = 0; i < self_ptr->shape[1]; ++i) {
             int x_idx = z1 * out.shape[0] + i;
             int y_idx = i * out.shape[1] + z2; 
-            std::cout<< z_idx << i << std::endl; 
             self_ptr->grad[z_idx][x_idx] = other_ptr->data[y_idx];
             other_ptr->grad[z_idx][y_idx] = self_ptr->data[x_idx];
           }
