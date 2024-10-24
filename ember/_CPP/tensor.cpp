@@ -22,10 +22,10 @@ std::vector<std::vector<double>> zero_matrix(int n) {
   return zero_matrix(n, n); 
 }
 
-std::vector<std::vector<double>> eye_matrix(int n) {
+std::vector<std::vector<double>> eye_matrix(int n, double k) {
   std::vector<std::vector<double>> out(n, std::vector<double>(n, 0.0)); 
   for (int i = 0; i < n; i++) {
-    out[i][i] = 1.; 
+    out[i][i] = k; 
   }
   return out; 
 }
