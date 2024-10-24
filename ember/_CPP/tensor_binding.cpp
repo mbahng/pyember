@@ -27,6 +27,8 @@ PYBIND11_MODULE(tensor_cpp, m) {
         return static_cast<std::string>(a);
       })
 
+    .def("reshape", &GradTensor::reshape)
+
     .def("matmul", 
        [](GradTensor &a, GradTensor &b) {
          return a.matmul(b); 
@@ -37,8 +39,8 @@ PYBIND11_MODULE(tensor_cpp, m) {
   py::class_<Tensor>(m, "Tensor") 
 
     .def_readwrite("data", &Tensor::data)
-    .def_readwrite("shape", &Tensor::data)
-    .def_readwrite("length", &Tensor::data)
+    .def_readwrite("shape", &Tensor::shape)
+    .def_readwrite("length", &Tensor::length)
     .def_readwrite("grad", &Tensor::grad)
     .def_readwrite("prev", &Tensor::prev)
 
@@ -102,8 +104,21 @@ PYBIND11_MODULE(tensor_cpp, m) {
     .def("__eq__", &Tensor::operator==, py::is_operator())
     .def("__ne__", &Tensor::operator!=, py::is_operator())
 
+
+    .def("__len__", 
+        [](Tensor &a) {
+            return a.length;
+        }
+      )
+
     .def("__add__", 
         [](Tensor &a, Tensor &b) {
+            return a.add(b);
+        }
+      )
+
+    .def("__add__", 
+        [](Tensor &a, GradTensor &b) {
             return a.add(b);
         }
       )
@@ -131,6 +146,16 @@ PYBIND11_MODULE(tensor_cpp, m) {
             return a.dot(b);
         }
       )
+
+    .def("relu", 
+       [](Tensor &a) {
+         return a.relu();
+       })
+
+    .def("sum", 
+       [](Tensor &a) {
+         return a.sum(); 
+       })
 
     .def("matmul", 
        [](Tensor &a, Tensor &b) {
