@@ -7,7 +7,40 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(tensor_cpp, m) {
 
+  py::class_<GradTensor>(m, "GradTensor")
+
+    .def_readwrite("data", &GradTensor::data)
+    .def_readwrite("shape", &GradTensor::data)
+    .def_readwrite("length", &GradTensor::data)
+
+    .def(py::init([](std::vector<std::vector<double>> data) {
+      return GradTensor(data); 
+    }))
+
+    .def("__repr__",
+      [](GradTensor &a) {
+        return static_cast<std::string>(a);
+      })
+    
+    .def("__str__",
+      [](GradTensor &a) {
+        return static_cast<std::string>(a);
+      })
+
+    .def("matmul", 
+       [](GradTensor &a, GradTensor &b) {
+         return a.matmul(b); 
+       })
+
+    ;
+
   py::class_<Tensor>(m, "Tensor") 
+
+    .def_readwrite("data", &Tensor::data)
+    .def_readwrite("shape", &Tensor::data)
+    .def_readwrite("length", &Tensor::data)
+    .def_readwrite("grad", &Tensor::grad)
+    .def_readwrite("prev", &Tensor::prev)
 
     // Constructors
     .def(py::init([](std::vector<double> data) {
@@ -22,12 +55,6 @@ PYBIND11_MODULE(tensor_cpp, m) {
       return Tensor(data); 
     }))
       
-    // Attributes
-    .def_readwrite("data", &Tensor::data)
-    .def_readwrite("shape", &Tensor::data)
-    .def_readwrite("length", &Tensor::data)
-    .def_readwrite("grad", &Tensor::grad)
-    .def_readwrite("prev", &Tensor::prev)
     .def("backward", 
       [](Tensor &t) {
         if (t.backward) {
@@ -36,12 +63,31 @@ PYBIND11_MODULE(tensor_cpp, m) {
       }
     )
 
-    .def("backprop", 
-        [](Tensor &a) {
-            return a.backprop(); 
-        }
-      )
+    .def_static("gaussian", &Tensor::gaussian,
+      py::arg("shape"),
+      py::arg("mean") = 0.0,
+      py::arg("stddev") = 1.0
+    )
 
+    .def_static("uniform", &Tensor::uniform,
+      py::arg("shape"),
+      py::arg("min") = 0.0,
+      py::arg("max") = 1.0
+    )
+
+    .def_static("ones", &Tensor::ones,
+      py::arg("shape")
+    )
+
+    .def_static("zeros", &Tensor::zeros,
+      py::arg("shape")
+    )
+
+    .def("backprop", 
+      [](Tensor &a) {
+          return a.backprop(); 
+      }
+    )
 
     .def("__repr__",
       [](Tensor &a) {
@@ -142,5 +188,5 @@ PYBIND11_MODULE(tensor_cpp, m) {
         self.at({index.cast<size_t>()}) = value;
       }
     })
-
-;}
+  ;
+}
