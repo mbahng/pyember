@@ -3,12 +3,14 @@ import networkx as nx
 import matplotlib.pyplot as plt 
 from pprint import pprint
 
-def to_str(data: list, grad: list) -> str: 
+def to_str(data: list, grad: ember.GradTensor) -> str: 
+    grad = grad.data
     grad_str = str(grad)[2:-2]
     grad_str = "\n".join(grad_str.split("], ["))
     return f"val={data}\ngrad={grad_str}"
 
 def first():
+
     a = ember.Tensor([2, -3]) 
     h = a ** 2
     b = ember.Tensor([3, 5])
@@ -20,7 +22,7 @@ def first():
 
     f = ember.Tensor([-2])
 
-    g = f * e
+    g = f + e
     top_sort = g.backprop()
 
     adj_list = {to_str(t.data, t.grad) : [] for t in top_sort}

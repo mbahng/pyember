@@ -20,18 +20,27 @@ std::vector<std::vector<double>> eye_matrix(int n, double k = 1.);
 
 class GradTensor {
   public: 
-    std::vector<std::vector<double>> data; 
+    std::vector<double> data; 
     std::vector<int> shape; 
     int length; 
 
   GradTensor() {
-    this->data = std::vector<std::vector<double>> {{}}; 
+    this->data = std::vector<double> {{}}; 
     this->shape = {0, 0}; 
     this->length = 0;
   }
 
+  GradTensor(std::vector<double> data, std::vector<int> shape) {
+    // assert that shape is consistent with data 
+    this->length = shape_to_length(shape); 
+    assert(data.size() == this->length); 
+    this->shape = shape; 
+    this->data = data; 
+  }
+
+
+  // 2D initialization of grad tensor
   GradTensor(std::vector<std::vector<double>> data) {
-    this->data = data;
     this->shape = std::vector<int> {(int)data.size(), (int)data[0].size()}; 
     for (int i = 0; i < shape[0]; ++i) {
       if (data[i].size() != shape[1]) {
@@ -39,6 +48,13 @@ class GradTensor {
       }
     }
     this->length = shape_to_length(shape); 
+    std::vector<double> res(length); 
+    for (int i = 0; i < shape[0]; ++i) {
+      for (int j = 0; j < shape[1]; ++j) {
+        res[shape[1] * i + j] = data[i][j]; 
+      }
+    }
+    this->data = res; 
   }
 
   operator std::string() const { 
@@ -49,11 +65,20 @@ class GradTensor {
     int cols = shape[1]; 
     for (int i = 0; i < rows; ++i) {
       for (int j = 0; j < cols; ++j) {
-        oss << std::setw(8) << data[i][j]; 
+        oss << std::setw(8) << data[(i * cols) + j]; 
       }
       oss << '\n'; 
     }
     return oss.str(); 
+  }
+
+  GradTensor reshape(std::vector<int> new_shape) {
+    // Calculate the total number of elements in the new shape
+    int new_length = shape_to_length(new_shape); 
+    if (new_length != this->length) {
+      throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
+    }
+    return GradTensor(this->data, new_shape); 
   }
 
   GradTensor matmul(GradTensor& other) {
@@ -74,9 +99,9 @@ class GradTensor {
       for (int j = 0; j < p; ++j) {
         double sum = 0.0;
         for (int k = 0; k < n; ++k) {
-          sum += this->data[i][k] * other.data[k][j];
+          sum += this->data[i * n + k] * other.data[k * p + j];
         }
-        out.data[i][j] = sum;
+        out.data[i * p + j] = sum;
       }
     }
     return out;
@@ -117,17 +142,14 @@ public:
   // constructor for 2D arrays
   Tensor(std::vector<std::vector<double>> data) {
     // check first if viable size 
-    std::cout << 1 << std::endl; 
     this->shape = std::vector<int> {(int)data.size(), (int)data[0].size()}; 
     for (int i = 0; i < shape[0]; ++i) {
       if (data[i].size() != shape[1]) {
         throw std::logic_error("Not a viable size since all arrays are not the same length."); 
       }
     }
-    std::cout << 2 << std::endl; 
     this->length = shape_to_length(shape); 
 
-    std::cout << 3 << std::endl; 
 
     std::vector<double> res(length); 
     for (int i = 0; i < shape[0]; ++i) {
@@ -135,7 +157,6 @@ public:
         res[shape[1] * i + j] = data[i][j]; 
       }
     }
-    std::cout << 4 << std::endl; 
 
     this->data = res; 
     this->prev = std::vector<Tensor*>(); 
@@ -359,14 +380,17 @@ public:
 
   Tensor add(Tensor& other) {
     // vector addition
-    std::vector<double> res_data(data.size(), 0.0); 
-    Tensor out = Tensor(res_data); 
-    for (int i = 0; i < res_data.size(); ++i) {
-      out.data[i] = this->data[i] + other.data[i]; 
+    std::vector<double> res_data(this->length, 0.0); 
+
+    for (int i = 0; i < this->length; ++i) {
+      res_data[i] = this->data[i] + other.data[i]; 
     }
 
-    this->grad = GradTensor(zero_matrix(data.size())); 
-    other.grad = GradTensor(zero_matrix(data.size())); 
+    Tensor out = Tensor(res_data); 
+    out.shape = this->shape; 
+
+    this->grad = GradTensor(zero_matrix(this->length)); 
+    other.grad = GradTensor(zero_matrix(other.length)); 
 
     Tensor* self_ptr = this; 
     Tensor* other_ptr = &other; 
@@ -374,9 +398,25 @@ public:
     out.prev = std::vector<Tensor*> {self_ptr, other_ptr}; 
   
     out.backward = [self_ptr, other_ptr] {
-      self_ptr->grad = GradTensor(eye_matrix(self_ptr->data.size())); 
-      other_ptr->grad = GradTensor(eye_matrix(other_ptr->data.size())); 
+      for (int i = 0; i < self_ptr->length; ++i) {
+        (self_ptr->grad).data[i * self_ptr->length + i] = 1.0;
+        (other_ptr->grad).data[i * self_ptr->length + i] = 1.0;
+      }
     };
+    return out; 
+  }
+
+  Tensor add(GradTensor& other) {
+    // vector addition
+    std::vector<double> res_data(this->length, 0.0); 
+
+    for (int i = 0; i < this->length; ++i) {
+      res_data[i] = this->data[i] + other.data[i]; 
+    }
+
+    Tensor out = Tensor(res_data); 
+    out.shape = this->shape; 
+
     return out; 
   }
 
@@ -418,15 +458,14 @@ public:
     Tensor* self_ptr = this; 
     Tensor* other_ptr = &other; 
 
-
     out.prev = std::vector<Tensor*> {self_ptr, other_ptr}; 
   
     out.backward = [self_ptr, other_ptr] {
       self_ptr->grad = GradTensor(eye_matrix(self_ptr->data.size())); 
       other_ptr->grad = GradTensor(eye_matrix(other_ptr->data.size())); 
       for (int i = 0; i < self_ptr->grad.size(); ++i) {
-        (self_ptr->grad).data[i][i] = other_ptr->data[i];
-        (other_ptr->grad).data[i][i] = self_ptr->data[i];
+        (self_ptr->grad).data[i * self_ptr->data.size() + i] = other_ptr->data[i];
+        (other_ptr->grad).data[i * self_ptr->data.size() + i] = self_ptr->data[i];
       }
     };
 
@@ -450,7 +489,7 @@ public:
     out.backward = [self_ptr, n] {
       self_ptr->grad = GradTensor(eye_matrix(self_ptr->data.size())); 
       for (int i = 0; i < self_ptr->grad.size(); ++i) {
-        (self_ptr->grad).data[i][i] = n * std::pow(self_ptr->data[i], n-1);
+        (self_ptr->grad).data[i * self_ptr->data.size() + i] = n * std::pow(self_ptr->data[i], n-1);
       }
     };
     return out; 
@@ -480,8 +519,8 @@ public:
 
     out.backward = [self_ptr, other_ptr] {
       for (int i = 0; i < self_ptr->data.size(); ++i) {
-        (self_ptr->grad).data[0][i] = other_ptr->data[i];
-        (other_ptr->grad).data[0][i] = self_ptr->data[i];
+        (self_ptr->grad).data[i] = other_ptr->data[i];
+        (other_ptr->grad).data[i] = self_ptr->data[i];
       }
     };
 
@@ -490,16 +529,8 @@ public:
 
   Tensor reshape(std::vector<int> new_shape) {
     // Calculate the total number of elements in the new shape
-    int new_total_elements = 1;
-    for (int dim : new_shape) {
-      if (dim < 0) {
-        throw std::invalid_argument("New shape dimensions must be non-negative");
-      }
-      new_total_elements *= dim;
-    }
-
-    // Check if the new shape is compatible with the current data
-    if (new_total_elements != this->length) {
+    int new_length = shape_to_length(new_shape); 
+    if (new_length != this->length) {
       throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
     }
 
@@ -549,20 +580,68 @@ public:
       for (int z1 = 0; z1 < out.shape[0]; ++z1) {
         for (int z2 = 0; z2 < out.shape[1]; ++z2) {
           // Z[z1, z2] = \sum_* x_{z1, * } y_{ * , z2 }  * from 0 to out.shape[0] 
-          int z_idx = z1 * out.shape[0] + z2;
+          int z_idx = z1 * out.shape[1] + z2;
           // update gradients on X first 
           // x goes from (z1, 0), (z1, 1), ..., (z1, out.shape[0])
           for (int i = 0; i < self_ptr->shape[1]; ++i) {
             int x_idx = z1 * out.shape[0] + i;
             int y_idx = i * out.shape[1] + z2; 
-            (self_ptr->grad).data[z_idx][x_idx] = other_ptr->data[y_idx];
-            (other_ptr->grad).data[z_idx][y_idx] = self_ptr->data[x_idx];
+            (self_ptr->grad).data[z_idx * self_ptr->data.size() + x_idx] = other_ptr->data[y_idx];
+            (other_ptr->grad).data[z_idx * other_ptr->data.size() + y_idx] = self_ptr->data[x_idx];
           }
         }
       }
     };
 
     return out;
+  }
+
+  Tensor relu() {
+    std::vector<double> out_data = this->data; 
+    for (int i = 0; i < this->length; ++i) {
+      if (out_data[i] < 0.) {
+        out_data[i] = 0.0;
+      }
+    }
+
+    Tensor out = Tensor(out_data); 
+    out.shape = this->shape; 
+
+    this->grad = GradTensor(zero_matrix(this->length, this->length)); 
+
+    out.prev = std::vector<Tensor*> {this}; 
+
+    out.backward = [this] {
+      for (int i = 0; i < this->length; ++i) {
+        if ((this->data)[i] >= 0) {
+          (this->grad).data[i * this->length + i] = 1.0;
+        }
+        else {
+          (this->grad).data[i * this->length + i] = 0.0; 
+        }
+      }
+    };
+    return out; 
+  }
+
+  Tensor sum() {
+    std::vector<double> out_data {0.0};  
+    for (int i = 0; i < this->length; ++i) {
+      out_data[0] += this->data[i]; 
+    }
+
+    Tensor out = Tensor(out_data); 
+    out.prev = std::vector<Tensor*> {this}; 
+
+    this->grad = GradTensor(zero_matrix(1, this->length)); 
+
+    out.backward = [this] {
+      for (int i = 0; i < this->length; ++i) {
+        (this->grad).data[i] = 1.0;
+      }
+    };
+    return out; 
+
   }
 
   static Tensor gaussian(std::vector<int> shape, double mean, double stddev) {
@@ -614,7 +693,9 @@ public:
 
   static Tensor ones(std::vector<int> shape) {
     std::vector<double> data(shape_to_length(shape), 1.0); 
-    return Tensor(data).reshape(shape); 
+    Tensor out = Tensor(data);
+    out.shape = shape; 
+    return out;
   }
 
   static Tensor zeros(std::vector<int> shape) {
