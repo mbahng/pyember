@@ -159,65 +159,61 @@ PYBIND11_MODULE(tensor_cpp, m) {
       .def("sum", 
          [](Tensor &a) {
            return a.sum(); 
-          }, py::keep_alive<1, 2>()
-       )
+       })
 
       .def("mean", 
          [](Tensor &a) {
            return a.mean(); 
-        }, py::keep_alive<1, 2>()
-       )
+       })
 
     // Unary Argument Vector Math Operations 
       .def("__pow__", 
           [](Tensor &a, double n) {
               return a.pow(n);
-          }, py::keep_alive<1, 2>()
+          }
         )
 
     // Binary Argument Scalar Math Operations 
       .def("dot", 
           [](Tensor &a, Tensor &b) {
               return a.dot(b);
-          }, py::keep_alive<1, 2>()
+          }
         )
 
     // Binary Argument Vector Math Operations 
       .def("__add__", 
           [](Tensor &a, Tensor &b) {
               return a.add(b);
-          }, py::keep_alive<1, 2>()
+          }
         )
 
       .def("__add__", 
           [](Tensor &a, GradTensor &b) {
               return a.add(b);
-          }, py::keep_alive<1, 2>()
+          }
         )
 
       .def("__sub__", 
           [](Tensor &a, Tensor &b) {
               return a.sub(b);
-          }, py::keep_alive<1, 2>()
+          }
         )
 
       .def("__mul__", 
           [](Tensor &a, Tensor &b) {
               return a.mult(b);
-          }, py::keep_alive<1, 2>()
+          }
         )
     
       .def("matmul", 
          [](Tensor &a, Tensor &b) {
            return a.matmul(b); 
-          }, py::keep_alive<1, 2>()
-       )
+         })
 
       .def("__matmul__", 
          [](Tensor &a, Tensor &b) {
            return a.matmul(b); 
-          }, py::keep_alive<1, 2>()
-       )
+         })
 
     // Activation Functions
       .def("relu", 
