@@ -487,7 +487,7 @@ public:
       Tensor* self_ptr = this; 
       out.prev = std::vector<Tensor*> {this}; 
     
-      out.backward = [self_ptr, &n] {
+      out.backward = [self_ptr, n] {
         for (int i = 0; i < (self_ptr->shape)[0]; ++i) {
           (self_ptr->grad).data[i] = n * std::pow(self_ptr->data[i], n-1);
         }
