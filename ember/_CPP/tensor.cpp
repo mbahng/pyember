@@ -28,4 +28,3 @@ std::vector<std::vector<double>> eye_matrix(int n, double k) {
   }
   return out; 
 }
-
