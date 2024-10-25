@@ -34,6 +34,8 @@ class CustomNet(Net):
 
         # backpropagate gradients 
         a6.backprop()
+
+        # retrieve gradients using chain rule   
         dFdB2 = a6.grad.matmul(a5.grad).matmul(self.b2.grad)
 
         # update parameters: W1
