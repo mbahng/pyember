@@ -149,12 +149,10 @@ PYBIND11_MODULE(tensor_cpp, m) {
         }
       )
 
-      .def("backprop", 
-        [](Tensor &a) {
-            return a.backprop(); 
-        }
+      .def("backprop", &Tensor::backprop, 
+          py::arg("intermediate") = false 
       )
-    
+
     // Unary Argument Scalar Math Operations 
       .def("sum", 
          [](Tensor &a) {
@@ -201,6 +199,12 @@ PYBIND11_MODULE(tensor_cpp, m) {
 
       .def("__mul__", 
           [](Tensor &a, Tensor &b) {
+              return a.mult(b);
+          }
+        )
+    
+      .def("__mul__", 
+          [](Tensor &a, GradTensor &b) {
               return a.mult(b);
           }
         )
