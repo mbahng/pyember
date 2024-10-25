@@ -135,7 +135,9 @@ public:
 
     Tensor(std::vector<std::vector<double>> data) {
       // check first if viable size 
-      this->shape = std::vector<int> {(int)data.size(), (int)data[0].size()}; 
+      int n = data.size();
+      int m = data[0].size();
+      this->shape = std::vector<int> {n, m};
       for (int i = 0; i < shape[0]; ++i) {
         if (data[i].size() != shape[1]) {
           throw std::logic_error("Not a viable size since all arrays are not the same length."); 
@@ -410,6 +412,7 @@ public:
 
     std::vector<Tensor*> backprop() {
       // Set the gradient of the final output (this tensor) to 1.0
+      auto self_ref = this; 
       this->grad = GradTensor(eye_matrix(this->data.size()));
       
       // Build the topological ordering
@@ -473,21 +476,20 @@ public:
  
   // Unary Argument Vector Math Operations 
     Tensor pow(double n) { 
-      Tensor out = this->copy(); 
+      std::vector<double> out_data = this->data; 
       for (int i = 0; i < this->length; ++i) {
-        out.data[i] = std::pow(out.data[i], n);
+        out_data[i] = std::pow(out_data[i], n);
       }
 
-      this->grad = GradTensor(zero_matrix(data.size())); 
+      this->grad = GradTensor(std::vector<double>(((this->length) * (this->length)), 0.0), std::vector<int>{this->length, this->length}); 
 
+      Tensor out = Tensor(out_data, this->shape); 
       Tensor* self_ptr = this; 
-
-      out.prev = std::vector<Tensor*> {self_ptr}; 
+      out.prev = std::vector<Tensor*> {this}; 
     
-      out.backward = [self_ptr, n] {
-        self_ptr->grad = GradTensor(eye_matrix(self_ptr->data.size())); 
-        for (int i = 0; i < self_ptr->grad.length; ++i) {
-          (self_ptr->grad).data[i * self_ptr->data.size() + i] = n * std::pow(self_ptr->data[i], n-1);
+      out.backward = [self_ptr, &n] {
+        for (int i = 0; i < (self_ptr->shape)[0]; ++i) {
+          (self_ptr->grad).data[i] = n * std::pow(self_ptr->data[i], n-1);
         }
       };
       return out; 
