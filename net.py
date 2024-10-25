@@ -1,44 +1,51 @@
 import ember
-import networkx as nx
-import matplotlib.pyplot as plt 
 from ember import Tensor
-from ember.models.net import Net 
 
-class CustomNet(Net): 
+class CustomNet(): 
     
     def __init__(self): 
-        self.W1 = Tensor.gaussian([2, 2]) 
-        self.b1 = Tensor.gaussian([2, 1])
+        self.a = Tensor([2]) 
+        self.b = Tensor([4]) 
+        self.c = Tensor([3]) 
+        self.d = Tensor([1]) 
 
-        self.W2 = Tensor.gaussian([2, 2]) 
-        self.b2 = Tensor.gaussian([2, 1])
+    def forward(self, x:ember.Tensor, intermediate) -> ember.Tensor: 
 
-    def forward(self, X:ember.Tensor) -> ember.Tensor: 
+        y1 = self.a * x 
+        y = y1 + self.b
+        z1 = self.c * y 
+        z = z1 + self.d
 
-        a1 = self.W1.matmul(X)
-        a2 = a1 + self.b1 
-        
-        a3 = a2.relu() 
-        a4 = self.W2.matmul(a3) 
-        a5 = a4 + self.b2 
-        
-        a6 = a5.sum()
-
-        # backpropagate gradients 
-        top_sort = a6.backprop()
+        top_sort = z.backprop(intermediate)
 
         # retrieve gradients using chain rule   
         # dFdB2 = a6.grad.matmul(a5.grad).matmul(self.b2.grad)
 
         # update parameters: W1
-        return a6, top_sort
+        return z, top_sort
 
 myNet = CustomNet()
-X = Tensor.gaussian([2, 1])
-res, top_sort = myNet.forward(X)
+X = Tensor([10])
+res, top_sort = myNet.forward(X, True)
 
-print(f"result : {res}") 
+# print(len(top_sort))
+# print(f"result : {res}") 
+# for tensor in top_sort: 
+#     print(tensor.data, tensor.grad)
 
-for tensor in top_sort: 
-    print(tensor.grad)
+
+alpha = Tensor([-0.000001])
+for _ in range(20): 
+    res, top_sort = myNet.forward(X, False)
+    print(res)
+    for tensor in top_sort: 
+        if tensor == myNet.a: 
+            myNet.a += alpha * myNet.a.grad
+        elif tensor == myNet.b: 
+            myNet.b += alpha * myNet.b.grad
+        elif tensor == myNet.c: 
+            myNet.c += alpha * myNet.c.grad
+        elif tensor == myNet.d: 
+            myNet.d += alpha * myNet.d.grad
+    print("***********")
 

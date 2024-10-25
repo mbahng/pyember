@@ -410,7 +410,7 @@ public:
       }
     }
 
-    std::vector<Tensor*> backprop() {
+    std::vector<Tensor*> backprop(bool intermediate) {
       // Set the gradient of the final output (this tensor) to 1.0
       auto self_ref = this; 
       this->grad = GradTensor(eye_matrix(this->data.size()));
@@ -427,6 +427,14 @@ public:
       for (Tensor* v : topo) {
         if (v->backward) {
           v->backward();
+        }
+      }
+
+      if (!intermediate) {
+        for (Tensor* now : topo) {
+          for (Tensor* p : now->prev) {
+            p->grad = (now->grad).matmul(p->grad);
+          }
         }
       }
 
@@ -616,6 +624,17 @@ public:
       };
 
       return out; 
+    }
+
+    Tensor mult(GradTensor& other) {
+      std::vector<double> res_data(this->length, 0.0); 
+
+      for (int i = 0; i < this->length; ++i) {
+        res_data[i] = this->data[i] * other.data[i]; 
+      }
+
+      Tensor out = Tensor(res_data, this->shape); 
+      return Tensor(res_data, this->shape); 
     }
 
     Tensor matmul(Tensor& other) {
