@@ -40,17 +40,19 @@ class BaseTensor {
 };
 
 class GradTensor : public BaseTensor {
-  // tensor representing gradients
   public: 
-    GradTensor(std::vector<double> data, std::vector<size_t> shape) {
-      this->storage_ = data; 
-      this->shape_ = shape;  
-    }
+    size_t pivot_; 
+    GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pivot); 
+    std::string type() const { return "GradTensor"; }
+    size_t pivot() const { return pivot_; } 
+
+    GradTensor lmatmul(GradTensor& other); 
+    GradTensor rmatmul(GradTensor& other); 
+
 };
 
 class Tensor : public BaseTensor { 
   public: 
-    // Constructors 
     Tensor(std::vector<double> data, std::vector<size_t> shape);
     Tensor(std::vector<double> data);
     Tensor(std::vector<std::vector<double>> data);

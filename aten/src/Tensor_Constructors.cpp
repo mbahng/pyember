@@ -124,3 +124,13 @@ Tensor Tensor::zeros(std::vector<size_t> shape) {
   std::vector<double> data(shape_to_length(shape), 0.0); 
   return Tensor(data, shape); 
 }
+
+// Grad Tensors
+
+GradTensor::GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pivot) {
+  this->storage_ = data; 
+  this->shape_ = shape;  
+  this->pivot_ = pivot;
+}
+
+
