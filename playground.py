@@ -7,7 +7,7 @@ def to_str(data: list, grad: ember.GradTensor) -> str:
     grad = grad.data
     grad_str = str(grad)[2:-2]
     grad_str = "\n".join(grad_str.split("], ["))
-    return f"val={data}\ngrad={grad_str}"
+    return f"val={data}\ngrad={grad}"
 
 def first():
 
@@ -31,8 +31,7 @@ def first():
         for t in node.prev: 
             adj_list[to_str(t.data, t.grad)].append(to_str(node.data, node.grad))
 
-
-    G = nx.DiGraph(adj_list) 
+    G = nx.DiGraph(adj_list)   # type: ignore
     nx.draw_planar(G, with_labels=True, node_size=8000)
     plt.show() 
 
@@ -51,7 +50,7 @@ def second():
             adj_list[to_str(t.data, t.grad)].append(to_str(node.data, node.grad))
 
 
-    G = nx.DiGraph(adj_list) 
+    G = nx.DiGraph(adj_list)  # type: ignore 
     nx.draw_planar(G, with_labels=True, node_size=8000)
     plt.show() 
 
@@ -72,8 +71,23 @@ def third():
     pprint(a.grad)
     pprint(b.grad)
 
-    G = nx.DiGraph(adj_list) 
+    G = nx.DiGraph(adj_list)  # type: ignore
     nx.draw_planar(G, with_labels=True, node_size=8000)
     plt.show() 
 
-first()
+
+a = ember.Tensor([2, -3]) 
+h = a ** 2
+b = ember.Tensor([3, 5])
+
+c = b * h
+
+d = ember.Tensor([10, 1])
+e = c.dot(d) 
+
+f = ember.Tensor([-2])
+
+g = f + e
+top_sort = g.backprop()
+
+pprint(top_sort)
