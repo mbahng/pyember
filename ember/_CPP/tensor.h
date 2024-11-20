@@ -90,6 +90,7 @@ class GradTensor {
       assert(this->shape[1] == other.shape[0]);
 
       GradTensor out = GradTensor(std::vector<std::vector<double>> (this->shape[0], std::vector<double>(other.shape[1], 0.))); 
+      out.shape = std::vector<int> {this->shape[0], this->shape[1]}; 
       
       // Perform matrix multiplication
       int m = this->shape[0];
@@ -185,31 +186,31 @@ public:
       this->data = res; 
     }
 
-    static Tensor gaussian(std::vector<int> shape, double mean, double stddev) {
-      // Create a unique seed by combining high-resolution time and a counter
-      static std::atomic<unsigned long long> seed_counter{0};
-
-      auto now = std::chrono::high_resolution_clock::now();
-      auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
-      unsigned long long unique_seed = nanos ^ (seed_counter.fetch_add(1, std::memory_order_relaxed) << 32);
-
-      // Create a generator with the unique seed
-      std::mt19937 generator(unique_seed);
-
-      // Create a distribution
-      std::normal_distribution<double> distribution(mean, stddev);
-
-      // Calculate total number of elements
-      int length = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
-
-      // Create and fill the vector
-      std::vector<double> result(length);
-      for (int i = 0; i < length; ++i) {
+  static Tensor gaussian(std::vector<int> shape, double mean, double stddev) {
+    // Create a unique seed by combining high-resolution time and a counter
+    static std::atomic<unsigned long long> seed_counter{0};
+    auto now = std::chrono::high_resolution_clock::now();
+    auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+    unsigned long long unique_seed = nanos ^ (seed_counter.fetch_add(1, std::memory_order_relaxed) << 32);
+    
+    // Create a generator with the unique seed
+    std::mt19937 generator(unique_seed);
+    
+    // Create a distribution
+    std::normal_distribution<double> distribution(mean, stddev);
+    
+    // Calculate total number of elements - use size_t for the accumulate
+    size_t length = std::accumulate(shape.begin(), shape.end(), 
+                                  size_t{1}, std::multiplies<size_t>());
+    
+    // Create and fill the vector - use size_t for the loop counter
+    std::vector<double> result(length);
+    for (size_t i = 0; i < length; ++i) {
         result[i] = distribution(generator);
-      }
-
-      return Tensor(result, shape);
     }
+    
+    return Tensor(result, shape);
+}
 
     static Tensor uniform(std::vector<int> shape, double min, double max) {
       // (Use the same unique seeding method as in the gaussian function)
