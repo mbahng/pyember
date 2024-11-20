@@ -1,5 +1,5 @@
 #include <vector>
-#include "Tensor.h"
+#include "../Tensor.h"
 
 int shape_to_length(std::vector<size_t> shape);
 

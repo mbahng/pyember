@@ -11,10 +11,11 @@ TEST(GradTensorTest, Matmul) {
   std::vector<size_t> shape2 = {2, 4}; 
   GradTensor t2 = GradTensor(storage2, shape2, 1); 
   
-  GradTensor prod = t1.rmatmul(t2); 
+  GradTensor prod = t1.matmul(t2); 
 
   std::cout << std::string(t1); 
   std::cout << std::string(t2); 
   std::cout << std::string(prod); 
 }
+
 
