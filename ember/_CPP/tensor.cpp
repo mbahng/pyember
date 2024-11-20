@@ -1,8 +1,5 @@
 #include "tensor.h"
-#include <random>
-#include <chrono>
 #include <vector>
-#include <atomic>
 
 int shape_to_length(std::vector<int> shape) {
   int len = 1; 
