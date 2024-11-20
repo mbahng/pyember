@@ -96,7 +96,7 @@ pprint(b.grad)
 
 Finally, we can visualize this using the `networkx` package. 
 
-![Alt text](img/computational_graph.png)
+![Alt text](docs/img/computational_graph.png)
 
 ### Datasets
 
