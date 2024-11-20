@@ -1,5 +1,5 @@
 #include <vector>
-#include "Tensor.h"
+#include "../Tensor.h"
 
 const double& BaseTensor::at(const std::vector<size_t>& indices) const {
   if (indices.size() != shape_.size()) {

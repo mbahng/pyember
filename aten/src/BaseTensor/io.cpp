@@ -3,7 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <functional>
-#include "Tensor.h"
+#include "../Tensor.h"
 #include <cxxabi.h>
 
 BaseTensor::operator std::string() const {  

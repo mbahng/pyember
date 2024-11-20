@@ -1,6 +1,6 @@
-#include "Tensor.h" 
+#include "../Tensor.h"
 
-const bool BaseTensor::operator==(BaseTensor& other) const {
+bool BaseTensor::operator==(BaseTensor& other) const {
   // First, compare shapes
   if (this->shape_ != other.shape_) {
     return false;
@@ -16,10 +16,6 @@ const bool BaseTensor::operator==(BaseTensor& other) const {
   return true;
 }
 
-const bool BaseTensor::operator!=(BaseTensor& other) const {
+bool BaseTensor::operator!=(BaseTensor& other) const {
     return !(*this == other);
-}
-
-Tensor Tensor::copy() {
-  return Tensor(this->storage_, this->shape_);
 }

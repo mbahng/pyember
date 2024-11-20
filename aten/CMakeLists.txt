@@ -10,18 +10,36 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # List all source files except main.cpp
 set(TENSOR_SOURCES
-    src/Tensor_Algebra.cpp
-    src/Tensor_Constructors.cpp
-    src/Tensor_IO.cpp
-    src/Tensor_Index.cpp
-    src/Tensor_Integrity.cpp
-    src/Tensor_Math.cpp
-    src/Tensor_Util.cpp
-    src/Tensor_View.cpp
+  src/BaseTensor/index_slice.cpp
+  src/BaseTensor/integrity.cpp
+  src/BaseTensor/io.cpp
+  src/BaseTensor/util.cpp
+  src/BaseTensor/view.cpp
+
+  src/Tensor/constructors.cpp
+  src/Tensor/algebra.cpp
+  src/Tensor/grad.cpp
+  src/Tensor/math.cpp
+  src/Tensor/util.cpp
+
+  src/GradTensor/constructors.cpp
+  src/GradTensor/algebra.cpp
+  src/GradTensor/util.cpp
 )
 
 set(TENSOR_TESTS 
-    test/Tensor_Constructors_test.cpp
+  test/BaseTensor/index_slice_tests.cpp
+  test/BaseTensor/integrity_tests.cpp
+  test/BaseTensor/io_tests.cpp
+  test/BaseTensor/util_tests.cpp
+  test/BaseTensor/view_tests.cpp
+
+  test/Tensor/constructors_tests.cpp
+  test/Tensor/algebra_tests.cpp
+  test/Tensor/grad_tests.cpp
+  test/Tensor/math_tests.cpp
+
+  test/GradTensor/constructors_tests.cpp
 )
 
 # Create the main library
