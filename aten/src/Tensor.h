@@ -107,4 +107,6 @@ class Tensor : public BaseTensor {
     Tensor mul(Tensor& other); 
     Tensor mul(GradTensor& other); 
     Tensor matmul(Tensor& other); 
+
+    Tensor sum(); 
 };

@@ -113,7 +113,7 @@ GradTensor GradTensor::matmul(GradTensor& other) {
       }
   }
   
-  size_t new_pivot = shape_to_length(otherR) + 1;
+  size_t new_pivot = shape_to_length(thisL);
   std::vector<size_t> new_shape(thisL);
   new_shape.insert(new_shape.end(), otherR.begin(), otherR.end());
   

@@ -11,6 +11,23 @@ BaseTensor::operator std::string() const {
   std::ostringstream oss;
   oss << std::fixed << std::setprecision(3); 
   oss << this->type() << "\n";
+
+  // Add special case for scalar/1D results
+  if (shape_.size() <= 1 || (shape_.size() == 2 && shape_[0] == 1 && shape_[1] == 1)) {
+    oss << "[" << storage_[0] << "]\n";
+    oss << "shape = (";
+    if (shape_.empty()) {
+      oss << "1";
+    } else {
+      for (int i = 0; i < shape_.size() - 1; i++) {
+        oss << shape_[i] << ", ";
+      }
+      oss << shape_[shape_.size()-1];
+    }
+    oss << "), dtype = " << this->dtype() << "\n";
+    return oss.str();
+  }
+
   std::function<void(std::vector<double>, std::vector<size_t>)> print;
   print = [&](std::vector<double> storage, std::vector<size_t> shape) {
     if (shape.size() == 0) {
