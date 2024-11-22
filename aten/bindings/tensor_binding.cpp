@@ -1,24 +1,6 @@
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <pybind11/functional.h>
-#include "../src/Tensor.h"
+#include "common.hpp"
 
-namespace py = pybind11;
-
-PYBIND11_MODULE(aten, m) {
-  // First bind the BaseTensor class since Tensor inherits from it
-  py::class_<BaseTensor>(m, "BaseTensor")
-    .def_property("storage",
-      [](const BaseTensor &t) -> const std::vector<double>& { return t.storage_; },
-      [](BaseTensor &t, const std::vector<double> &value) { t.storage_ = value; })
-    .def_property("shape",
-      [](const BaseTensor &t) -> const std::vector<size_t>& { return t.shape_; },
-      [](BaseTensor &t, const std::vector<size_t> &value) { t.shape_ = value; });
-
-  // Bind the GradTensor minimally since it's used by Tensor
-  py::class_<GradTensor, BaseTensor>(m, "GradTensor")
-    .def(py::init<>());
-
+void init_tensor_binding(py::module_ &m) {
   // Bind the Tensor class
   py::class_<Tensor, BaseTensor>(m, "Tensor")
     // Constructor from data and shape
@@ -43,3 +25,5 @@ PYBIND11_MODULE(aten, m) {
         return "Tensor(shape=" + shape_str + ")";
       });
 }
+
+
