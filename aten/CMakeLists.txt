@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
-project(aten)
+
+# Find Python
+find_package(Python 3.12 COMPONENTS Interpreter Development REQUIRED)
 
 # Enable testing
 enable_testing()
@@ -15,30 +17,25 @@ set(TENSOR_SOURCES
   src/BaseTensor/io.cpp
   src/BaseTensor/util.cpp
   src/BaseTensor/view.cpp
-
   src/Tensor/constructors.cpp
   src/Tensor/algebra.cpp
   src/Tensor/grad.cpp
   src/Tensor/math.cpp
   src/Tensor/util.cpp
-
   src/GradTensor/constructors.cpp
   src/GradTensor/algebra.cpp
   src/GradTensor/util.cpp
 )
-
 set(TENSOR_TESTS 
   test/BaseTensor/index_slice_tests.cpp
   test/BaseTensor/integrity_tests.cpp
   test/BaseTensor/io_tests.cpp
   test/BaseTensor/util_tests.cpp
   test/BaseTensor/view_tests.cpp
-
   test/Tensor/constructors_tests.cpp
   test/Tensor/algebra_tests.cpp
   test/Tensor/grad_tests.cpp
   test/Tensor/math_tests.cpp
-
   test/GradTensor/constructors_tests.cpp
 )
 
@@ -67,8 +64,15 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(BUILD_GTEST ON CACHE BOOL "" FORCE)
 
-# Make GoogleTest available
-FetchContent_MakeAvailable(googletest)
+# Set up pybind11
+FetchContent_Declare(
+  pybind11
+  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+  GIT_TAG v2.11.1  # Use the latest stable version
+)
+
+# Make dependencies available
+FetchContent_MakeAvailable(googletest pybind11)
 
 # Create test executable
 add_executable(tests ${TENSOR_TESTS})
@@ -88,3 +92,8 @@ target_link_libraries(tests
 # Add tests to CTest
 include(GoogleTest)
 gtest_discover_tests(tests)
+
+# Python bindings option
+if(BUILD_PYTHON_BINDINGS)
+    add_subdirectory(bindings)
+endif()

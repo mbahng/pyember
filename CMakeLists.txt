@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.10)
+project(aten)
+
+# add option to python bind, default on 
+option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
+
+find_package(Python 3.12 EXACT REQUIRED COMPONENTS Interpreter Development)
+message(STATUS "Found Python: ${Python_VERSION}")
+
+add_subdirectory(aten)
+
+
