@@ -12,7 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # List all source files except main.cpp
 set(TENSOR_SOURCES
-  src/BaseTensor/index_slice.cpp
   src/BaseTensor/integrity.cpp
   src/BaseTensor/io.cpp
   src/BaseTensor/util.cpp
@@ -27,7 +26,6 @@ set(TENSOR_SOURCES
   src/GradTensor/util.cpp
 )
 set(TENSOR_TESTS 
-  test/BaseTensor/index_slice_tests.cpp
   test/BaseTensor/integrity_tests.cpp
   test/BaseTensor/io_tests.cpp
   test/BaseTensor/util_tests.cpp
