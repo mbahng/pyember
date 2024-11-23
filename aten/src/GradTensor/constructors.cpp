@@ -1,7 +1,6 @@
 #include <vector> 
 #include <ctime>
 #include "../Tensor.h"
-
 // Grad Tensors
 
 GradTensor::GradTensor() {
