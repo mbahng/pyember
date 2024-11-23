@@ -1,7 +1,6 @@
 #include <gtest/gtest.h> 
 #include "Tensor.h"
 #include <vector> 
-#include <iostream>
 
 TEST(TensorTest, Sum2) {
   Tensor t = Tensor(

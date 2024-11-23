@@ -1,8 +1,8 @@
-#include <gtest/gtest.h> 
-#include "Tensor.h"
 #include <vector>
+#include <gtest/gtest.h>
+#include "../../src/Tensor.h"
 
-TEST(GradTensorTest, Matmul) {
+TEST(GradTensorTest, GradSame) {
   std::vector<double> storage1 = {1., 2., 3., 4., 5., 6., 7., 8., 9., 10.}; 
   std::vector<size_t> shape1 = {5, 2}; 
   GradTensor t1 = GradTensor(storage1, shape1, 1); 
@@ -19,7 +19,7 @@ TEST(GradTensorTest, Matmul) {
     }, 
     std::vector<size_t>{5, 4}, 
     1
-  )
+  );
   EXPECT_EQ(prod.data(), gt.data());
 }
 
