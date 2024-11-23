@@ -76,11 +76,14 @@ Tensor Tensor::add(Tensor& other) {
   out.prev = {this_ptr, other_ptr};
 
   out.backward = [this, other_ptr] {
-    // update gradient to form d out[i]/ d this[i] = 1. 
+    // update gradient to form d out[i]/ d this[i] = 1.  
+    // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
     std::vector<size_t> pairshape = this->shape_; 
     pairshape.insert(pairshape.end(), (this->shape_).begin(), (this->shape_).end());
+    // Generate a meshgrid over all indices, can be very inefficient
     auto relevant_idx = generate_all_indices(pairshape);
     for (std::vector<size_t> idx : relevant_idx) { 
+      // For each index, we must either set it as 1 if 1st half = 2nd half
       bool same_idx = true;
       for (int i = 0; i < idx.size() / 2; i++) {
         if (idx[i] != idx[i + (idx.size() / 2)]) {
@@ -117,12 +120,49 @@ Tensor Tensor::sub(Tensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  int length = shape_to_length(this->shape());
+  size_t length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
     res_data[i] = this->data()[i] - other.data()[i];
   }
-  return Tensor(res_data, this->shape());   
+  Tensor out = Tensor(res_data, this->shape()); 
+
+  std::vector<size_t> newshape = out.shape(); 
+  newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
+  this->grad = GradTensor(newshape, this->shape().size()); 
+  other.grad = GradTensor(newshape, this->shape().size()); 
+
+  Tensor* this_ptr = this;
+  Tensor* other_ptr = &other;
+
+  out.prev = {this_ptr, other_ptr};
+
+  out.backward = [this, other_ptr] {
+    // update gradient to form d out[i]/ d this[i] = 1.  
+    // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
+    std::vector<size_t> pairshape = this->shape_; 
+    pairshape.insert(pairshape.end(), (this->shape_).begin(), (this->shape_).end());
+    // Generate a meshgrid over all indices, can be very inefficient
+    auto relevant_idx = generate_all_indices(pairshape);
+    for (std::vector<size_t> idx : relevant_idx) { 
+      // For each index, we must either set it as 1 if 1st half = 2nd half
+      bool same_idx = true;
+      for (int i = 0; i < idx.size() / 2; i++) {
+        if (idx[i] != idx[i + (idx.size() / 2)]) {
+          same_idx = false;
+        }
+      }
+      if (same_idx) {
+        (this->grad).at(idx) = 1.0;
+        (other_ptr->grad).at(idx) = -1.0;
+      }
+      else {
+        (this->grad).at(idx) = 0.0;
+        (other_ptr->grad).at(idx) = 0.0;
+      }
+    }
+  };
+  return out; 
 }
 
 Tensor Tensor::sub(GradTensor& other) {
