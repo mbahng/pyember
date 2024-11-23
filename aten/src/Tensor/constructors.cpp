@@ -61,7 +61,7 @@ Tensor Tensor::arange(int start, int stop, int step) {
 
 Tensor Tensor::linspace(double start, double stop, int numsteps){
   std::vector<double> storage_ = {}; 
-  double stepsize = (stop - start) / numsteps; 
+  double stepsize = (stop - start) / (numsteps - 1); 
   for (double i = start; i <= stop; i += stepsize) {
     storage_.push_back(i);
   }
