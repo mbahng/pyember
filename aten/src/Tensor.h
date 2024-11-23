@@ -9,7 +9,6 @@
 #include <cmath> 
 #include <set>
 
-
 int shape_to_length(std::vector<size_t> shape);
 
 class Tensor; 
@@ -23,14 +22,14 @@ class BaseTensor {
     std::vector<size_t> shape_; 
 
     struct Slice {
-        size_t start;
-        size_t stop;
-        size_t step;
-        
-        Slice(size_t start_ = 0, 
-              size_t stop_ = std::numeric_limits<size_t>::max(), 
-              size_t step_ = 1)
-            : start(start_), stop(stop_), step(step_) {}
+      size_t start;
+      size_t stop;
+      size_t step;
+      
+      Slice(size_t start_ = 0, 
+        size_t stop_ = std::numeric_limits<size_t>::max(), 
+        size_t step_ = 1)
+      : start(start_), stop(stop_), step(step_) {}
     };
 
     virtual std::string type() const { return "BaseTensor"; } 
