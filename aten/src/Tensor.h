@@ -1,11 +1,14 @@
-#include <cassert> 
+#include <cassert>
+#include <algorithm> 
 #include <vector>
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
+#include <cmath> 
 #include <set>
+
 
 int shape_to_length(std::vector<size_t> shape);
 
@@ -19,30 +22,47 @@ class BaseTensor {
     std::vector<double> storage_; 
     std::vector<size_t> shape_; 
 
-    // const (member function qualifier). 
-    // Function promises not to modify the object it's called on
+    struct Slice {
+        size_t start;
+        size_t stop;
+        size_t step;
+        
+        Slice(size_t start_ = 0, 
+              size_t stop_ = std::numeric_limits<size_t>::max(), 
+              size_t step_ = 1)
+            : start(start_), stop(stop_), step(step_) {}
+    };
+
     virtual std::string type() const { return "BaseTensor"; } 
     virtual std::string dtype() const { return "double"; }
+    virtual ~BaseTensor() = default;
   
-    // Tensor_View
     const std::vector<size_t>& shape() const { return shape_; }
     const std::vector<double>& data() const { return storage_; } 
-
-    // Tensor_IO
-    operator std::string() const; 
-
-    // Tensor_Util
-    virtual bool operator==(BaseTensor& other) const; 
-    virtual bool operator!=(BaseTensor& other) const;  
-
-    // Tensor Operations cannot be virtualized 
-
-    // Tensor_View.cpp
     BaseTensor& reshape(std::vector<size_t> new_shape);
 
-    // Tensor_Index.cpp 
-    const double& at(const std::vector<size_t>& indices) const; 
-    double& at(const std::vector<size_t>& indices); 
+    virtual bool operator==(BaseTensor& other) const; 
+    virtual bool operator!=(BaseTensor& other) const;  
+    operator std::string() const; 
+
+    // Tensor Math Operations cannot be virtualized 
+    
+    // Index access
+    virtual double at(const std::vector<size_t>& indices) const;
+    virtual double& at(const std::vector<size_t>& indices);
+
+    // Slicing
+    virtual std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const;
+
+  protected:
+    // Helper methods
+    size_t get_flat_index(const std::vector<size_t>& indices) const;
+    void validate_indices(const std::vector<size_t>& indices) const;
+    std::vector<size_t> calculate_slice_shape(const std::vector<Slice>& slices) const;
+    void copy_slice_data(const std::vector<Slice>& slices,
+                        std::vector<size_t>& current_indices,
+                        size_t current_dim,
+                        std::vector<double>& result_storage) const;
 };
 
 class GradTensor : public BaseTensor {
@@ -53,7 +73,7 @@ class GradTensor : public BaseTensor {
     GradTensor(); 
     GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pivot); 
     GradTensor(std::vector<size_t> shape, size_t pivot); 
-    std::string type() const { return "GradTensor"; }
+    std::string type() const override { return "GradTensor"; }
     size_t pivot() const { return pivot_; } 
     
     static GradTensor eye(size_t n, size_t pivot = 1); 
@@ -70,6 +90,19 @@ class GradTensor : public BaseTensor {
     GradTensor mul(GradTensor& other); 
     Tensor mul(Tensor& other); 
     GradTensor matmul(GradTensor& other); 
+
+    double at(const std::vector<size_t>& indices) const override {
+        return BaseTensor::at(indices);
+    }
+
+    double& at(const std::vector<size_t>& indices) override {
+        return BaseTensor::at(indices);
+    }
+
+    std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
+        auto base_result = BaseTensor::slice(slices);
+        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, pivot_);
+    }
 };
 
 class Tensor : public BaseTensor { 
@@ -92,7 +125,7 @@ class Tensor : public BaseTensor {
     static Tensor ones(std::vector<size_t> shape);
     static Tensor zeros(std::vector<size_t> shape); 
 
-    std::string type() const { return "Tensor"; }
+    std::string type() const override { return "Tensor"; }
     virtual Tensor& reshape(std::vector<size_t> new_shape);
     Tensor copy() const; 
 
@@ -109,4 +142,17 @@ class Tensor : public BaseTensor {
     Tensor matmul(Tensor& other); 
 
     Tensor sum(); 
+
+    double at(const std::vector<size_t>& indices) const override {
+        return BaseTensor::at(indices);
+    }
+
+    double& at(const std::vector<size_t>& indices) override {
+        return BaseTensor::at(indices);
+    }
+
+    std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
+        auto base_result = BaseTensor::slice(slices);
+        return std::make_unique<Tensor>(base_result->storage_, base_result->shape_);
+    }
 };
