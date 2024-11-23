@@ -18,7 +18,12 @@ void array_matches_shape(
 );
 
 GradTensor GradTensor::add(GradTensor& other) {
-  assert(this->shape() == other.shape() && this->pivot_ == other.pivot_); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
+  else if (this->pivot_ != other.pivot_) {
+    throw std::logic_error("Pivots do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -29,6 +34,9 @@ GradTensor GradTensor::add(GradTensor& other) {
 }
 
 Tensor GradTensor::add(Tensor& other) {
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   assert(this->shape() == other.shape()); 
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
@@ -40,7 +48,12 @@ Tensor GradTensor::add(Tensor& other) {
 }
 
 GradTensor GradTensor::sub(GradTensor& other) {
-  assert(this->shape() == other.shape() && this->pivot_ == other.pivot_); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
+  else if (this->pivot_ != other.pivot_) {
+    throw std::logic_error("Pivots do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -51,7 +64,9 @@ GradTensor GradTensor::sub(GradTensor& other) {
 }
 
 Tensor GradTensor::sub(Tensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -62,7 +77,12 @@ Tensor GradTensor::sub(Tensor& other) {
 }
 
 GradTensor GradTensor::mul(GradTensor& other) {
-  assert(this->shape() == other.shape() && this->pivot_ == other.pivot_); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
+  else if (this->pivot_ != other.pivot_) {
+    throw std::logic_error("Pivots do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -73,7 +93,9 @@ GradTensor GradTensor::mul(GradTensor& other) {
 }
 
 Tensor GradTensor::mul(Tensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {

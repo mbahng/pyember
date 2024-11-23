@@ -2,10 +2,7 @@
 #include <vector>
 
 int main() {
-  std::vector<size_t> nshape = {10, 10};
-  Tensor a = Tensor::gaussian(nshape, 0.0, 1.0);
-  Tensor b = Tensor::gaussian(nshape, 0.0, 1.0);
-  Tensor c = Tensor::gaussian(nshape, 0.0, 1.0);
-  Tensor d = Tensor::gaussian(nshape, 0.0, 1.0);
-  std::cout << std::string(d) << std::endl;  
+  GradTensor g1 = GradTensor({1., 2., 3., 4.}, {2, 2}, 0);
+  GradTensor g2 = GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
+  std::cout << (bool)(g1 == g1); 
 }
