@@ -3,6 +3,7 @@
 run_python_tests() {
     echo "Running Python tests..."
     python test/tensor/gradtensor.py
+    python test/tensor/tensor.py
     python test/tensor/io.py
     return $?
 }
