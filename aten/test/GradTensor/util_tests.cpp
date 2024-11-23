@@ -24,3 +24,11 @@ TEST(UtilsTest, Copy) {
   ASSERT_TRUE(&t1 != &t2);
 }
 
+TEST(UtilsTest, Index) {
+  GradTensor t1 = GradTensor({1., 2., 3., 4.}, {2, 2}, 1); 
+
+  ASSERT_TRUE(t1.at({0, 0}) == 1.); 
+  ASSERT_TRUE(t1.at({0, 1}) == 2.); 
+  ASSERT_TRUE(t1.at({1, 0}) == 3.); 
+  ASSERT_TRUE(t1.at({1, 1}) == 4.); 
+}

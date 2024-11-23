@@ -116,6 +116,9 @@ class Tensor : public BaseTensor {
     Tensor(std::vector<std::vector<double>> data);
     Tensor(std::vector<std::vector<std::vector<double>>> data);
 
+    // Destructors 
+    ~Tensor() { prev.clear(); }
+
     static Tensor arange(int start, int stop, int step = 1);
 
     static Tensor linspace(double start, double stop, int numsteps);

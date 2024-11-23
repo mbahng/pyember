@@ -17,19 +17,93 @@ void array_matches_shape(
   std::vector<size_t> shape
 );
 
+// Helper function to increment the indices
+bool increment_indices(std::vector<size_t>& indices, const std::vector<size_t>& shape) {
+  for (int i = indices.size() - 1; i >= 0; --i) {
+    indices[i]++;
+    if (indices[i] < shape[i]) {
+      return true;  // Successfully incremented
+    }
+    indices[i] = 0;  // Reset this position and continue with next position
+  }
+  return false;  // We've gone through all possibilities
+}
+
+// Function to generate all possible vectors
+std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape) {
+  std::vector<std::vector<size_t>> result;
+  
+  // Calculate total number of combinations
+  size_t total = 1;
+  for (size_t dim : shape) {
+    total *= dim;
+  }
+  result.reserve(total);  // Reserve space for efficiency
+  
+  // Start with all zeros
+  std::vector<size_t> current(shape.size(), 0);
+  
+  // Add first combination
+  result.push_back(current);
+  
+  // Generate all other combinations
+  while (increment_indices(current, shape)) {
+    result.push_back(current);
+  }
+  
+  return result;
+}
+
 Tensor Tensor::add(Tensor& other) {
-  assert(this->shape() == other.shape()); 
-  int length = shape_to_length(this->shape());
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
+  size_t length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
     res_data[i] = this->data()[i] + other.data()[i];
   }
+  Tensor out = Tensor(res_data, this->shape()); 
 
-  return Tensor(res_data, this->shape());   
+  std::vector<size_t> newshape = out.shape(); 
+  newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
+  this->grad = GradTensor(newshape, this->shape().size()); 
+  other.grad = GradTensor(newshape, this->shape().size()); 
+
+  Tensor* this_ptr = this;
+  Tensor* other_ptr = &other;
+
+  out.prev = {this_ptr, other_ptr};
+
+  out.backward = [this, other_ptr] {
+    // update gradient to form d out[i]/ d this[i] = 1. 
+    std::vector<size_t> pairshape = this->shape_; 
+    pairshape.insert(pairshape.end(), (this->shape_).begin(), (this->shape_).end());
+    auto relevant_idx = generate_all_indices(pairshape);
+    for (std::vector<size_t> idx : relevant_idx) { 
+      bool same_idx = true;
+      for (int i = 0; i < idx.size() / 2; i++) {
+        if (idx[i] != idx[i + (idx.size() / 2)]) {
+          same_idx = false;
+        }
+      }
+      if (same_idx) {
+        (this->grad).at(idx) = 1.0;
+        (other_ptr->grad).at(idx) = 1.0;
+      }
+      else {
+        (this->grad).at(idx) = 0.0;
+        (other_ptr->grad).at(idx) = 0.0;
+      }
+    }
+  };
+  return out; 
 }
 
 Tensor Tensor::add(GradTensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -40,7 +114,9 @@ Tensor Tensor::add(GradTensor& other) {
 }
 
 Tensor Tensor::sub(Tensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -50,7 +126,9 @@ Tensor Tensor::sub(Tensor& other) {
 }
 
 Tensor Tensor::sub(GradTensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -60,7 +138,9 @@ Tensor Tensor::sub(GradTensor& other) {
 }
 
 Tensor Tensor::mul(Tensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -70,7 +150,9 @@ Tensor Tensor::mul(Tensor& other) {
 }
 
 Tensor Tensor::mul(GradTensor& other) {
-  assert(this->shape() == other.shape()); 
+  if (this->shape() != other.shape()) {
+    throw std::logic_error("Shapes do not match");
+  }
   int length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
