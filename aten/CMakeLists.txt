@@ -37,6 +37,7 @@ set(TENSOR_TESTS
   test/Tensor/grad_tests.cpp
   test/Tensor/math_tests.cpp
   test/GradTensor/constructors_tests.cpp
+  test/GradTensor/util_tests.cpp
 )
 
 # Create the main library
