@@ -1,5 +1,5 @@
 #include <gtest/gtest.h> 
-#include "Tensor.h"
+#include "../../src/Tensor.h"
 #include <vector>
 
 TEST(TensorInitialization, StandardInitialization) {

@@ -25,7 +25,7 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
 
   // Reverse for correct dependency order
   std::reverse(topo.begin(), topo.end()); 
-  
+
   // Backpropagate through the computation graph
   for (Tensor* v : topo) {
     if (v->backward) {
