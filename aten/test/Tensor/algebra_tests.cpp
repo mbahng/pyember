@@ -25,10 +25,22 @@ TEST(TensorAlgebraTest, AddGradTensorVector) {
 TEST(TensorAlgebraTest, SubTensor) {
   Tensor t1 = Tensor::arange(0, 5);
   Tensor t2 = Tensor::arange(0, 5); 
-  Tensor s1 = Tensor::zeros({5});
+  Tensor s1 = t1.sub(t2);
+  Tensor truth_sum = Tensor::zeros({5});
+  
+  ASSERT_TRUE(s1 == truth_sum); 
+  
+  s1.backprop(true);
 
-  ASSERT_TRUE(t1.sub(t2) == s1);
+  GradTensor truth1 = GradTensor::eye(5, 1);
+  GradTensor truth2 = GradTensor::eye(5, 1); 
 
+  for (int i = 0; i < truth2.storage_.size(); i++) {
+    truth2.storage_[i] *= -1;
+  }
+
+  ASSERT_TRUE(t1.grad == truth1); 
+  ASSERT_TRUE(t2.grad == truth2); 
 }
 
 TEST(TensorAlgebraTest, SubGradTensor) {
