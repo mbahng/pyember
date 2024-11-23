@@ -29,7 +29,7 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
 
 ### Making sure everything's correct 
 
-  Run the script `run_tests.sh`, which will 
+  Run the script `./run_tests.sh all` (args `python` to run just python tests and `cpp` to run just C++ tests), which will 
   1. Run all C++ unit tests for `aten`, ensuring that all functions work correctly. 
   2. Run all Python unit tests for `ember`, ensuring that additional functions work correctly and that the C++ functions are binded correctly. The stub (`.pyi`) files for `aten` are located in `ember/aten`. 
 
@@ -44,7 +44,7 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
   5. `tests` are testing modules for the `ember` library. 
   6. `CMakeLists.txt` generates the Makefiles needed to compile this library. 
   7. `setup.py` allows you to pip install this as a package. 
-
+  8. `run_tests.sh` which is the main test running script. 
 
 ## Getting Started 
 
