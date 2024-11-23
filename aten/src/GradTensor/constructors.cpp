@@ -24,7 +24,7 @@ GradTensor::GradTensor(std::vector<size_t> shape, size_t pivot) {
 GradTensor GradTensor::eye(size_t n, size_t pivot) {
   std::vector<size_t> shape = {n, n}; 
   std::vector<double> storage(n * n, 0.0); 
-  for (int i = 0; i < n * n; i++) {
+  for (int i = 0; i < n; i++) {
     storage[n * i + i] = 1.0; 
   }
   return GradTensor(storage, shape, pivot);
