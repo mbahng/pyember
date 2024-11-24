@@ -102,6 +102,8 @@ class GradTensor : public BaseTensor {
         auto base_result = BaseTensor::slice(slices);
         return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, pivot_);
     }
+    // Add to GradTensor class:
+    GradTensor& transpose(const std::vector<size_t>& axes = {});
 };
 
 class Tensor : public BaseTensor { 
@@ -157,4 +159,6 @@ class Tensor : public BaseTensor {
         auto base_result = BaseTensor::slice(slices);
         return std::make_unique<Tensor>(base_result->storage_, base_result->shape_);
     }
+
+    Tensor transpose(const std::vector<size_t>& axes = {}) const;
 };

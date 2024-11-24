@@ -77,6 +77,14 @@ TEST(TensorTest, Slice2D) {
 TEST(TensorTest, Slice3D) {
 }
 
+TEST(TensorTest, Transpose) {
+  Tensor t1 = Tensor::arange(0, 6).reshape({2, 3}); 
+  Tensor t2 = t1.transpose();
+  Tensor truth = Tensor({0., 3., 1., 4., 2., 5.}, {3, 2});
+
+  ASSERT_TRUE(t2 == truth);
+}
+
 TEST(GradTensorTest, Index) {
   GradTensor t = GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
 
@@ -201,4 +209,11 @@ TEST(GradTensorTest, Slice3D) {
 
 }
 
+TEST(GradTensorTest, Transpose) {
+  GradTensor t1 = GradTensor({0., 1., 2., 3., 4., 5.}, {2, 3}, 1);
+  GradTensor t2 = t1.transpose();
+  GradTensor truth = GradTensor({0., 3., 1., 4., 2., 5.}, {3, 2}, 1);
+
+  ASSERT_TRUE(t2 == truth);
+}
 
