@@ -17,6 +17,12 @@ void init_gradtensor_binding(py::module_ &m) {
     .def("__eq__", &GradTensor::operator==, py::is_operator())
     .def("__ne__", &GradTensor::operator!=, py::is_operator()) 
 
+    .def("transpose", 
+        [](GradTensor &a, const std::vector<size_t> &axes) {
+            return a.transpose();
+        }
+      )
+
     .def("__add__", 
         [](GradTensor &a, Tensor &b) {
             return a.add(b);

@@ -1,4 +1,3 @@
-from os import walk
 import unittest
 from ember import Tensor, GradTensor
 
@@ -102,6 +101,15 @@ class TestTensorAlgebra(unittest.TestCase):
         y = Tensor([1, 2, 3, 4]).reshape([4, 1])
         z = x @ y 
         self.assertTrue(z == Tensor([30], [1, 1]))
+
+class TestTensorUtils(unittest.TestCase): 
+
+    def testTranspose(self): 
+        t1 = Tensor.arange(0, 6, 1).reshape([2, 3]) 
+        t2 = t1.transpose([0, 1])
+        truth = Tensor([0, 3, 1, 4, 2, 5], [3, 2]) 
+
+        self.assertTrue(t2 == truth)
 
 if __name__ == "__main__": 
   unittest.main()
