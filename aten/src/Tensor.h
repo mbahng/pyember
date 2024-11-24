@@ -108,9 +108,9 @@ class GradTensor : public BaseTensor {
 
 class Tensor : public BaseTensor { 
   public: 
-    GradTensor grad = GradTensor();                     // the Jacobian rather than gradient
-    std::vector<Tensor*> prev = std::vector<Tensor*>(); // previous nodes used to compute this tensor, if any 
-    std::function<void()> backward;                     // function for filling in gradients of this tensor
+    GradTensor grad = GradTensor();
+    std::vector<Tensor*> prev = std::vector<Tensor*>();
+    std::function<void()> backward;
 
     // constructors
     Tensor(std::vector<double> data, std::vector<size_t> shape);
