@@ -1,12 +1,3 @@
-import torch
+from ember import Tensor
 
-x = torch.randn(2, 2, requires_grad=True)
-y = torch.randn(2, 2, requires_grad=True)
-print(x.grad)
-
-z = x + y
-loss = z.sum()
-
-loss.backward()
-print(x.grad)
-
+t = Tensor.arange(0, 6, 1).reshape([2, 3])

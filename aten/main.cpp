@@ -2,18 +2,11 @@
 #include <vector>
 
 int main() {
-  /* Tensor t1 = Tensor::arange(0, 5); */
-  /* Tensor t2 = Tensor::arange(0, 5);  */
-  /* Tensor s1 = t1.add(t2); */
-  /*  */
-  /* std::cout << "1" << std::endl; */
-  /* s1.backprop(false); */
-  /* std::cout << "2" << std::endl; */
-  /*  */
-  /* GradTensor truth = GradTensor::eye(5, 1); */
-  /* std::cout << "3" << std::endl; */
-  /*   */
-  /* std::cout << std::string(t1.grad) << std::endl; */
-  /* std::cout << std::string(truth) << std::endl; */
+  Tensor t1 = Tensor::arange(0, 6).reshape({2, 3}); 
+  Tensor t2 = t1.transpose();
+  Tensor truth = Tensor({0., 3., 1., 4., 2., 5.}, {3, 2});
+
+  std::cout << std::string(t2) << std::endl;
+  std::cout << std::string(truth) << std::endl;
   return 0;
 }
