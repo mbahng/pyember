@@ -1,13 +1,15 @@
 from ember import Tensor
 
-x = Tensor.uniform([4], 0, 1)
-y = Tensor.uniform([4], 0, 1)
-w = Tensor.uniform([4], 0, 1) 
+x = Tensor.arange(0, 4, 1).reshape([2, 2])
+y = Tensor.arange(4, 8, 1).reshape([2, 2])
 
-z = x * y 
+z = x @ y 
 
-a = z + w
+print(z)
 
-a.backprop(True)
+z.backprop(True)
 
-print(x.grad)
+print(x.grad[0,0,:,:].pivot)
+print(x.grad[0,1,:,:])
+print(x.grad[1,0,:,:])
+print(x.grad[1,1,:,:])

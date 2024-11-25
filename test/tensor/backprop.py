@@ -307,20 +307,39 @@ class TestAutogradMul(unittest.TestCase):
         self.assertEqual(x.grad, xgrad_truth)
         self.assertEqual(y.grad, ygrad_truth)
 
-
 class TestAutogradMatmul(unittest.TestCase): 
     
-    def sumScalars(self): 
-        pass
+    def testMatmulMatricesIntermediate(self): 
+        x = Tensor.arange(0, 4, 1).reshape([2, 2])
+        y = Tensor.arange(4, 8, 1).reshape([2, 2])
+        z = x @ y  
+        z.backprop(True)
 
-    def sumVectors(self): 
-        pass
+        xgrad_block00_truth = GradTensor([4, 6, 0, 0], [1, 1, 2, 2], 2)
+        xgrad_block01_truth = GradTensor([5, 7, 0, 0], [1, 1, 2, 2], 2)
+        xgrad_block10_truth = GradTensor([0, 0, 4, 6], [1, 1, 2, 2], 2)
+        xgrad_block11_truth = GradTensor([0, 0, 5, 7], [1, 1, 2, 2], 2)
 
-    def sumMatrices(self): 
-        pass
+        self.assertEqual(x.grad[0,0,:,:], xgrad_block00_truth) 
+        self.assertEqual(x.grad[0,1,:,:], xgrad_block01_truth) 
+        self.assertEqual(x.grad[1,0,:,:], xgrad_block10_truth) 
+        self.assertEqual(x.grad[1,1,:,:], xgrad_block11_truth) 
 
-    def sumTensors(self): 
-        pass
+    def testMatmulMatricesNoIntermediate(self): 
+        x = Tensor.arange(0, 4, 1).reshape([2, 2])
+        y = Tensor.arange(4, 8, 1).reshape([2, 2])
+        z = x @ y  
+        z.backprop(False)
+
+        xgrad_block00_truth = GradTensor([4, 6, 0, 0], [1, 1, 2, 2], 2)
+        xgrad_block01_truth = GradTensor([5, 7, 0, 0], [1, 1, 2, 2], 2)
+        xgrad_block10_truth = GradTensor([0, 0, 4, 6], [1, 1, 2, 2], 2)
+        xgrad_block11_truth = GradTensor([0, 0, 5, 7], [1, 1, 2, 2], 2)
+
+        self.assertEqual(x.grad[0,0,:,:], xgrad_block00_truth) 
+        self.assertEqual(x.grad[0,1,:,:], xgrad_block01_truth) 
+        self.assertEqual(x.grad[1,0,:,:], xgrad_block10_truth) 
+        self.assertEqual(x.grad[1,1,:,:], xgrad_block11_truth) 
 
 if __name__ == "__main__": 
   unittest.main(verbosity=2)
