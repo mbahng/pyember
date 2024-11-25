@@ -5,6 +5,7 @@ run_python_tests() {
     python test/tensor/io.py
     python test/tensor/gradtensor.py
     python test/tensor/tensor.py
+    python test/tensor/scalartensor.py
     python test/tensor/backprop.py
     return $?
 }

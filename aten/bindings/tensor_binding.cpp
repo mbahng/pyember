@@ -60,18 +60,12 @@ void init_tensor_binding(py::module_ &m) {
             return a.transpose();
         }
       )
-
-    // String representation
-    .def("__repr__",
-      [](const Tensor &t) {
-        std::string shape_str = "(";
-        for (size_t i = 0; i < t.shape_.size(); ++i) {
-          if (i > 0) shape_str += ", ";
-          shape_str += std::to_string(t.shape_[i]);
+    // order of the bindings matter: most specific should go first
+    .def("__add__", 
+        [](Tensor &a, ScalarTensor &b) {
+            return a.add(b);
         }
-        shape_str += ")";
-        return "Tensor(shape=" + shape_str + ")";
-      })
+      )
 
     .def("__add__", 
         [](Tensor &a, Tensor &b) {
@@ -82,6 +76,12 @@ void init_tensor_binding(py::module_ &m) {
     .def("__add__", 
         [](Tensor &a, GradTensor &b) {
             return a.add(b);
+        }
+      )
+
+    .def("__sub__", 
+        [](Tensor &a, ScalarTensor &b) {
+            return a.sub(b);
         }
       )
 
@@ -98,6 +98,12 @@ void init_tensor_binding(py::module_ &m) {
       )
 
     .def("__mul__", 
+        [](Tensor &a, ScalarTensor &b) {
+            return a.mul(b);
+        }
+      )
+  
+    .def("__mul__", 
         [](Tensor &a, Tensor &b) {
             return a.mul(b);
         }
@@ -108,7 +114,7 @@ void init_tensor_binding(py::module_ &m) {
             return a.mul(b);
         }
       )
-  
+
     .def("matmul", 
        [](Tensor &a, Tensor &b) {
          return a.matmul(b); 

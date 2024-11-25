@@ -32,10 +32,9 @@ Tensor Tensor::add(Tensor& other) {
   }
   Tensor out = Tensor(res_data, this->shape()); 
 
-  std::vector<size_t> newshape = out.shape(); 
-  newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
-  this->grad = GradTensor(newshape, this->shape().size()); 
-  other.grad = GradTensor(newshape, this->shape().size()); 
+  std::vector<size_t> newshape = concat_indices(out.shape(), this->shape());
+  this->grad = GradTensor(newshape, out.shape().size()); 
+  other.grad = GradTensor(newshape, out.shape().size()); 
 
   Tensor* this_ptr = this;
   Tensor* other_ptr = &other;
@@ -45,25 +44,18 @@ Tensor Tensor::add(Tensor& other) {
   out.backward = [this, other_ptr] {
     // update gradient to form d out[i]/ d this[i] = 1.  
     // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
-    std::vector<size_t> pairshape = this->shape_; 
-    pairshape.insert(pairshape.end(), (this->shape_).begin(), (this->shape_).end());
-    // Generate a meshgrid over all indices, can be very inefficient
-    auto relevant_idx = generate_all_indices(pairshape);
-    for (std::vector<size_t> idx : relevant_idx) { 
-      // For each index, we must either set it as 1 if 1st half = 2nd half
-      bool same_idx = true;
-      for (int i = 0; i < idx.size() / 2; i++) {
-        if (idx[i] != idx[i + (idx.size() / 2)]) {
-          same_idx = false;
+    
+    for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
+      for (std::vector<size_t> r_idx : generate_all_indices(this->shape())) {
+        std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+        if (l_idx == r_idx) {
+          (this->grad).at(idx) = 1.0;
+          (other_ptr->grad).at(idx) = 1.0;
         }
-      }
-      if (same_idx) {
-        (this->grad).at(idx) = 1.0;
-        (other_ptr->grad).at(idx) = 1.0;
-      }
-      else {
-        (this->grad).at(idx) = 0.0;
-        (other_ptr->grad).at(idx) = 0.0;
+        else {
+          (this->grad).at(idx) = 0.0;
+          (other_ptr->grad).at(idx) = 0.0;
+        }
       }
     }
   };
@@ -81,6 +73,10 @@ Tensor Tensor::add(GradTensor& other) {
   }
 
   return Tensor(res_data, this->shape());   
+}
+
+Tensor Tensor::add(ScalarTensor& other) {
+  return other.add(*this); 
 }
 
 Tensor Tensor::sub(Tensor& other) {
@@ -107,25 +103,17 @@ Tensor Tensor::sub(Tensor& other) {
   out.backward = [this, other_ptr] {
     // update gradient to form d out[i]/ d this[i] = 1.  
     // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
-    std::vector<size_t> pairshape = this->shape_; 
-    pairshape.insert(pairshape.end(), (this->shape_).begin(), (this->shape_).end());
-    // Generate a meshgrid over all indices, can be very inefficient
-    auto relevant_idx = generate_all_indices(pairshape);
-    for (std::vector<size_t> idx : relevant_idx) { 
-      // For each index, we must either set it as 1 if 1st half = 2nd half
-      bool same_idx = true;
-      for (int i = 0; i < idx.size() / 2; i++) {
-        if (idx[i] != idx[i + (idx.size() / 2)]) {
-          same_idx = false;
+    for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
+      for (std::vector<size_t> r_idx : generate_all_indices(this->shape())) {
+        std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+        if (l_idx == r_idx) {
+          (this->grad).at(idx) = 1.0;
+          (other_ptr->grad).at(idx) = -1.0;
         }
-      }
-      if (same_idx) {
-        (this->grad).at(idx) = 1.0;
-        (other_ptr->grad).at(idx) = -1.0;
-      }
-      else {
-        (this->grad).at(idx) = 0.0;
-        (other_ptr->grad).at(idx) = 0.0;
+        else {
+          (this->grad).at(idx) = 0.0;
+          (other_ptr->grad).at(idx) = 0.0;
+        }
       }
     }
   };
@@ -142,6 +130,10 @@ Tensor Tensor::sub(GradTensor& other) {
     res_data[i] = this->data()[i] - other.data()[i];
   }
   return Tensor(res_data, this->shape());   
+}
+
+Tensor Tensor::sub(ScalarTensor& other) {
+  return other.sub(*this); 
 }
 
 Tensor Tensor::mul(Tensor& other) {
@@ -194,6 +186,10 @@ Tensor Tensor::mul(GradTensor& other) {
     res_data[i] = this->data()[i] * other.data()[i];
   }
   return Tensor(res_data, this->shape());   
+}
+
+Tensor Tensor::mul(ScalarTensor& other) {
+  return other.mul(*this); 
 }
 
 Tensor Tensor::matmul(Tensor& other) {
