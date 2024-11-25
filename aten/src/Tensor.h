@@ -13,6 +13,7 @@ int shape_to_length(std::vector<size_t> shape);
 
 class Tensor; 
 class GradTensor; 
+class ScalarTensor; 
 
 class BaseTensor {
   // Abstract class for all Tensor objects. 
@@ -161,4 +162,20 @@ class Tensor : public BaseTensor {
     }
 
     Tensor transpose(const std::vector<size_t>& axes = {}) const;
+};
+
+class ScalarTensor : public Tensor {
+  public: 
+    // constructors 
+    ScalarTensor(); 
+    ScalarTensor(double data); 
+    ScalarTensor(std::vector<double> data); 
+
+    ~ScalarTensor() { prev.clear(); } 
+
+    std::string type() const override { return "ScalarTensor"; } 
+
+    ScalarTensor copy() const; 
+    double item() const; 
+     
 };

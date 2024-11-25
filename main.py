@@ -1,15 +1,11 @@
-from ember import Tensor
+import ember 
 
-x = Tensor.arange(0, 4, 1).reshape([2, 2])
-y = Tensor.arange(4, 8, 1).reshape([2, 2])
+A = ember.Tensor([[0, 1], [2, 3]]) 
+B = ember.Tensor([[4, 5], [6, 7]]) 
+C = A @ B 
 
-z = x @ y 
+C.backprop(True)
 
-print(z)
+print(C)
 
-z.backprop(True)
-
-print(x.grad[0,0,:,:].pivot)
-print(x.grad[0,1,:,:])
-print(x.grad[1,0,:,:])
-print(x.grad[1,1,:,:])
+print(A.grad)
