@@ -145,13 +145,6 @@ GradTensor GradTensor::matmul(GradTensor& other) {
       for (std::vector<size_t> n : generate_all_indices(thisR)) {
         std::vector<size_t> l_idx = concat_indices(m, n);
         std::vector<size_t> r_idx = concat_indices(n, k); 
-        std::cout << "1 ====== \n";
-        for (auto s : l_idx) { std::cout << s << " "; }
-        std::cout << "\n";
-        for (auto s : r_idx) { std::cout << s << " "; }
-        std::cout << "\n";
-        contraction += this->at(l_idx) * other.at(r_idx);
-        std::cout << "2 ====== \n";
       }
       out.at(concat_indices(m, k)) = contraction; 
     }
