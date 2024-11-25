@@ -26,6 +26,11 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("shape"))
     .def_static("zeros", &Tensor::zeros, 
         py::arg("shape"))
+    .def("copy", 
+        [](Tensor &a) {
+            return a.copy();
+        }
+      )
 
     // Expose grad attribute
     .def_property("grad",

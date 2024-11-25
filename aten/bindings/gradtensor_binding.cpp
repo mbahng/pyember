@@ -11,6 +11,11 @@ void init_gradtensor_binding(py::module_ &m) {
        py::arg("shape"), py::arg("pivot")) 
     .def_static("eye", &GradTensor::eye, 
         py::arg("n"), py::arg("pivot"))
+    .def("copy", 
+        [](GradTensor &a) {
+            return a.copy();
+        }
+      )
 
     .def("__repr__", &GradTensor::operator std::string, py::is_operator())
     .def("__str__", &GradTensor::operator std::string, py::is_operator())
