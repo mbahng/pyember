@@ -2,6 +2,8 @@
 #include <vector> 
 #include <cassert>
 
+std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
+std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
 
 void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo) {
   if (visited.find(v) == visited.end()) {
@@ -16,8 +18,15 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   // Set the gradient of the final output (this tensor) to 1.0
   auto self_ref = this; 
-  this->grad = GradTensor::eye(this->data().size(), 1);
-  
+  std::vector<size_t> pairshape = duplicate_indices(this->shape_);
+  this->grad = GradTensor(pairshape, (this->shape_).size()); 
+
+  // initialize grad[i, i] to 1s, where i may be a vector  
+  for (std::vector<size_t> i : generate_all_indices(this->shape_)) { 
+    std::vector<size_t> i_dup = duplicate_indices(i); 
+    (this->grad).at(i_dup) = 1.0; 
+  }
+
   // Build the topological ordering
   std::vector<Tensor*> topo;
   std::set<Tensor*> visited;

@@ -37,6 +37,19 @@ void init_tensor_binding(py::module_ &m) {
       [](const Tensor &t) -> const std::vector<Tensor*>& { return t.prev; },
       [](Tensor &t, const std::vector<Tensor*> &p) { t.prev = p; }) 
 
+    // Backpropagation Functions 
+      .def("backward", 
+        [](Tensor &t) {
+          if (t.backward) {
+              t.backward();
+          } 
+        }
+      )
+
+      .def("backprop", &Tensor::backprop, 
+          py::arg("intermediate") = false 
+      )
+
     .def("transpose", 
         [](Tensor &a, const std::vector<size_t> &axes) {
             return a.transpose();

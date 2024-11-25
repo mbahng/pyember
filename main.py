@@ -1,3 +1,11 @@
 from ember import Tensor
 
-t = Tensor.arange(0, 6, 1).reshape([2, 3])
+x = Tensor.arange(0, 6, 1)
+y = Tensor.arange(0, 6, 1)
+
+z = x + y 
+
+z.backprop(False)
+
+
+print(x.grad)
