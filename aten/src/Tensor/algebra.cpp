@@ -170,8 +170,6 @@ Tensor Tensor::mul(Tensor& other) {
     // update gradient to form d out[i]/ d this[i] = 1.  
     // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
     std::vector<size_t> pairshape = duplicate_indices(this->shape_);
-    // Generate a meshgrid over all indices, can be very inefficient
-    auto relevant_idx = generate_all_indices(pairshape); 
 
     for (std::vector<size_t> l_idx : generate_all_indices(this->shape_)) {
       for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape_)) { 
@@ -201,29 +199,76 @@ Tensor Tensor::mul(GradTensor& other) {
 Tensor Tensor::matmul(Tensor& other) {
   // Check if the tensors are at least 2D
   assert(this->shape().size() == 2 || other.shape().size() == 2);
-
   // Check if the last dimension of this tensor matches the second-to-last dimension of other
   assert(this->shape()[1] == other.shape()[0]);
-
   // Determine the dimensions of the result
   std::vector<size_t> result_shape {this->shape()[0], other.shape()[1]};
-
   Tensor out(std::vector<double> (shape_to_length(result_shape), 0.0), result_shape);
-
+  
   // Perform batch matrix multiplication
-  int m = this->shape()[0];
-  int n = this->shape()[1];
-  int p = other.shape()[1];
-
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < p; ++j) {
+  size_t m = this->shape()[0];
+  size_t n = this->shape()[1];
+  size_t p = other.shape()[1];
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < p; ++j) {
       double sum = 0.0;
-      for (int k = 0; k < n; ++k) {
+      for (size_t k = 0; k < n; ++k) {
         sum += this->data()[i * n + k] * other.data()[k * p + j];
       }
       out.storage_[i * p + j] = sum;
     }
   }
+
+  // Set up gradients with correct shapes
+  // For A: shape is (M, K, M, N) where M,K is output shape and M,N is input shape
+  std::vector<size_t> left_grad_shape = {m, p, m, n};
+  // For B: shape is (M, K, N, K) where M,K is output shape and N,K is input shape
+  std::vector<size_t> right_grad_shape = {m, p, n, p};
+  
+  this->grad = GradTensor(left_grad_shape, 2);  // pivot after output dimensions
+  other.grad = GradTensor(right_grad_shape, 2); // pivot after output dimensions
+
+  Tensor* this_ptr = this;
+  Tensor* other_ptr = &other;
+
+  out.prev = {this_ptr, other_ptr};
+
+  out.backward = [this, other_ptr, m, n, p] {
+    // For the left matrix (A):
+    // ∂C[i,j]/∂A[k,l] = B[l,j] if i=k, 0 otherwise
+    for (size_t i = 0; i < m; ++i) {     // output row
+      for (size_t j = 0; j < p; ++j) {   // output col
+        for (size_t k = 0; k < m; ++k) { // input A row
+          for (size_t l = 0; l < n; ++l) { // input A col
+            std::vector<size_t> grad_idx = {i, j, k, l};
+            if (i == k) {
+              this->grad.at(grad_idx) = other_ptr->data()[l * p + j];
+            } else {
+              this->grad.at(grad_idx) = 0.0;
+            }
+          }
+        }
+      }
+    }
+
+    // For the right matrix (B):
+    // ∂C[i,j]/∂B[k,l] = A[i,k] if j=l, 0 otherwise
+    for (size_t i = 0; i < m; ++i) {     // output row
+      for (size_t j = 0; j < p; ++j) {   // output col
+        for (size_t k = 0; k < n; ++k) { // input B row
+          for (size_t l = 0; l < p; ++l) { // input B col
+            std::vector<size_t> grad_idx = {i, j, k, l};
+            if (j == l) {
+              other_ptr->grad.at(grad_idx) = this->data()[i * n + k];
+            } else {
+              other_ptr->grad.at(grad_idx) = 0.0;
+            }
+          }
+        }
+      }
+    }
+  };
+
   return out;
 }
 
