@@ -85,10 +85,19 @@ class GradTensor : public BaseTensor {
 
     GradTensor add(GradTensor& other); 
     Tensor add(Tensor& other); 
+    GradTensor add(ScalarTensor& other);
+    GradTensor add(double& other);
+
     GradTensor sub(GradTensor& other); 
     Tensor sub(Tensor& other); 
+    GradTensor sub(ScalarTensor& other);
+    GradTensor sub(double& other);
+
     GradTensor mul(GradTensor& other); 
     Tensor mul(Tensor& other); 
+    GradTensor mul(ScalarTensor& other);
+    GradTensor mul(double& other);
+
     GradTensor matmul(GradTensor& other); 
 
     double at(const std::vector<size_t>& indices) const override {
@@ -141,12 +150,18 @@ class Tensor : public BaseTensor {
     Tensor add(Tensor& other); 
     Tensor add(GradTensor& other); 
     Tensor add(ScalarTensor& other); 
+    Tensor add(double& other); 
+
     Tensor sub(Tensor& other); 
     Tensor sub(GradTensor& other); 
     Tensor sub(ScalarTensor& other); 
+    Tensor sub(double& other); 
+
     Tensor mul(Tensor& other); 
     Tensor mul(GradTensor& other); 
     Tensor mul(ScalarTensor& other); 
+    Tensor mul(double& other); 
+
     Tensor matmul(Tensor& other); 
 
     Tensor sum(); 

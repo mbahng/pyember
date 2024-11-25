@@ -79,6 +79,12 @@ Tensor Tensor::add(ScalarTensor& other) {
   return other.add(*this); 
 }
 
+Tensor Tensor::add(double& other) {
+  // Must store scalar on heap since we don't want it destroyed in comp graph
+  ScalarTensor* scalar = new ScalarTensor(other);
+  return scalar->add(*this); 
+}
+
 Tensor Tensor::sub(Tensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
@@ -136,6 +142,11 @@ Tensor Tensor::sub(ScalarTensor& other) {
   return other.sub(*this); 
 }
 
+Tensor Tensor::sub(double& other) { 
+  ScalarTensor* scalar = new ScalarTensor(other);
+  return scalar->sub(*this); 
+}
+
 Tensor Tensor::mul(Tensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
@@ -190,6 +201,11 @@ Tensor Tensor::mul(GradTensor& other) {
 
 Tensor Tensor::mul(ScalarTensor& other) {
   return other.mul(*this); 
+}
+
+Tensor Tensor::mul(double& other) {
+  ScalarTensor* scalar = new ScalarTensor(other);
+  return scalar->mul(*this); 
 }
 
 Tensor Tensor::matmul(Tensor& other) {

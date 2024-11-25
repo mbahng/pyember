@@ -66,15 +66,18 @@ void init_tensor_binding(py::module_ &m) {
             return a.add(b);
         }
       )
-
     .def("__add__", 
         [](Tensor &a, Tensor &b) {
             return a.add(b);
         }
       )
-
     .def("__add__", 
         [](Tensor &a, GradTensor &b) {
+            return a.add(b);
+        }
+      )
+    .def("__add__", 
+        [](Tensor &a, double &b) {
             return a.add(b);
         }
       )
@@ -96,21 +99,29 @@ void init_tensor_binding(py::module_ &m) {
             return a.sub(b);
         }
       )
+    .def("__sub__", 
+        [](Tensor &a, double &b) {
+            return a.sub(b);
+        }
+      )
 
     .def("__mul__", 
         [](Tensor &a, ScalarTensor &b) {
             return a.mul(b);
         }
       )
-  
     .def("__mul__", 
         [](Tensor &a, Tensor &b) {
             return a.mul(b);
         }
       )
-  
     .def("__mul__", 
         [](Tensor &a, GradTensor &b) {
+            return a.mul(b);
+        }
+      )
+    .def("__mul__", 
+        [](Tensor &a, double &b) {
             return a.mul(b);
         }
       )
