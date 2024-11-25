@@ -140,10 +140,13 @@ class Tensor : public BaseTensor {
 
     Tensor add(Tensor& other); 
     Tensor add(GradTensor& other); 
+    Tensor add(ScalarTensor& other); 
     Tensor sub(Tensor& other); 
     Tensor sub(GradTensor& other); 
+    Tensor sub(ScalarTensor& other); 
     Tensor mul(Tensor& other); 
     Tensor mul(GradTensor& other); 
+    Tensor mul(ScalarTensor& other); 
     Tensor matmul(Tensor& other); 
 
     Tensor sum(); 
@@ -177,5 +180,12 @@ class ScalarTensor : public Tensor {
 
     ScalarTensor copy() const; 
     double item() const; 
+
+    Tensor add(Tensor& other); 
+    GradTensor add(GradTensor& other); 
+    Tensor sub(Tensor& other); 
+    GradTensor sub(GradTensor& other); 
+    Tensor mul(Tensor& other); 
+    GradTensor mul(GradTensor& other); 
      
 };
