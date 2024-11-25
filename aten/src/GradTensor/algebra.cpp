@@ -17,6 +17,15 @@ void array_matches_shape(
   std::vector<size_t> shape
 );
 
+std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
+
+std::vector<size_t> concat_indices(
+    std::vector<size_t> shape1,
+    std::vector<size_t> shape2);
+
+std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
+std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, size_t idx);
+
 GradTensor GradTensor::add(GradTensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
@@ -105,41 +114,43 @@ Tensor GradTensor::mul(Tensor& other) {
   return Tensor(res_data, this->shape()); 
 }
 
-GradTensor GradTensor::matmul(GradTensor& other) {
-  // right matrix multiplication this * other
+GradTensor GradTensor::matmul(GradTensor& other) { 
+  // tensor contraction this * other 
   std::vector<size_t> otherL = std::vector<size_t> (other.shape().begin(), other.shape().begin() + other.pivot());
   std::vector<size_t> otherR = std::vector<size_t> (other.shape().begin() + other.pivot(), other.shape().end());
   std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin(), this->shape().begin() + this->pivot());
   std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pivot(), this->shape().end());
 
-  assert(thisR == otherL);
-
+  // thisR and otherL are hyperdimesions to be contracted 
+  if (thisR != otherL) {
+    std::ostringstream msg;
+    msg << "Dimensions to be contracted are not equal: left (";  
+    for (size_t s : thisR) { msg << " " << s; }
+    msg << " ), right ( ";
+    for (size_t s : otherL) { msg << " " << s; }
+    msg << " )";
+    throw std::logic_error(msg.str());
+  }
+  
   size_t m = shape_to_length(thisL);    // Number of rows in result
   size_t n = shape_to_length(otherR);   // Number of columns in result
   size_t k = shape_to_length(thisR);    // Inner dimension for multiplication
   
-  // Create result vector initialized with zeros
-  std::vector<double> result(m * n, 0.0);
-  
-  // Perform matrix multiplication
-  for (size_t i = 0; i < m; ++i) {
-      for (size_t j = 0; j < n; ++j) {
-          double sum = 0.0;
-          for (size_t p = 0; p < k; ++p) {
-              // Calculate indices for this and other matrices
-              size_t this_idx = i * k + p;
-              size_t other_idx = p * n + j;
-              sum += this->data()[this_idx] * other.data()[other_idx];
-          }
-          result[i * n + j] = sum;
-      }
+  // Create result vector initialized with zeros 
+  GradTensor out = GradTensor(duplicate_indices(thisL), thisL.size());  
+
+  for (std::vector<size_t> mk : generate_all_indices(out.shape())) { 
+    std::vector<std::vector<size_t>> indices = split_indices(mk, thisL.size()); 
+    std::vector<size_t> m = indices[0]; 
+    std::vector<size_t> k = indices[1]; 
+    double contraction = 0.0; 
+    for (std::vector<size_t> n : generate_all_indices(otherR)) {
+      std::vector<size_t> l_idx = concat_indices(m, n);
+      std::vector<size_t> r_idx = concat_indices(n, k); 
+      contraction += this->at(l_idx) * other.at(r_idx);
+    }
+    out.at(mk) = contraction; 
   }
-  
-  size_t new_pivot = this->pivot_;
-  std::vector<size_t> new_shape(thisL);
-  new_shape.insert(new_shape.end(), otherR.begin(), otherR.end());
-  
-  return GradTensor(result, new_shape, new_pivot);
+
+  return out; 
 }
-
-

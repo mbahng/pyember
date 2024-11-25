@@ -2,9 +2,10 @@
 
 run_python_tests() {
     echo "Running Python tests..."
+    python test/tensor/io.py
     python test/tensor/gradtensor.py
     python test/tensor/tensor.py
-    python test/tensor/io.py
+    python test/tensor/backprop.py
     return $?
 }
 
