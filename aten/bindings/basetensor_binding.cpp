@@ -56,9 +56,15 @@ void init_basetensor_binding(py::module_ &m) {
             slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
           }
         }
+
+        auto out = t.slice(slices); 
+        if (shape_to_length(out->shape()) == 1) {
+          return py::cast(ScalarTensor(out->data()));
+        }
         
         // All indices are now converted to slices
-        return py::cast(t.slice(slices));
+        // Can't do py::cast(out) directly for some reason
+        return py::cast(t.slice(slices)); 
       } else if (py::isinstance<py::int_>(index)) {
         // Single integer index - convert to slice
         size_t idx_val = index.cast<size_t>();
@@ -68,7 +74,11 @@ void init_basetensor_binding(py::module_ &m) {
         for (size_t i = 1; i < t.shape().size(); ++i) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
-        return py::cast(t.slice(slices));
+        std::unique_ptr<BaseTensor> out = t.slice(slices); 
+        if (shape_to_length(out->shape()) == 1) {
+          return py::cast(ScalarTensor(out->data()));
+        }
+        return py::cast(t.slice(slices)); 
       } else if (py::isinstance<py::slice>(index)) {
         // Single slice
         py::slice slice = index.cast<py::slice>();
@@ -82,7 +92,11 @@ void init_basetensor_binding(py::module_ &m) {
         for (size_t i = 1; i < t.shape().size(); ++i) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
-        return py::cast(t.slice(slices));
+        std::unique_ptr<BaseTensor> out = t.slice(slices); 
+        if (shape_to_length(out->shape()) == 1) {
+          return py::cast(ScalarTensor(out->data()));
+        }
+        return py::cast(t.slice(slices)); 
       }
       throw py::type_error("Invalid index type");
     })
