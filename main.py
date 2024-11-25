@@ -1,11 +1,13 @@
 from ember import Tensor
 
-x = Tensor.arange(0, 6, 1)
-y = Tensor.arange(0, 6, 1)
+x = Tensor.uniform([4], 0, 1)
+y = Tensor.uniform([4], 0, 1)
+w = Tensor.uniform([4], 0, 1) 
 
-z = x + y 
+z = x * y 
 
-z.backprop(False)
+a = z + w
 
+a.backprop(True)
 
 print(x.grad)

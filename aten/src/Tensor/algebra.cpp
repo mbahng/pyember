@@ -18,6 +18,8 @@ void array_matches_shape(
 );
 
 std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
+std::vector<size_t> concat_indices(std::vector<size_t> shape1, std::vector<size_t> shape2);
+std::vector<size_t> duplicate_indices(std::vector<size_t> shape);
 
 Tensor Tensor::add(Tensor& other) {
   if (this->shape() != other.shape()) {
@@ -146,12 +148,42 @@ Tensor Tensor::mul(Tensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  int length = shape_to_length(this->shape());
+  size_t length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
     res_data[i] = this->data()[i] * other.data()[i];
   }
-  return Tensor(res_data, this->shape());   
+  Tensor out = Tensor(res_data, this->shape()); 
+
+  std::vector<size_t> newshape = out.shape(); 
+  newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
+  this->grad = GradTensor(newshape, this->shape().size()); 
+  other.grad = GradTensor(newshape, this->shape().size()); 
+
+  Tensor* this_ptr = this;
+  Tensor* other_ptr = &other;
+  
+  out.prev = {this_ptr, other_ptr};
+  out.grad = GradTensor(duplicate_indices(this->shape()), (this->shape()).size());
+
+  out.backward = [this, other_ptr] {
+    // update gradient to form d out[i]/ d this[i] = 1.  
+    // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
+    std::vector<size_t> pairshape = duplicate_indices(this->shape_);
+    // Generate a meshgrid over all indices, can be very inefficient
+    auto relevant_idx = generate_all_indices(pairshape); 
+
+    for (std::vector<size_t> l_idx : generate_all_indices(this->shape_)) {
+      for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape_)) { 
+        if (l_idx == r_idx) {
+          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          (this->grad).at(idx) = other_ptr->at(r_idx);
+          (other_ptr->grad).at(idx) = this->at(l_idx);
+        }
+      }
+    }
+  };
+  return out; 
 }
 
 Tensor Tensor::mul(GradTensor& other) {

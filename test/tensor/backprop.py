@@ -22,10 +22,11 @@ class TestAutogradAdd(unittest.TestCase):
         z = x + y 
         z.backprop(True) 
 
-        grad_truth = GradTensor([1.], [1, 1], 1)
+        xgrad_truth = GradTensor([1.], [1, 1], 1)
+        ygrad_truth = GradTensor([1.], [1, 1], 1)
         
-        self.assertEqual(x.grad, grad_truth)
-        self.assertEqual(y.grad, grad_truth)
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
 
     def testSumVectorsIntermediate(self): 
         x = Tensor.arange(0, 3, 1)
@@ -60,7 +61,8 @@ class TestAutogradAdd(unittest.TestCase):
         grad_truth[1, 1, 1, 1] = 1.0
         grad_truth[1, 2, 1, 2] = 1.0
 
-        self.assertEqual(z.grad, grad_truth)
+        self.assertEqual(x.grad, grad_truth)
+        self.assertEqual(y.grad, grad_truth)
 
     def testSumMatricesNoIntermediate(self): 
         x = Tensor.arange(0, 6, 1).reshape([2, 3])
@@ -76,7 +78,8 @@ class TestAutogradAdd(unittest.TestCase):
         grad_truth[1, 1, 1, 1] = 1.0
         grad_truth[1, 2, 1, 2] = 1.0
 
-        self.assertEqual(z.grad, grad_truth)
+        self.assertEqual(x.grad, grad_truth)
+        self.assertEqual(y.grad, grad_truth)
 
     def testSumTensorsIntermediate(self): 
         x = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
@@ -89,35 +92,221 @@ class TestAutogradAdd(unittest.TestCase):
         for i, j, k in combos: 
             grad_truth[i, j, k, i, j, k] = 1.0
 
-        self.assertEqual(z.grad, grad_truth)
+        self.assertEqual(x.grad, grad_truth)
+        self.assertEqual(y.grad, grad_truth)
 
 class TestAutogradSub(unittest.TestCase): 
     
-    def sumScalars(self): 
-        pass
+    def testSubScalarsIntermediate(self): 
+        x = Tensor([1]) 
+        y = Tensor([2]) 
+        z = x - y 
+        z.backprop(True) 
 
-    def sumVectors(self): 
-        pass
+        xgrad_truth = GradTensor([1.], [1, 1], 1)
+        ygrad_truth = GradTensor([-1.], [1, 1], 1)
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+    
+    def testSubScalarsNoIntermediate(self): 
+        x = Tensor([1]) 
+        y = Tensor([2]) 
+        z = x - y 
+        z.backprop(False) 
 
-    def sumMatrices(self): 
-        pass
+        xgrad_truth = GradTensor([1.], [1, 1], 1)
+        ygrad_truth = GradTensor([-1.], [1, 1], 1)
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
 
-    def sumTensors(self): 
-        pass
+    def testSubVectorsIntermediate(self): 
+        x = Tensor.arange(0, 3, 1)
+        y = Tensor.arange(0, 3, 1)
+        z = x - y 
+        z.backprop(True)
+        xgrad_truth = GradTensor([1, 0, 0, 0, 1, 0, 0, 0, 1], [3, 3], 1)
+        ygrad_truth = GradTensor([-1, 0, 0, 0, -1, 0, 0, 0, -1], [3, 3], 1)
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testSubVectorsNoIntermediate(self): 
+        x = Tensor.arange(0, 3, 1)
+        y = Tensor.arange(0, 3, 1)
+        z = x - y 
+        z.backprop(False)
+        xgrad_truth = GradTensor([1, 0, 0, 0, 1, 0, 0, 0, 1], [3, 3], 1)
+        ygrad_truth = GradTensor([-1, 0, 0, 0, -1, 0, 0, 0, -1], [3, 3], 1)
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testSubMatricesIntermediate(self): 
+        x = Tensor.arange(0, 6, 1).reshape([2, 3])
+        y = Tensor.arange(0, 6, 1).reshape([2, 3])
+
+        z = x - y 
+        z.backprop(True)
+        xgrad_truth = GradTensor([2, 3, 2, 3], 2) 
+        ygrad_truth = GradTensor([2, 3, 2, 3], 2) 
+        combos = product(range(2), range(3)) 
+        for i, j in combos: 
+            xgrad_truth[i, j, i, j] = 1.0
+            ygrad_truth[i, j, i, j] = -1.0
+
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testSubMatricesNoIntermediate(self): 
+        x = Tensor.arange(0, 6, 1).reshape([2, 3])
+        y = Tensor.arange(0, 6, 1).reshape([2, 3])
+
+        z = x - y 
+        z.backprop(False)
+        xgrad_truth = GradTensor([2, 3, 2, 3], 2) 
+        ygrad_truth = GradTensor([2, 3, 2, 3], 2) 
+        combos = product(range(2), range(3)) 
+        for i, j in combos: 
+            xgrad_truth[i, j, i, j] = 1.0
+            ygrad_truth[i, j, i, j] = -1.0
+
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testSubTensorsIntermediate(self): 
+        x = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
+        y = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
+
+        z = x - y 
+        z.backprop(False)
+        xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 3)
+        ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 3)
+        combos = product(range(2), range(3), range(4)) 
+        for i, j, k in combos: 
+            xgrad_truth[i, j, k, i, j, k] = 1.0
+            ygrad_truth[i, j, k, i, j, k] = -1.0
+
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
 
 class TestAutogradMul(unittest.TestCase): 
     
-    def sumScalars(self): 
-        pass
+    def testMulScalarsIntermediate(self): 
+        x = Tensor([1]) 
+        y = Tensor([2]) 
+        z = x * y 
+        z.backprop(True) 
 
-    def sumVectors(self): 
-        pass
+        xgrad_truth = GradTensor([2.], [1, 1], 1)
+        ygrad_truth = GradTensor([1.], [1, 1], 1)
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
 
-    def sumMatrices(self): 
-        pass
+    def testMulScalarsNoIntermediate(self):
+        x = Tensor([1]) 
+        y = Tensor([2]) 
+        z = x * y 
+        z.backprop(False) 
 
-    def sumTensors(self): 
-        pass
+        xgrad_truth = GradTensor([2.], [1, 1], 1)
+        ygrad_truth = GradTensor([1.], [1, 1], 1)
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testMulVectorsIntermediate(self): 
+        x = Tensor.uniform([4], 0, 1) 
+        y = Tensor.uniform([4], 0, 1) 
+        z = x * y
+        z.backprop(True)
+
+        xgrad_truth = GradTensor([4, 4], 1)
+        ygrad_truth = GradTensor([4, 4], 1) 
+        for i in range(4): 
+            xgrad_truth[i, i] = y[i].data()[0]
+            ygrad_truth[i, i] = x[i].data()[0]
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testMulVectorsNoIntermediate(self):
+        x = Tensor.uniform([4], 0, 1) 
+        y = Tensor.uniform([4], 0, 1) 
+        z = x * y
+        z.backprop(False)
+
+        xgrad_truth = GradTensor([4, 4], 1)
+        ygrad_truth = GradTensor([4, 4], 1) 
+        for i in range(4): 
+            xgrad_truth[i, i] = y[i].data()[0]
+            ygrad_truth[i, i] = x[i].data()[0]
+        
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testMulMatricesIntermediate(self):
+        x = Tensor.uniform([2, 3], 0, 1) 
+        y = Tensor.uniform([2, 3], 0, 1) 
+        z = x * y
+        z.backprop(True)
+
+        xgrad_truth = GradTensor([2, 3, 2, 3], 2)
+        ygrad_truth = GradTensor([2, 3, 2, 3], 2) 
+        for i, j in product(range(2), range(3)): 
+            xgrad_truth[i, j, i, j] = y[i, j].data()[0]
+            ygrad_truth[i, j, i, j] = x[i, j].data()[0]
+       
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testMulMatricesNoIntermediate(self):
+        x = Tensor.uniform([2, 3], 0, 1) 
+        y = Tensor.uniform([2, 3], 0, 1) 
+        z = x * y
+        z.backprop(False)
+
+        xgrad_truth = GradTensor([2, 3, 2, 3], 2)
+        ygrad_truth = GradTensor([2, 3, 2, 3], 2) 
+        for i, j in product(range(2), range(3)): 
+            xgrad_truth[i, j, i, j] = y[i, j].data()[0]
+            ygrad_truth[i, j, i, j] = x[i, j].data()[0]
+       
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testMulTensorsIntermediate(self):
+        x = Tensor.uniform([2, 3, 4], 0, 1) 
+        y = Tensor.uniform([2, 3, 4], 0, 1) 
+        z = x * y
+        z.backprop(True)
+
+        xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 3)
+        ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 3) 
+        for i, j, k in product(range(2), range(3), range(4)): 
+            xgrad_truth[i, j, k, i, j, k] = y[i, j, k].data()[0]
+            ygrad_truth[i, j, k, i, j, k] = x[i, j, k].data()[0]
+       
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
+    def testMulTensorsNoIntermediate(self):
+        x = Tensor.uniform([2, 3, 4], 0, 1) 
+        y = Tensor.uniform([2, 3, 4], 0, 1) 
+        z = x * y
+        z.backprop(False)
+
+        xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 3)
+        ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 3) 
+        for i, j, k in product(range(2), range(3), range(4)): 
+            xgrad_truth[i, j, k, i, j, k] = y[i, j, k].data()[0]
+            ygrad_truth[i, j, k, i, j, k] = x[i, j, k].data()[0]
+       
+        self.assertEqual(x.grad, xgrad_truth)
+        self.assertEqual(y.grad, ygrad_truth)
+
 
 class TestAutogradMatmul(unittest.TestCase): 
     
