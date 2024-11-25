@@ -25,7 +25,7 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   for (std::vector<size_t> i : generate_all_indices(this->shape_)) { 
     std::vector<size_t> i_dup = duplicate_indices(i); 
     (this->grad).at(i_dup) = 1.0; 
-  }
+  } 
 
   // Build the topological ordering
   std::vector<Tensor*> topo;

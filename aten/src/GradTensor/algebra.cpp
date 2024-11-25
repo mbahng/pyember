@@ -132,9 +132,9 @@ GradTensor GradTensor::matmul(GradTensor& other) {
     throw std::logic_error(msg.str());
   }
   
-  size_t m = shape_to_length(thisL);   
-  size_t n = shape_to_length(thisR);  
-  size_t k = shape_to_length(otherR); 
+  /* size_t m = shape_to_length(thisL);    */
+  /* size_t n = shape_to_length(thisR);   */
+  /* size_t k = shape_to_length(otherR);  */
   
   // Create result vector initialized with zeros 
   GradTensor out = GradTensor(concat_indices(thisL, otherR), thisL.size());  
@@ -145,6 +145,7 @@ GradTensor GradTensor::matmul(GradTensor& other) {
       for (std::vector<size_t> n : generate_all_indices(thisR)) {
         std::vector<size_t> l_idx = concat_indices(m, n);
         std::vector<size_t> r_idx = concat_indices(n, k); 
+        contraction += (this->at(l_idx) * other.at(r_idx));
       }
       out.at(concat_indices(m, k)) = contraction; 
     }
