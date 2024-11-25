@@ -56,6 +56,15 @@ Tensor GradTensor::add(Tensor& other) {
   return Tensor(res_data, this->shape()); 
 }
 
+GradTensor GradTensor::add(ScalarTensor& other) {
+  return other.add(*this); 
+}
+
+GradTensor GradTensor::add(double& other) {
+  ScalarTensor scalar = ScalarTensor(other);
+  return scalar.add(*this); 
+}
+
 GradTensor GradTensor::sub(GradTensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
@@ -85,6 +94,15 @@ Tensor GradTensor::sub(Tensor& other) {
   return Tensor(res_data, this->shape()); 
 }
 
+GradTensor GradTensor::sub(ScalarTensor& other) {
+  return other.sub(*this); 
+}
+
+GradTensor GradTensor::sub(double& other) {
+  ScalarTensor scalar = ScalarTensor(other);
+  return scalar.sub(*this); 
+}
+
 GradTensor GradTensor::mul(GradTensor& other) {
   if (this->shape() != other.shape()) {
     throw std::logic_error("Shapes do not match");
@@ -112,6 +130,15 @@ Tensor GradTensor::mul(Tensor& other) {
   }
 
   return Tensor(res_data, this->shape()); 
+}
+
+GradTensor GradTensor::mul(ScalarTensor& other) {
+  return other.mul(*this); 
+}
+
+GradTensor GradTensor::mul(double& other) {
+  ScalarTensor scalar = ScalarTensor(other);
+  return scalar.mul(*this); 
 }
 
 GradTensor GradTensor::matmul(GradTensor& other) { 
