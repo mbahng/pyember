@@ -9,6 +9,7 @@ set(BINDING_SOURCES
     gradtensor_binding.cpp
     basetensor_binding.cpp 
     tensor_binding.cpp 
+    scalartensor_binding.cpp 
 )
 
 # Create the Python module named 'aten'
