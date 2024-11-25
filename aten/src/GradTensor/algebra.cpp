@@ -132,24 +132,29 @@ GradTensor GradTensor::matmul(GradTensor& other) {
     throw std::logic_error(msg.str());
   }
   
-  size_t m = shape_to_length(thisL);    // Number of rows in result
-  size_t n = shape_to_length(otherR);   // Number of columns in result
-  size_t k = shape_to_length(thisR);    // Inner dimension for multiplication
+  size_t m = shape_to_length(thisL);   
+  size_t n = shape_to_length(thisR);  
+  size_t k = shape_to_length(otherR); 
   
   // Create result vector initialized with zeros 
-  GradTensor out = GradTensor(duplicate_indices(thisL), thisL.size());  
+  GradTensor out = GradTensor(concat_indices(thisL, otherR), thisL.size());  
 
-  for (std::vector<size_t> mk : generate_all_indices(out.shape())) { 
-    std::vector<std::vector<size_t>> indices = split_indices(mk, thisL.size()); 
-    std::vector<size_t> m = indices[0]; 
-    std::vector<size_t> k = indices[1]; 
-    double contraction = 0.0; 
-    for (std::vector<size_t> n : generate_all_indices(otherR)) {
-      std::vector<size_t> l_idx = concat_indices(m, n);
-      std::vector<size_t> r_idx = concat_indices(n, k); 
-      contraction += this->at(l_idx) * other.at(r_idx);
+  for (std::vector<size_t> m : generate_all_indices(thisL)) {
+    for (std::vector<size_t> k : generate_all_indices(otherR)) {
+      double contraction = 0.0; 
+      for (std::vector<size_t> n : generate_all_indices(thisR)) {
+        std::vector<size_t> l_idx = concat_indices(m, n);
+        std::vector<size_t> r_idx = concat_indices(n, k); 
+        std::cout << "1 ====== \n";
+        for (auto s : l_idx) { std::cout << s << " "; }
+        std::cout << "\n";
+        for (auto s : r_idx) { std::cout << s << " "; }
+        std::cout << "\n";
+        contraction += this->at(l_idx) * other.at(r_idx);
+        std::cout << "2 ====== \n";
+      }
+      out.at(concat_indices(m, k)) = contraction; 
     }
-    out.at(mk) = contraction; 
   }
 
   return out; 

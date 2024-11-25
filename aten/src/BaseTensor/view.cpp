@@ -61,10 +61,10 @@ void BaseTensor::validate_indices(const std::vector<size_t>& indices) const {
   if (indices.size() != shape_.size()) {
     throw std::invalid_argument("Number of indices doesn't match tensor dimensions");
   }
-  
+
   for (size_t i = 0; i < indices.size(); ++i) {
     if (indices[i] >= shape_[i]) {
-      throw std::out_of_range("Index out of bounds");
+      throw std::out_of_range("Index out of bounds.");
     }
   }
 }
