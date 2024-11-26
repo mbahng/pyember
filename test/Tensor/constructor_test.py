@@ -1,5 +1,5 @@
 import unittest
-from ember import Tensor, GradTensor
+from ember import Tensor
 
 class TestTensorConstructors(unittest.TestCase): 
 
@@ -54,63 +54,6 @@ class TestTensorConstructors(unittest.TestCase):
     self.assertEqual(t.data(), [0] * 24)
     self.assertEqual(t.shape, [2, 3, 4])
 
-class TestTensorAlgebra(unittest.TestCase): 
-
-  def testAddWithTensor(self): 
-    x = Tensor([1, 2, 3, 4]) 
-    y = Tensor([1, 2, 3, 4]) 
-    z = x + y 
-    
-    self.assertTrue(z == Tensor([2, 4, 6, 8]))
-
-  def testAddWithGradTensor(self): 
-    x = Tensor([1, 2, 3, 4]) 
-    y = GradTensor([1, 2, 3, 4], [4], 0) 
-    z = x + y 
-    
-    self.assertTrue(z == Tensor([2, 4, 6, 8]))
-
-  def testSubWithTensor(self): 
-    x = Tensor([1, 2, 3, 4]) 
-    y = Tensor([1, 2, 3, 4])
-    z = x - y 
-    
-    self.assertTrue(z == Tensor([0, 0, 0, 0])) 
-
-  def testSubWithGradTensor(self): 
-    x = Tensor([1, 2, 3, 4]) 
-    y = GradTensor([1, 2, 3, 4], [4], 0) 
-    z = x - y 
-    self.assertTrue(z == Tensor([0, 0, 0, 0]))
-
-  def testMulWithTensor(self): 
-    x = Tensor([1, 2, 3, 4]) 
-    y = Tensor([1, 2, 3, 4]) 
-    z = x * y 
-    self.assertTrue(z == Tensor([1, 4, 9, 16]))
-  
-  def testMulWithGradTensor(self): 
-    x = Tensor([1, 2, 3, 4]) 
-    y = GradTensor([1, 2, 3, 4], [4], 0) 
-    z = x * y 
-    
-    self.assertTrue(z == Tensor([1, 4, 9, 16]))
-
-  def testMatMulWithTensor(self): 
-    x = Tensor([1, 2, 3, 4]).reshape([1, 4])
-    y = Tensor([1, 2, 3, 4]).reshape([4, 1])
-    z = x @ y 
-    self.assertTrue(z == Tensor([30], [1, 1]))
-
-class TestTensorUtils(unittest.TestCase): 
-
-  def testTranspose(self): 
-    t1 = Tensor.arange(0, 6, 1).reshape([2, 3]) 
-    t2 = t1.transpose([0, 1])
-    truth = Tensor([0, 3, 1, 4, 2, 5], [3, 2]) 
-
-    self.assertTrue(t2 == truth)
-
 if __name__ == "__main__": 
- unittest.main(verbosity=2)
+  unittest.main(verbosity=2)
 

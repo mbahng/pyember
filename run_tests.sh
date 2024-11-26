@@ -2,11 +2,25 @@
 
 run_python_tests() {
     echo "Running Python tests..."
-    python test/tensor/io.py
-    python test/tensor/gradtensor.py
-    python test/tensor/tensor.py
-    python test/tensor/scalartensor.py
-    python test/tensor/backprop.py
+    python test/BaseTensor/integrity_test.py
+    python test/BaseTensor/util_test.py
+    python test/GradTensor/algebra_test.py
+
+    python test/GradTensor/algebra_test.py
+    python test/GradTensor/constructor_test.py
+    python test/GradTensor/math_test.py
+    python test/GradTensor/util_test.py
+
+    python test/ScalarTensor/constructor_test.py
+    python test/ScalarTensor/math_test.py
+    python test/ScalarTensor/util_test.py
+
+    python test/Tensor/algebra_test.py
+    python test/Tensor/constructor_test.py
+    python test/Tensor/grad_test.py
+    python test/Tensor/math_test.py
+    python test/Tensor/util_test.py
+
     return $?
 }
 

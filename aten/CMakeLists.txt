@@ -13,33 +13,38 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # List all source files except main.cpp
 set(TENSOR_SOURCES
   src/BaseTensor/integrity.cpp
-  src/BaseTensor/io.cpp
   src/BaseTensor/util.cpp
-  src/BaseTensor/view.cpp
-  src/Tensor/constructors.cpp
-  src/Tensor/algebra.cpp
+
+  src/GradTensor/constructor.cpp
+  src/GradTensor/util.cpp
+  src/GradTensor/math.cpp
+  src/GradTensor/algebra.cpp
+
+  src/Tensor/constructor.cpp
+  src/Tensor/util.cpp
   src/Tensor/grad.cpp
   src/Tensor/math.cpp
-  src/Tensor/util.cpp
-  src/GradTensor/constructors.cpp
-  src/GradTensor/algebra.cpp
-  src/GradTensor/util.cpp
-  src/ScalarTensor/constructors.cpp
-  src/ScalarTensor/math.cpp
+  src/Tensor/algebra.cpp
+
+  src/ScalarTensor/constructor.cpp
   src/ScalarTensor/util.cpp
+  src/ScalarTensor/math.cpp
 )
 set(TENSOR_TESTS 
   test/BaseTensor/integrity_tests.cpp
   test/BaseTensor/io_tests.cpp
   test/BaseTensor/util_tests.cpp
   test/BaseTensor/view_tests.cpp
+
+  test/GradTensor/constructors_tests.cpp
+  test/GradTensor/util_tests.cpp
+  test/GradTensor/algebra_tests.cpp
+
   test/Tensor/constructors_tests.cpp
   test/Tensor/algebra_tests.cpp
   test/Tensor/grad_tests.cpp
   test/Tensor/math_tests.cpp
-  test/GradTensor/constructors_tests.cpp
-  test/GradTensor/util_tests.cpp
-  test/GradTensor/algebra_tests.cpp
+
   test/ScalarTensor/constructors_tests.cpp
   test/ScalarTensor/math_tests.cpp
   test/ScalarTensor/util_tests.cpp
