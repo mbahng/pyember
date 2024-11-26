@@ -9,6 +9,24 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
   - [Models and Training](#models-and-training)
   - [Monte Carlo Samplers](#monte-carlo-samplers)
 
+## Progress 
+
+  ### Aten BaseTensor 
+
+    |Method| Implementation | PyBinds | C++ Tests | Python Tests |  
+    |------|------|------|------|------|------|  
+    |transpose|
+
+  ### Aten GradTensor 
+
+    | Header 1 | Header 2 | Header 3 |
+    |----------|----------|----------|
+    | Row 1    | Data     | Data     |
+    | Row 2    | Data     | Data     |
+
+  ### Aten Tensor 
+
+
 ## Installation
 
   ### Compiling the `aten` Library  
