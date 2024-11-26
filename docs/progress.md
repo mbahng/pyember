@@ -6,41 +6,41 @@
 
   ✅ - Done
   ❌ - Not implemented
-  🚧 - Should not be accessed 
-  🔨 - In progress 
+  🪧 - Don't need, either should not be accessed or is not necessary (e.g. due to inheritance)
+  🚧 - In progress
 
   ## Aten BaseTensor 
 
   | C++ Method | PyBind Method | Status | C++ Tests | Python Tests | Stubs |
   |----------|----------|----------|----------|----------|----------|
-  | `std::string type() const` | `type()` | ✅ | ✅ | ❌  | ❌  |    
-  | `std::string dtype() const` | `dtype()` | ✅ | ✅ | ❌   | ❌  |    
-  | `bool operator==(BaseTensor&)` | `__eq__()` | ✅ | ✅ | ❌  | ❌  |    
-  | `bool operator!=(BaseTensor&)` | `__ne__()` | ✅ | ✅ | ❌  | ❌  |    
-  | `double at(const std::vector<size_t>&) const` | `__getitem__()` | ✅ | ✅ | ✅ | ❌  | 
-  | `double at(const std::vector<size_t>&)` | `__setitem__()` | ✅ | ✅ | ✅ | ❌ |    
-  | `std::unique_ptr<BaseTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | ✅ | ✅ | ✅ | ❌ |  
-  | `operator std::string const` | `__str__()` |  ✅ | ✅ | ✅ | ❌ |  
-  | `operator std::string const` | `__repr__()` |  ✅ | ✅ | ✅ | ❌ |  
+  | `std::string type() const` | `type()` | ✅ | ✅ | 🪧 | 🪧    |    
+  | `std::string dtype() const` | `dtype()` | ✅ | ✅ | 🪧     | 🪧    |  
+  | `bool operator==(BaseTensor&)` | `__eq__()` | ✅ | ✅ | 🪧    | 🪧    |    
+  | `bool operator!=(BaseTensor&)` | `__ne__()` | ✅ | ✅ | 🪧    | 🪧    |    
+  | `double at(const std::vector<size_t>&) const` | `__getitem__()` | ✅ | ✅ | 🪧   | 🪧    | 
+  | `double at(const std::vector<size_t>&)` | `__setitem__()` | ✅ | ✅ | 🪧   | 🪧   |    
+  | `std::unique_ptr<BaseTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | ✅ | ✅ | 🪧   | 🪧   |  
+  | `operator std::string const` | `__str__()` |  ✅ | ✅ | 🪧   | 🪧   |  
+  | `operator std::string const` | `__repr__()` |  ✅ | ✅ | 🪧   | 🪧   |  
 
   ## Aten GradTensor 
 
   | C++ Method | PyBind Method | Status | C++ Tests | Python Tests | Stubs |
   |----------|----------|----------|----------|----------|----------|
-  | `std::string type() const` | `type()` | ✅ | ✅  |  ❌  | ❌  |    
-  | `std:: string dtype() const` | `dtype()` | ✅ | ✅ |  ❌  | ❌  |    
+  | `std::string type() const` | `type()` | ✅ | ✅  |  ✅   | ❌  |    
+  | `std:: string dtype() const` | `dtype()` | ✅ | ✅ |  ✅   | ❌  |    
   | `bool operator==(GradTensor&)` | `__eq__()` | ✅ | ✅ | ✅   | ❌  |       
   | `bool operator!=(GradTensor&)` | `__ne__()` | ✅ | ✅ | ✅   | ❌  |
-  | `double at(const std::vector<size_t>&) const` | `__getitem__()` | ✅ | ✅ | ❌  | ❌  |   
-  | `double at(const std::vector<size_t>&)` | `__setitem__()` | ✅ | ✅ | ❌  | ❌  |
-  | `std::unique_ptr<GradTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | ✅ | ✅ | ❌  | ❌  |
+  | `double at(const std::vector<size_t>&) const` | `__getitem__()` | ✅ | ✅ | ✅ | ❌  |   
+  | `double at(const std::vector<size_t>&)` | `__setitem__()` | ✅ | ✅ | ✅ | ❌ |
+  | `std::unique_ptr<GradTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | ✅ | ✅ | ✅ | ❌  |
   | `size_t pivot() const` | `pivot()` | ✅ | ❌ | ❌ | ❌ | 
   | `GradTensor()` | `GradTensor()` | ✅ | ✅  | ✅  | ❌ | 
   | `GradTensor(std::vector<double>, std::vector<size_t>, size_t)` | `GradTensor(List[double], List[int], int)` | ✅ | ✅  | ✅  | ❌ | 
   | `GradTensor(std::vector<size_t>, size_t)` | `GradTensor(List[int], int)`| ✅ | ✅  | ✅  | ❌ | 
-  | `GradTensor::eye(size_t, size_t)` | | ✅ | ✅  | ❌ | ❌ | 
-  | `transpose()` |  `transpose()` | ✅ | ❌ | ❌ | ❌ | 
-  | `GradTensor copy() const` | `copy()` | ✅ | ✅  | ❌ | ❌ |     
+  | `GradTensor::eye(size_t, size_t)` | | ✅ | ✅  | ✅  | ❌ | 
+  | `transpose()` |  `transpose()` | ✅ | ✅ | ❌ | ❌ | 
+  | `GradTensor copy() const` | `copy()` | ✅ | ✅  | ✅  | ❌ |     
   | `GradTensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ✅  | ✅  | ❌ | 
   | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅  | ❌ | ❌ | 
   | `GradTensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅ | ❌ | ❌ | ❌ |      
@@ -76,7 +76,7 @@
   | `static Tensor uniform(std::vector<size_t> , double, double)` | `Tensor.uniform(List[int], int, int)` | ✅ | ✅ |   ❌ | ❌ |      
   | `static Tensor ones(std::vector<size_t>)` | `Tensor.ones(List[int])` | ✅ | ✅  | ❌ | ❌ |     
   | `static Tensor zeros(std::vector<size_t>)` | `Tensor.zeros(List[int])` | ✅ | ✅  | ❌ | ❌ |      
-  | `void build_topo(Tensor* v, std::set<Tensor*>&, std::vector<Tensor*>&)` | 🚧 | ✅ | ❌| 🚧 |  🚧 |
+  | `void build_topo(Tensor* v, std::set<Tensor*>&, std::vector<Tensor*>&)` | 🪧 | ✅ | ❌| 🪧 |  🪧 |
   | `prev_` | `prev` | ✅   
   | `std::vector<Tensor*> backprop(bool)` | `backprop(bool)` | ✅| ❌ | ❌ | ❌ |     
   | `Tensor copy() const` | `copy()` | ✅ | ❌ | ❌ | ❌ |    
@@ -98,7 +98,7 @@
   | `Tensor log(double&, double&)` | | ❌ | ❌ | ❌ | ❌ |
   | `Tensor matmul(Tensor&)` | `matmul(Tensor)` | ✅ | ❌ | ❌ | ❌ |
   | `Tensor matmul(Tensor&)` | `__matmul__(Tensor)` | ✅ | ❌ | ✅  | ❌ |
-  | `Tensor sum(Tensor&)` | | 🔨  | ❌ | ❌ | ❌ |
+  | `Tensor sum(Tensor&)` | | 🚧 | ❌ | ❌ | ❌ |
   | `Tensor tranpose(const std::vector<size_t>&) const` | `transpose(List[int])` | ✅ | ❌ | ✅  | ❌ |
   | `Tensor concat(Tensor&, size_t)` | | ❌ | ❌ | ❌ | ❌ |
   | `Tensor sin()` |  | ❌ | ❌ | ❌ | ❌ |
