@@ -2,6 +2,54 @@ import unittest
 from itertools import product
 from ember import Tensor, GradTensor
 
+class TestTensorAlgebra(unittest.TestCase): 
+
+  def testAddWithTensor(self): 
+    x = Tensor([1, 2, 3, 4]) 
+    y = Tensor([1, 2, 3, 4]) 
+    z = x + y 
+    
+    self.assertTrue(z == Tensor([2, 4, 6, 8]))
+
+  def testAddWithGradTensor(self): 
+    x = Tensor([1, 2, 3, 4]) 
+    y = GradTensor([1, 2, 3, 4], [4], 0) 
+    z = x + y 
+    
+    self.assertTrue(z == Tensor([2, 4, 6, 8]))
+
+  def testSubWithTensor(self): 
+    x = Tensor([1, 2, 3, 4]) 
+    y = Tensor([1, 2, 3, 4])
+    z = x - y 
+    
+    self.assertTrue(z == Tensor([0, 0, 0, 0])) 
+
+  def testSubWithGradTensor(self): 
+    x = Tensor([1, 2, 3, 4]) 
+    y = GradTensor([1, 2, 3, 4], [4], 0) 
+    z = x - y 
+    self.assertTrue(z == Tensor([0, 0, 0, 0]))
+
+  def testMulWithTensor(self): 
+    x = Tensor([1, 2, 3, 4]) 
+    y = Tensor([1, 2, 3, 4]) 
+    z = x * y 
+    self.assertTrue(z == Tensor([1, 4, 9, 16]))
+  
+  def testMulWithGradTensor(self): 
+    x = Tensor([1, 2, 3, 4]) 
+    y = GradTensor([1, 2, 3, 4], [4], 0) 
+    z = x * y 
+    
+    self.assertTrue(z == Tensor([1, 4, 9, 16]))
+
+  def testMatMulWithTensor(self): 
+    x = Tensor([1, 2, 3, 4]).reshape([1, 4])
+    y = Tensor([1, 2, 3, 4]).reshape([4, 1])
+    z = x @ y 
+    self.assertTrue(z == Tensor([30], [1, 1]))
+
 class TestAutogradAdd(unittest.TestCase): 
     
     def testSumScalarsIntermediate(self): 
@@ -373,4 +421,5 @@ class TestAutogradMatmul(unittest.TestCase):
 
 if __name__ == "__main__": 
   unittest.main(verbosity=2)
+
 

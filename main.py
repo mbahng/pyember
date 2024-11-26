@@ -1,11 +1,11 @@
 import ember 
 
-A = ember.Tensor([[0, 1], [2, 3]]) 
-B = ember.Tensor([[4, 5], [6, 7]]) 
-C = A @ B 
+x = ember.Tensor.arange(0, 4, 1) 
+y = 2
 
-C.backprop(True)
+z = x * y
 
-print(C)
+z.backprop() 
 
-print(A.grad)
+print(z)
+print(x.grad) 
