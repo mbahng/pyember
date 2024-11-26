@@ -9,6 +9,8 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
   - [Models and Training](#models-and-training)
   - [Monte Carlo Samplers](#monte-carlo-samplers)
 
+Look [here](docs/progress.md) to see the methods it supports. 
+
 ## Installation
 
   ### Compiling the `aten` Library  
@@ -35,7 +37,7 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
 
 ## Repository Structure 
 
-  I tried to model a lot of the structure from Pytorch and TinyGrad.  
+  I tried to model a lot of the structure from Pytorch and TinyGrad. Very briefly, 
 
   1. `aten` contains the header and source files for the C++ low-level tensor library, such as basic operations and an autograd engine. 
   2. `docs` contains detailed documentation about each function.  
@@ -45,6 +47,8 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
   6. `CMakeLists.txt` generates the Makefiles needed to compile this library. 
   7. `setup.py` allows you to pip install this as a package. 
   8. `run_tests.sh` which is the main test running script. 
+
+  For a more detailed explanation, look [here](docs/structure.md). 
 
 ## Getting Started 
 
