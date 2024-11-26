@@ -13,18 +13,42 @@ Ember is a lightweight statistics and ML library for my personal use with C++ an
 
   ### Aten BaseTensor 
 
-    |Method| Implementation | PyBinds | C++ Tests | Python Tests |  
-    |------|------|------|------|------|------|  
-    |transpose|
+  | C++ Method | Python Method | Implementation | PyBinds | C++ Tests | Python Tests | Docs |
+  |----------|----------|----------|----------|----------|----------|----------|
+  | `type()` | `type()` | ✅  | ✅  | ✅  | ✅  | ✅ 
+  | `dtype()` | `dtype()` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `==` | `==` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `!=` | `!=` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `at` | `__getitem__()` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `at` | `__setitem__()` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `slice` | `[:,:]` | ✅ | ✅  | ✅  | ✅  | ✅ 
 
   ### Aten GradTensor 
 
-    | Header 1 | Header 2 | Header 3 |
-    |----------|----------|----------|
-    | Row 1    | Data     | Data     |
-    | Row 2    | Data     | Data     |
+  | C++ Method | PyBind Method | Status | C++ Tests | Python Tests | Docs |
+  |----------|----------|----------|----------|----------|----------|
+  | `std::string type() const` | `type()` | ✅  | ✅  | ✅  | ✅  
+  | `std:: string dtype() const` | `dtype()` | ✅ | ✅  | ✅  | ✅ 
+  | `bool operator==(BaseTensor&)` | `==` | ✅ | ✅  | ✅  | ✅  
+  | `bool operator!=(BaseTensor&)` | `!=` | ✅ | ✅  | ✅  | ✅ 
+  | `double at(const std::vector<size_t>&)` | `__getitem__()` | ✅ | ✅  | ✅  | ✅  
+  | `double at(const std::vector<size_t>&)` | `__setitem__()` | ✅ | ✅  | ✅  | ✅ 
+  | `slice` | `[:,:]` | ✅ | ✅  | ✅  | ✅  
+  | `pivot()`|
 
   ### Aten Tensor 
+
+  | C++ Method | Python Method | Implementation | PyBinds | C++ Tests | Python Tests | Docs |
+  |----------|----------|----------|----------|----------|----------|----------|
+  | `type()` | `type()` | ✅  | ✅  | ✅  | ✅  | ✅ 
+  | `dtype()` | `dtype()` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `==` | `==` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `!=` | `!=` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `at` | `__getitem__()` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `at` | `__setitem__()` | ✅ | ✅  | ✅  | ✅  | ✅ 
+  | `slice` | `[:,:]` | ✅ | ✅  | ✅  | ✅  | ✅ 
+
+  ### Models 
 
 
 ## Installation
