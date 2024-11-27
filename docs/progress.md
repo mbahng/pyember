@@ -42,18 +42,20 @@
   | `GradTensor::eye(size_t, size_t)` | | ✅ | ✅  | ✅ | ✅ | 
   | `transpose()` |  `transpose()` | ✅ | ✅ | ✅ | ✅ | 
   | `GradTensor copy() const` | `copy()` | ✅ | ✅  | ✅  | ✅  |     
+  | `GradTensor neg()` | `__neg__()` | ❌ | ❌ | ❌ | ❌ |
   | `GradTensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
-  | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅  | ❌ | ✅  | 
-  | `GradTensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅ | ❌ | ❌ | ✅  |      
-  | `GradTensor add(double&)` | `__add__(float)` | ✅ | ❌ | ❌ | ✅  |      
+  | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅  | ✅  | ✅  | 
+  | `GradTensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  | `GradTensor add(double&)` | `__add__(float)` | ✅ | ✅  | ✅  | ✅  |      
   | `GradTensor sub(GradTensor&)` | `__sub__(GradTensor)` | ✅ | ✅  | ✅  | ✅  |      
-  | `Tensor sub(Tensor&)` | `__sub__(Tensor)` | ✅ | ✅  | ❌ | ✅  | 
-  | `GradTensor sub(ScalarTensor&)` | `__sub__(ScalarTensor)` | ✅ | ❌ | ❌ | ✅  |      
-  | `GradTensor sub(double&)` | `__sub__(float)` | ✅ | ❌ | ❌ | ✅  |
+  | `Tensor sub(Tensor&)` | `__sub__(Tensor)` | ✅ | ✅  | ✅ | ✅  | 
+  | `GradTensor sub(ScalarTensor&)` | `__sub__(ScalarTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  | `GradTensor sub(double&)` | `__sub__(float)` | ✅ | ✅  | ✅  | ✅  |
+  | `GradTensor sub(double&)` | `__rsub__(float)` | ✅ | ✅  | ✅  | ✅  |
   | `GradTensor mul(GradTensor&)` | `__mul__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
-  | `Tensor mul(Tensor&)` | `__mul__(Tensor)` | ✅ | ✅  | ❌ | ✅  | 
-  | `GradTensor mul(ScalarTensor&)` | `__mul__(ScalarTensor)` | ✅ | ❌ | ❌ | ✅  |      
-  | `GradTensor mul(double&)` | `__mul__(float)` | ✅ | ❌ | ❌ | ✅  | 
+  | `Tensor mul(Tensor&)` | `__mul__(Tensor)` | ✅ | ✅  | ✅  | ✅  | 
+  | `GradTensor mul(ScalarTensor&)` | `__mul__(ScalarTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  | `GradTensor mul(double&)` | `__mul__(float)` | ✅ | ✅  | ✅  | ✅  | 
   | `GradTensor matmul(GradTensor&)` | `__matmul__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
 
   ## Aten Tensor 
@@ -82,6 +84,7 @@
   | `std::vector<Tensor*> backprop(bool)` | `backprop(bool)` | ✅ | ✅ | ✅ | ✅ |
   | `Tensor& reshape(std::vector<size_t>)` | `reshape(List[int])` | ✅ | ✅ | ✅ | ✅ |  
   | `Tensor copy() const` | `copy()` | ✅ | ❌ | ❌ | ✅ | 
+  | `Tensor neg()` | `__neg__()` | ❌ | ❌ | ❌ | ❌ |
   | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅  | ✅  | ✅ |
   | `Tensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ❌ | ✅  | ✅ |
   | `Tensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅  | ❌ | ❌ | ✅ |
@@ -121,21 +124,39 @@
 
   | C++ Method | PyBind Method | Status | C++ Tests | Python Tests | Docs |
   |----------|----------|----------|----------|----------|----------|
-  | `std::string type() const` | `type()` |  | ✅  | 
-  | `std:: string dtype() const` | `dtype()` |  | ✅ | 
-  | `bool operator==(ScalarTensor&)` | `__eq__()` |  | ✅ | 
-  | `bool operator!=(ScalarTensor&)` | `__ne__()` |  | ✅ | 
-  | `double at(const std::vector<size_t>&) const` | `__getitem__()` |  | ✅ 
-  | `double at(const std::vector<size_t>&)` | `__setitem__()` |  | ✅ 
-  | `std::unique_ptr<ScalarTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` |  | ✅   
-  | `ScalarTensor copy() const` |  | ✅
+  | `std::string type() const` | `type()` | ✅ | ❌ | ❌ | ❌ |
+  | `std:: string dtype() const` | `dtype()` | ✅ | ❌ | ❌ | ❌ |
+  | `bool operator==(ScalarTensor&)` | `__eq__()` | ✅ | ❌ | ❌ | ❌ |
+  | `bool operator!=(ScalarTensor&)` | `__ne__()` | ✅ | ❌ | ❌ | ❌ |
+  | `double at(const std::vector<size_t>&) const` | `__getitem__()` | 
+  | `double at(const std::vector<size_t>&)` | `__setitem__()` |
+  | `std::unique_ptr<ScalarTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | 
   | `double item() const` |  | ✅
-  | `Tensor add(Tensor&)` |  | ✅
-  | `GradTensor add(GradTensor&)` |  | ✅
-  | `Tensor sub(Tensor&)` |  | ✅
-  | `GradTensor sub(GradTensor&)` |  | ✅
-  | `Tensor mul(Tensor&)` |  | ✅
-  | `GradTensor mul(GradTensor&)` |  | ✅
+  | `ScalarTensor copy() const` |  | ✅
+  | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅ |
+  |  | `__radd__(Tensor)` | ✅
+  | `GradTensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ✅ |
+  |  | `__radd__(GradTensor)` | ✅
+  | `ScalarTensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅ | ✅ |
+  |  | `__radd__(ScalarTensor)` | ✅
+  | `ScalarTensor add(double&)` | `__add__(float)` | ❌ | ❌ | ❌ | ❌ |
+  |  | `__radd__(float)` | ✅
+  | `Tensor sub(Tensor&)` | `__sub__(Tensor)` | ✅  | ✅ |
+  |  | `__rsub__(Tensor)` | ✅  | ❌ | ❌ | ❌ |     
+  | `GradTensor sub(GradTensor&)` | `__sub__(GradTensor)` | ✅ | ✅ |
+  |  | `__rsub__(GradTensor)` | ✅  | ❌ | ❌ | ❌ |     
+  | `ScalarTensor sub(ScalarTensor&)` | `__sub__(ScalarTensor)` | ✅ | ✅ |
+  |  | `__rsub__(ScalarTensor)` | ✅  | ❌ | ❌ | ❌ |     
+  | `ScalarTensor sub(double&)` | `__sub__(float)` | ❌ | ❌ | ❌ | ❌ |     
+  |  | `__rsub__(float)` | ✅  | ❌ | ❌ | ❌ |     
+  | `Tensor mul(Tensor&)` | `__mul__(Tensor)` | ✅  | ✅ |
+  |  | `__rmul__(Tensor)` | ✅  | ❌ | ❌ | ❌ |     
+  | `GradTensor mul(GradTensor&)` | `__mul__(GradTensor)` | ✅ | ✅ |
+  |  | `__rmul__(GradTensor)` | ✅  | ❌ | ❌ | ❌ |     
+  | `ScalarTensor mul(ScalarTensor&)` | `__mul__(ScalarTensor)` | ✅ | ✅ |
+  |  | `__rmul__(ScalarTensor)` | ✅  | ❌ | ❌ | ❌ |     
+  | `ScalarTensor mul(double&)` | `__mul__(float)` | ❌ | ❌ | ❌ | ❌ |     
+  |  | `__rmul__(float)` | ✅  | ❌ | ❌ | ❌ |     
 
 
   ## Models 

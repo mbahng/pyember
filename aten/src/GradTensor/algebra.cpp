@@ -95,12 +95,16 @@ Tensor GradTensor::sub(Tensor& other) {
 }
 
 GradTensor GradTensor::sub(ScalarTensor& other) {
-  return other.sub(*this); 
+  GradTensor out = this->copy(); 
+  for (int i = 0; i < this->storage_.size(); i++) {
+    out.storage_[i] -= other.item();
+  }
+  return out; 
 }
 
 GradTensor GradTensor::sub(double& other) {
   ScalarTensor scalar = ScalarTensor(other);
-  return scalar.sub(*this); 
+  return this->sub(scalar); 
 }
 
 GradTensor GradTensor::mul(GradTensor& other) {

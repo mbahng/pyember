@@ -1,11 +1,14 @@
 import ember 
 
-x = ember.Tensor.arange(0, 4, 1) 
-y = 2
-
-z = x * y
-
-z.backprop() 
-
+x = ember.Tensor.gaussian([4, 1], 0, 1)
+y = ember.Tensor.ones([4, 4])
+z = y @ x 
+print(x) 
+print(y) 
 print(z)
-print(x.grad) 
+
+z.backprop(False) 
+
+print(x.grad)
+
+

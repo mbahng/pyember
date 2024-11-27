@@ -48,6 +48,11 @@ void init_gradtensor_binding(py::module_ &m) {
             return a.add(b);
         }
       )
+    .def("__radd__", 
+        [](GradTensor &a, double &b) {
+            return a.add(b);
+        }
+      )
     .def("__sub__", 
         [](GradTensor &a, ScalarTensor &b) {
             return a.sub(b);
@@ -66,6 +71,12 @@ void init_gradtensor_binding(py::module_ &m) {
     .def("__sub__", 
         [](GradTensor &a, double &b) {
             return a.sub(b);
+        }
+      )
+    .def("__rsub__", 
+        [](GradTensor &a, double &b) {
+            ScalarTensor scalar = ScalarTensor(b);
+            return scalar.sub(a);
         }
       )
     .def("__mul__", 
