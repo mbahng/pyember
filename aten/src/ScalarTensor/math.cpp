@@ -52,6 +52,28 @@ GradTensor ScalarTensor::add(GradTensor& other) {
   return out; 
 }
 
+ScalarTensor ScalarTensor::add(ScalarTensor& other) {
+  ScalarTensor out = ScalarTensor(this->item() + other.item()); 
+  this->grad = GradTensor({1, 1}, 1);
+  other.grad = GradTensor({1, 1}, 1); 
+
+  ScalarTensor* this_ptr = this;  
+  ScalarTensor* other_ptr = &other;  
+  out.prev = {this_ptr, other_ptr};
+
+  out.backward = [this, other_ptr] {
+    (other_ptr->grad).at({0}) = 1.0; 
+    (this->grad).at({0}) = 1.0; 
+  };
+
+  return out; 
+}
+
+ScalarTensor ScalarTensor::add(double& other) {
+  ScalarTensor scalar = ScalarTensor(this->item() + other); 
+  return this->add(scalar);
+}
+
 Tensor ScalarTensor::sub(Tensor& other) {
   Tensor out = other.copy();
   size_t length = shape_to_length(other.shape_);
@@ -94,9 +116,31 @@ GradTensor ScalarTensor::sub(GradTensor& other) {
   GradTensor out = other.copy();
   size_t length = shape_to_length(other.shape_);
   for (size_t i = 0; i < length; i++) {
-    out.storage_[i] -= this->item();
+    out.storage_[i] = this->item() - other.storage_[i]; 
   }
   return out; 
+}
+
+ScalarTensor ScalarTensor::sub(ScalarTensor& other) {
+  ScalarTensor out = ScalarTensor(this->item() - other.item()); 
+  this->grad = GradTensor({1, 1}, 1);
+  other.grad = GradTensor({1, 1}, 1); 
+
+  ScalarTensor* this_ptr = this;  
+  ScalarTensor* other_ptr = &other;  
+  out.prev = {this_ptr, other_ptr};
+
+  out.backward = [this, other_ptr] {
+    (other_ptr->grad).at({0}) = -1.0; 
+    (this->grad).at({0}) = 1.0; 
+  };
+
+  return out; 
+}
+
+ScalarTensor ScalarTensor::sub(double& other) {
+  ScalarTensor scalar = ScalarTensor(this->item() - other); 
+  return this->sub(scalar);
 }
 
 Tensor ScalarTensor::mul(Tensor& other) {
@@ -145,3 +189,25 @@ GradTensor ScalarTensor::mul(GradTensor& other) {
   }
   return out; 
 }
+
+ScalarTensor ScalarTensor::mul(ScalarTensor& other) {
+  ScalarTensor out = ScalarTensor(this->item() * other.item()); 
+  this->grad = GradTensor({1, 1}, 1);
+  other.grad = GradTensor({1, 1}, 1); 
+
+  ScalarTensor* this_ptr = this;  
+  ScalarTensor* other_ptr = &other;  
+  out.prev = {this_ptr, other_ptr};
+
+  out.backward = [this, other_ptr] {
+    (other_ptr->grad).at({0}) = this->item(); 
+    (this->grad).at({0}) = other_ptr->item(); 
+  };
+  return out; 
+}
+
+ScalarTensor ScalarTensor::mul(double& other) {
+  ScalarTensor scalar = ScalarTensor(this->item() * other);
+  return this->mul(scalar);
+}
+

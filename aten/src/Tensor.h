@@ -198,9 +198,17 @@ class ScalarTensor : public Tensor {
 
     Tensor add(Tensor& other); 
     GradTensor add(GradTensor& other); 
+    ScalarTensor add(ScalarTensor& other); 
+    ScalarTensor add(double& other); 
+
     Tensor sub(Tensor& other); 
     GradTensor sub(GradTensor& other); 
+    ScalarTensor sub(ScalarTensor& other); 
+    ScalarTensor sub(double& other); 
+
     Tensor mul(Tensor& other); 
     GradTensor mul(GradTensor& other); 
+    ScalarTensor mul(ScalarTensor& other); 
+    ScalarTensor mul(double& other); 
      
 };
