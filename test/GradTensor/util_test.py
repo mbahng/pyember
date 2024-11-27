@@ -1,6 +1,28 @@
 import unittest
 from ember import GradTensor, ScalarTensor
 
+class TestGradTensorPivot(unittest.TestCase): 
+
+  def testPivot(self): 
+    x1 = GradTensor([1, 2, 3, 4], [2, 2], 1)
+    x2 = GradTensor([1, 2, 3, 4], [1, 2, 2], 2)
+    x3 = GradTensor([1, 2, 3, 4], [1, 1, 2, 2], 3)
+    x4 = GradTensor([1, 2, 3, 4], [2, 1, 2, 1], 2)
+    x5 = GradTensor([2, 2], 1)
+    x6 = GradTensor([1, 2, 2], 2)
+    x7 = GradTensor([1, 1, 2, 2], 3)
+    x8 = GradTensor([2, 1, 2, 1], 2)
+
+    self.assertEqual(x1.pivot, 1)
+    self.assertEqual(x2.pivot, 2)
+    self.assertEqual(x3.pivot, 3)
+    self.assertEqual(x4.pivot, 2)
+    self.assertEqual(x5.pivot, 1)
+    self.assertEqual(x6.pivot, 2)
+    self.assertEqual(x7.pivot, 3)
+    self.assertEqual(x8.pivot, 2)
+
+
 class TestGradTensorEquality(unittest.TestCase): 
 
   def testGradEquals(self): 

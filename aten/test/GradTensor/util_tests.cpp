@@ -32,3 +32,15 @@ TEST(UtilsTest, Index) {
   ASSERT_TRUE(t1.at({1, 0}) == 3.); 
   ASSERT_TRUE(t1.at({1, 1}) == 4.); 
 }
+
+TEST(UtilsTest, Pivot) {
+  GradTensor t1 = GradTensor({1., 2., 3., 4.}, {2, 2}, 1); 
+  GradTensor t2 = GradTensor({1., 2., 3., 4.}, {1, 2, 2}, 2); 
+  GradTensor t3 = GradTensor({1., 2., 3., 4.}, {1, 1, 2, 2}, 3); 
+  GradTensor t4 = GradTensor({1., 2., 3., 4.}, {2, 1, 2, 1}, 2); 
+
+  ASSERT_TRUE(t1.pivot() == 1);    
+  ASSERT_TRUE(t2.pivot() == 2);    
+  ASSERT_TRUE(t3.pivot() == 3);    
+  ASSERT_TRUE(t4.pivot() == 2);    
+}
