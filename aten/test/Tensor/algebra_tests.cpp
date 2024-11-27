@@ -12,7 +12,7 @@ TEST(TensorAlgebraTest, AddTensorVector) {
   
   s1.backprop(true);
 
-  GradTensor truth = GradTensor::eye(5, 1);
+  GradTensor* truth = GradTensor::eye(5, 1);
  
   ASSERT_TRUE(t1.grad == truth); 
   ASSERT_TRUE(t2.grad == truth); 
@@ -32,11 +32,11 @@ TEST(TensorAlgebraTest, SubTensor) {
   
   s1.backprop(true);
 
-  GradTensor truth1 = GradTensor::eye(5, 1);
-  GradTensor truth2 = GradTensor::eye(5, 1); 
+  GradTensor* truth1 = GradTensor::eye(5, 1);
+  GradTensor* truth2 = GradTensor::eye(5, 1); 
 
-  for (int i = 0; i < truth2.storage_.size(); i++) {
-    truth2.storage_[i] *= -1;
+  for (int i = 0; i < truth2->storage_.size(); i++) {
+    truth2->storage_[i] *= -1;
   }
 
   ASSERT_TRUE(t1.grad == truth1); 

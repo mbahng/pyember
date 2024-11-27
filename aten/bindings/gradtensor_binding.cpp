@@ -156,8 +156,8 @@ void init_gradtensor_binding(py::module_ &m) {
         }
       )
     .def("__matmul__", 
-        [](GradTensor &a, GradTensor &b) {
-          return a.matmul(b);
+        [](GradTensor* a, GradTensor* b) {
+          return a->matmul(b);
         }
       )
 ;}

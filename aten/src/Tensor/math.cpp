@@ -30,7 +30,7 @@ Tensor Tensor::sum() {
   std::vector<size_t> newshape = {1}; 
   newshape.insert(newshape.end(), this->shape().begin(), this->shape().end());
 
-  this->grad = GradTensor(
+  this->grad = new GradTensor(
     std::vector<double>(length, 1.0), 
     newshape,
     1
@@ -38,7 +38,7 @@ Tensor Tensor::sum() {
 
   out.backward = [this, length] {
     for (size_t i = 0; i < length; ++i) {
-      (this->grad).storage_[i] = 1.0;
+      (this->grad)->storage_[i] = 1.0;
     }
   };
   return out; 

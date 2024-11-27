@@ -30,11 +30,11 @@ TEST(UtilsTst, DefaultConstructor) {
 }
 
 TEST(UtilsTst, EyeConstructor) {
-  GradTensor g = GradTensor::eye(2, 1); 
+  GradTensor* g = GradTensor::eye(2, 1); 
   std::vector<double> g_data = {1., 0., 0., 1.};
   std::vector<size_t> g_shape = {2, 2}; 
-  ASSERT_EQ(g.data(), g_data);
-  ASSERT_EQ(g.shape(), g_shape); 
-  ASSERT_EQ(g.pivot(), 1); 
+  ASSERT_EQ(g->data(), g_data);
+  ASSERT_EQ(g->shape(), g_shape); 
+  ASSERT_EQ(g->pivot(), 1); 
 }
 
