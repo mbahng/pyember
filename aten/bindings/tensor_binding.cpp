@@ -6,29 +6,29 @@ void init_tensor_binding(py::module_ &m) {
 
     // Constructors
     .def(py::init<std::vector<double>, std::vector<size_t>>(), 
-        py::arg("data"), py::arg("shape"))
+      py::arg("data"), py::arg("shape"))
     .def(py::init<std::vector<double>>(), 
-        py::arg("data")) 
+      py::arg("data")) 
     .def(py::init<std::vector<std::vector<double>>>(), 
-        py::arg("data")) 
+      py::arg("data")) 
     .def(py::init<std::vector<std::vector<std::vector<double>>>>(), 
-        py::arg("data")) 
+      py::arg("data")) 
 
     .def_static("arange", &Tensor::arange, 
-        py::arg("start"), py::arg("stop"), py::arg("step"))
+      py::arg("start"), py::arg("stop"), py::arg("step"))
     .def_static("linspace", &Tensor::linspace, 
-        py::arg("start"), py::arg("stop"), py::arg("numsteps"))
+      py::arg("start"), py::arg("stop"), py::arg("numsteps"))
     .def_static("gaussian", &Tensor::gaussian, 
-        py::arg("shape"), py::arg("mean"), py::arg("stddev"))
+      py::arg("shape"), py::arg("mean"), py::arg("stddev"))
     .def_static("uniform", &Tensor::uniform, 
-        py::arg("shape"), py::arg("min"), py::arg("max"))
+      py::arg("shape"), py::arg("min"), py::arg("max"))
     .def_static("ones", &Tensor::ones, 
-        py::arg("shape"))
+      py::arg("shape"))
     .def_static("zeros", &Tensor::zeros, 
-        py::arg("shape"))
+      py::arg("shape"))
     .def("copy", 
         [](Tensor &a) {
-            return a.copy();
+          return a.copy();
         }
       )
 
@@ -63,66 +63,125 @@ void init_tensor_binding(py::module_ &m) {
     // order of the bindings matter: most specific should go first
     .def("__add__", 
         [](Tensor &a, ScalarTensor &b) {
-            return a.add(b);
+          return a.add(b);
+        }
+      )
+    .def("__radd__", 
+        [](Tensor &a, ScalarTensor &b) {
+          return b.add(a);
         }
       )
     .def("__add__", 
         [](Tensor &a, Tensor &b) {
-            return a.add(b);
+          return a.add(b);
+        }
+      )
+    .def("__radd__", 
+        [](Tensor &a, Tensor &b) {
+          return b.add(a);
         }
       )
     .def("__add__", 
         [](Tensor &a, GradTensor &b) {
-            return a.add(b);
+          return a.add(b);
+        }
+      )
+    .def("__radd__", 
+        [](Tensor &a, GradTensor &b) {
+          return b.add(a);
         }
       )
     .def("__add__", 
         [](Tensor &a, double &b) {
-            return a.add(b);
+          return a.add(b);
+        }
+      )
+    .def("__radd__", 
+        [](Tensor &a, double &b) {
+          return a.add(b);
         }
       )
 
     .def("__sub__", 
         [](Tensor &a, ScalarTensor &b) {
-            return a.sub(b);
+          return a.sub(b);
         }
       )
-
+    .def("__rsub__", 
+        [](Tensor &a, ScalarTensor &b) {
+          return b.sub(a);
+        }
+      )
     .def("__sub__", 
         [](Tensor &a, Tensor &b) {
-            return a.sub(b);
+          return a.sub(b);
         }
       )
-
+    .def("__rsub__", 
+        [](Tensor &a, Tensor &b) {
+          return b.sub(a);
+        }
+      )
     .def("__sub__", 
         [](Tensor &a, GradTensor &b) {
-            return a.sub(b);
+          return a.sub(b);
+        }
+      )
+    .def("__rsub__", 
+        [](Tensor &a, GradTensor &b) {
+          return b.sub(a);
         }
       )
     .def("__sub__", 
         [](Tensor &a, double &b) {
-            return a.sub(b);
+          return a.sub(b);
+        }
+      )
+    .def("__rsub__", 
+        [](Tensor &a, double &b) {
+          ScalarTensor scalar = ScalarTensor(b); 
+          return scalar.sub(a);
         }
       )
 
     .def("__mul__", 
         [](Tensor &a, ScalarTensor &b) {
-            return a.mul(b);
+          return a.mul(b);
+        }
+      )
+    .def("__rmul__", 
+        [](Tensor &a, ScalarTensor &b) {
+          return b.mul(a);
         }
       )
     .def("__mul__", 
         [](Tensor &a, Tensor &b) {
-            return a.mul(b);
+          return a.mul(b);
+        }
+      )
+    .def("__rmul__", 
+        [](Tensor &a, Tensor &b) {
+          return b.mul(a);
         }
       )
     .def("__mul__", 
         [](Tensor &a, GradTensor &b) {
-            return a.mul(b);
+          return a.mul(b);
+        }
+      )
+    .def("__rmul__", 
+        [](Tensor &a, GradTensor &b) {
+          return b.mul(a);
         }
       )
     .def("__mul__", 
         [](Tensor &a, double &b) {
-            return a.mul(b);
+          return a.mul(b);
+        }
+      )
+    .def("__rmul__", 
+        [](Tensor &a, double &b) {
+          return a.mul(b);
         }
       )
 
@@ -130,7 +189,6 @@ void init_tensor_binding(py::module_ &m) {
        [](Tensor &a, Tensor &b) {
          return a.matmul(b); 
        })
-
     .def("__matmul__", 
        [](Tensor &a, Tensor &b) {
          return a.matmul(b); 
