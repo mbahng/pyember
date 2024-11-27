@@ -28,6 +28,12 @@ void init_gradtensor_binding(py::module_ &m) {
         }
       )
 
+    .def("__neg__", 
+        [](GradTensor &a) {
+          double c = -1.;
+          return a.mul(c);
+        }
+      )
     .def("__add__", 
         [](GradTensor &a, ScalarTensor &b) {
           return a.add(b);

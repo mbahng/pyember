@@ -2,6 +2,19 @@ import unittest
 from itertools import product
 from ember import Tensor, GradTensor
 
+class TestNeg(unittest.TestCase):
+
+  def testNegate(self): 
+    x = Tensor([1]) 
+    y = Tensor([1, 2, 3, 4]) 
+    z = Tensor([[1, 2], [3, 4]]) 
+    xt = Tensor([-1]) 
+    yt = Tensor([-1, -2, -3, -4]) 
+    zt = Tensor([[-1, -2], [-3, -4]]) 
+    self.assertEqual(-x, xt)
+    self.assertEqual(-y, yt)
+    self.assertEqual(-z, zt)
+    
 class TestGradTensorAdd(unittest.TestCase):
 
   def testAddScalarGradTensor(self):

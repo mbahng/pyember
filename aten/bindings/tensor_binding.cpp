@@ -61,6 +61,12 @@ void init_tensor_binding(py::module_ &m) {
         }
       )
     // order of the bindings matter: most specific should go first
+    .def("__neg__", 
+        [](Tensor &a) {
+          double c = -1.;
+          return a.mul(c);
+        }
+      )
     .def("__add__", 
         [](Tensor &a, ScalarTensor &b) {
           return a.add(b);
