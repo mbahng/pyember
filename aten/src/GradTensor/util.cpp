@@ -1,5 +1,17 @@
 #include "../Tensor.h"
 
+GradTensor::operator std::string() const {
+  std::string result = BaseTensor::operator std::string();  
+  if (result.back() != '\n') {
+    result += ", pivot = " + std::to_string(this->pivot_) + '\n'; 
+  }
+  else {
+    result.pop_back();
+    result += ", pivot = " + std::to_string(this->pivot_) + '\n'; 
+  }
+  return result; 
+}
+
 bool GradTensor::operator==(GradTensor& other) const {
   return (BaseTensor::operator==(other) && this->pivot_ == other.pivot_);
 }

@@ -43,7 +43,7 @@ class BaseTensor {
 
     virtual bool operator==(BaseTensor& other) const; 
     virtual bool operator!=(BaseTensor& other) const;  
-    operator std::string() const; 
+    virtual operator std::string() const; 
 
     // Tensor Math Operations cannot be virtualized 
     
@@ -82,6 +82,7 @@ class GradTensor : public BaseTensor {
     bool operator==(GradTensor& other) const; 
     bool operator!=(GradTensor& other) const;  
     GradTensor copy() const; 
+    operator std::string() const override; 
 
     GradTensor add(GradTensor& other); 
     Tensor add(Tensor& other); 
@@ -142,6 +143,7 @@ class Tensor : public BaseTensor {
     std::string type() const override { return "Tensor"; }
     virtual Tensor& reshape(std::vector<size_t> new_shape);
     Tensor copy() const; 
+    operator std::string() const override; 
 
     // backprop functions 
     void build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo); 
