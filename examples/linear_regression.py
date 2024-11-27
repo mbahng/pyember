@@ -1,13 +1,17 @@
 import ember 
-D = 10 
-X = ember.Tensor.uniform([100, 10], 0, 1)
 
-model = ember.LinearRegression(D)
+X = ember.Tensor.arange(0, 10, 1).reshape([1, 10])
+model = ember.LinearRegression(10) 
+model.W = ember.Tensor.arange(10, 20, 1).reshape([10, 1])
 
-for i in range(100): 
-    x = X[i]
-    y = model.forward(x) 
-    print(y.data()[0])
-    g = model.W.grad.copy().reshape(model.W.shape)
-    model.W += g 
+print(X)
+print(model.W)
+print(model.b)
 
+y = model.forward(X) 
+print(y)
+print("===============")
+y.backprop(False) 
+
+print(X.grad)
+print(model.W.grad)
