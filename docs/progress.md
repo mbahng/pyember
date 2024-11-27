@@ -35,8 +35,8 @@
   | `double at(const std::vector<size_t>&) const`                        | `__getitem__()`                            | ✅     | ✅        | ✅           | ✅     |
   | `double at(const std::vector<size_t>&)`                              | `__setitem__()`                            | ✅     | ✅        | ✅           | ✅     |
   | `std::unique_ptr<GradTensor> slice(const std::vector<Slice>&) const` | `__getitem__()`                            | ✅     | ✅        | ✅           | ✅     |
-  | `BaseTensor::operator std::string() const`                           | `__str__()`                                | 🪧     | ❌        | ❌           | ✅     |
-  | `BaseTensor::operator std::string() const`                           | `__repr__()`                               | 🪧     | ❌        | ❌           | ✅     |
+  | `BaseTensor::operator std::string() const`                           | `__str__()`                                | ✅     | ❌        | ✅           | ✅     |
+  | `BaseTensor::operator std::string() const`                           | `__repr__()`                               | ✅     | ❌        | ✅           | ✅     |
   | `size_t pivot() const`                                               | `pivot()`                                  | ✅     | ✅        | ✅           | ✅     |
   | `GradTensor()`                                                       | `GradTensor()`                             | ✅     | ✅        | ✅           | ✅     |
   | `GradTensor(std::vector<double>, std::vector<size_t>, size_t)`       | `GradTensor(List[double], List[int], int)` | ✅     | ✅        | ✅           | ✅     |
@@ -82,8 +82,8 @@
   | `double at(const std::vector<size_t>&) const`                           | `__getitem__()`                               | ✅     | ✅        | ✅           | ✅     |
   | `double at(const std::vector<size_t>&)`                                 | `__setitem__()`                               | ✅     | ✅        | ✅           | ✅     |
   | `std::unique_ptr<Tensor> slice(const std::vector<Slice>&) const`        | `__getitem__()`                               | ✅     | ✅        | ✅           | ✅     |
-  | `BaseTensor::operator std::string() const`                              | `__str__()`                                   | 🪧     | ✅        | ✅           | ✅     |
-  | `BaseTensor::operator std::string() const`                              | `__repr__()`                                  | 🪧     | ✅        | ✅           | ✅     |
+  | `BaseTensor::operator std::string() const`                              | `__str__()`                                   | ✅     | ✅        | ✅           | ✅     |
+  | `BaseTensor::operator std::string() const`                              | `__repr__()`                                  | ✅     | ✅        | ✅           | ✅     |
   | `Tensor(std::vector<double>, std::vector<size_t>)`                      | `Tensor(List[float], List[int])`              | ✅     | ✅        | ✅           | ✅     |
   | `Tensor(std::vector<double>)`                                           | `Tensor(List[float])`                         | ✅     | ✅        | ✅           | ✅     |
   | `Tensor(std::vector<std::vector<double>>)`                              | `Tensor(List[List[float]])`                   | ✅     | ✅        | ✅           | ✅     |
