@@ -145,10 +145,10 @@ GradTensor GradTensor::mul(double& other) {
   return scalar.mul(*this); 
 }
 
-GradTensor GradTensor::matmul(GradTensor& other) { 
+GradTensor* GradTensor::matmul(GradTensor* other) { 
   // tensor contraction this * other 
-  std::vector<size_t> otherL = std::vector<size_t> (other.shape().begin(), other.shape().begin() + other.pivot());
-  std::vector<size_t> otherR = std::vector<size_t> (other.shape().begin() + other.pivot(), other.shape().end());
+  std::vector<size_t> otherL = std::vector<size_t> (other->shape().begin(), other->shape().begin() + other->pivot());
+  std::vector<size_t> otherR = std::vector<size_t> (other->shape().begin() + other->pivot(), other->shape().end());
   std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin(), this->shape().begin() + this->pivot());
   std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pivot(), this->shape().end());
 
@@ -168,7 +168,7 @@ GradTensor GradTensor::matmul(GradTensor& other) {
   /* size_t k = shape_to_length(otherR);  */
   
   // Create result vector initialized with zeros 
-  GradTensor out = GradTensor(concat_indices(thisL, otherR), thisL.size());  
+  GradTensor* out = new GradTensor(concat_indices(thisL, otherR), thisL.size());  
 
   for (std::vector<size_t> m : generate_all_indices(thisL)) {
     for (std::vector<size_t> k : generate_all_indices(otherR)) {
@@ -176,9 +176,9 @@ GradTensor GradTensor::matmul(GradTensor& other) {
       for (std::vector<size_t> n : generate_all_indices(thisR)) {
         std::vector<size_t> l_idx = concat_indices(m, n);
         std::vector<size_t> r_idx = concat_indices(n, k); 
-        contraction += (this->at(l_idx) * other.at(r_idx));
+        contraction += (this->at(l_idx) * other->at(r_idx));
       }
-      out.at(concat_indices(m, k)) = contraction; 
+      out->at(concat_indices(m, k)) = contraction; 
     }
   }
 

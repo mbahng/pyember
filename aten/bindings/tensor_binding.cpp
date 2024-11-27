@@ -5,14 +5,18 @@ void init_tensor_binding(py::module_ &m) {
   py::class_<Tensor, BaseTensor>(m, "Tensor")
 
     // Constructors
-    .def(py::init<std::vector<double>, std::vector<size_t>>(), 
-      py::arg("data"), py::arg("shape"))
-    .def(py::init<std::vector<double>>(), 
-      py::arg("data")) 
-    .def(py::init<std::vector<std::vector<double>>>(), 
-      py::arg("data")) 
-    .def(py::init<std::vector<std::vector<std::vector<double>>>>(), 
-      py::arg("data")) 
+    .def(py::init([](std::vector<double> data, std::vector<size_t> shape) {
+        return new Tensor(data, shape);
+      }))
+    .def(py::init([](std::vector<double> data) {
+        return new Tensor(data);
+      }))
+    .def(py::init([](std::vector<std::vector<double>> data) {
+        return new Tensor(data);
+      }))
+    .def(py::init([](std::vector<std::vector<std::vector<double>>> data) {
+        return new Tensor(data);
+      }))
 
     .def_static("arange", &Tensor::arange, 
       py::arg("start"), py::arg("stop"), py::arg("step"))
@@ -34,8 +38,8 @@ void init_tensor_binding(py::module_ &m) {
 
     // Expose grad attribute
     .def_property("grad",
-      [](const Tensor &t) -> const GradTensor& { return t.grad; },
-      [](Tensor &t, const GradTensor &g) { t.grad = g; })
+      [](const Tensor &t) -> const GradTensor* { return t.grad; },
+      [](Tensor &t, GradTensor *g) { t.grad = g; })
 
     // Expose prev vector
     .def_property("prev",

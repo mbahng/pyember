@@ -76,7 +76,7 @@ class GradTensor : public BaseTensor {
     std::string type() const override { return "GradTensor"; }
     size_t pivot() const { return pivot_; } 
     
-    static GradTensor eye(size_t n, size_t pivot = 1); 
+    static GradTensor* eye(size_t n, size_t pivot = 1); 
 
     // utils 
     bool operator==(GradTensor& other) const; 
@@ -99,7 +99,7 @@ class GradTensor : public BaseTensor {
     GradTensor mul(ScalarTensor& other);
     GradTensor mul(double& other);
 
-    GradTensor matmul(GradTensor& other); 
+    GradTensor* matmul(GradTensor* other); 
 
     double at(const std::vector<size_t>& indices) const override {
         return BaseTensor::at(indices);
@@ -119,7 +119,7 @@ class GradTensor : public BaseTensor {
 
 class Tensor : public BaseTensor { 
   public: 
-    GradTensor grad = GradTensor();
+    GradTensor* grad = new GradTensor();
     std::vector<Tensor*> prev = std::vector<Tensor*>();
     std::function<void()> backward;
 

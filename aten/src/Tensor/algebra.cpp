@@ -33,8 +33,8 @@ Tensor Tensor::add(Tensor& other) {
   Tensor out = Tensor(res_data, this->shape()); 
 
   std::vector<size_t> newshape = concat_indices(out.shape(), this->shape());
-  this->grad = GradTensor(newshape, out.shape().size()); 
-  other.grad = GradTensor(newshape, out.shape().size()); 
+  this->grad = new GradTensor(newshape, out.shape().size()); 
+  other.grad = new GradTensor(newshape, out.shape().size()); 
 
   Tensor* this_ptr = this;
   Tensor* other_ptr = &other;
@@ -49,12 +49,12 @@ Tensor Tensor::add(Tensor& other) {
       for (std::vector<size_t> r_idx : generate_all_indices(this->shape())) {
         std::vector<size_t> idx = concat_indices(l_idx, r_idx);
         if (l_idx == r_idx) {
-          (this->grad).at(idx) = 1.0;
-          (other_ptr->grad).at(idx) = 1.0;
+          (this->grad)->at(idx) = 1.0;
+          (other_ptr->grad)->at(idx) = 1.0;
         }
         else {
-          (this->grad).at(idx) = 0.0;
-          (other_ptr->grad).at(idx) = 0.0;
+          (this->grad)->at(idx) = 0.0;
+          (other_ptr->grad)->at(idx) = 0.0;
         }
       }
     }
@@ -98,8 +98,8 @@ Tensor Tensor::sub(Tensor& other) {
 
   std::vector<size_t> newshape = out.shape(); 
   newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
-  this->grad = GradTensor(newshape, this->shape().size()); 
-  other.grad = GradTensor(newshape, this->shape().size()); 
+  this->grad = new GradTensor(newshape, this->shape().size()); 
+  other.grad = new GradTensor(newshape, this->shape().size()); 
 
   Tensor* this_ptr = this;
   Tensor* other_ptr = &other;
@@ -113,12 +113,12 @@ Tensor Tensor::sub(Tensor& other) {
       for (std::vector<size_t> r_idx : generate_all_indices(this->shape())) {
         std::vector<size_t> idx = concat_indices(l_idx, r_idx);
         if (l_idx == r_idx) {
-          (this->grad).at(idx) = 1.0;
-          (other_ptr->grad).at(idx) = -1.0;
+          (this->grad)->at(idx) = 1.0;
+          (other_ptr->grad)->at(idx) = -1.0;
         }
         else {
-          (this->grad).at(idx) = 0.0;
-          (other_ptr->grad).at(idx) = 0.0;
+          (this->grad)->at(idx) = 0.0;
+          (other_ptr->grad)->at(idx) = 0.0;
         }
       }
     }
@@ -160,14 +160,14 @@ Tensor Tensor::mul(Tensor& other) {
 
   std::vector<size_t> newshape = out.shape(); 
   newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
-  this->grad = GradTensor(newshape, this->shape().size()); 
-  other.grad = GradTensor(newshape, this->shape().size()); 
+  this->grad = new GradTensor(newshape, this->shape().size()); 
+  other.grad = new GradTensor(newshape, this->shape().size()); 
 
   Tensor* this_ptr = this;
   Tensor* other_ptr = &other;
   
   out.prev = {this_ptr, other_ptr};
-  out.grad = GradTensor(duplicate_indices(this->shape()), (this->shape()).size());
+  out.grad = new GradTensor(duplicate_indices(this->shape()), (this->shape()).size());
 
   out.backward = [this, other_ptr] {
     // update gradient to form d out[i]/ d this[i] = 1.  
@@ -178,8 +178,8 @@ Tensor Tensor::mul(Tensor& other) {
       for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape_)) { 
         if (l_idx == r_idx) {
           std::vector<size_t> idx = concat_indices(l_idx, r_idx);
-          (this->grad).at(idx) = other_ptr->at(r_idx);
-          (other_ptr->grad).at(idx) = this->at(l_idx);
+          (this->grad)->at(idx) = other_ptr->at(r_idx);
+          (other_ptr->grad)->at(idx) = this->at(l_idx);
         }
       }
     }
@@ -237,8 +237,8 @@ Tensor Tensor::matmul(Tensor& other) {
   // For B: shape is (M, K, N, K) where M,K is output shape and N,K is input shape
   std::vector<size_t> right_grad_shape = {m, p, n, p};
   
-  this->grad = GradTensor(left_grad_shape, 2);  // pivot after output dimensions
-  other.grad = GradTensor(right_grad_shape, 2); // pivot after output dimensions
+  this->grad = new GradTensor(left_grad_shape, 2);  // pivot after output dimensions
+  other.grad = new GradTensor(right_grad_shape, 2); // pivot after output dimensions
 
   Tensor* this_ptr = this;
   Tensor* other_ptr = &other;
@@ -254,9 +254,9 @@ Tensor Tensor::matmul(Tensor& other) {
           for (size_t l = 0; l < n; ++l) { // input A col
             std::vector<size_t> grad_idx = {i, j, k, l};
             if (i == k) {
-              this->grad.at(grad_idx) = other_ptr->data()[l * p + j];
+              (this->grad)->at(grad_idx) = other_ptr->data()[l * p + j];
             } else {
-              this->grad.at(grad_idx) = 0.0;
+              (this->grad)->at(grad_idx) = 0.0;
             }
           }
         }
@@ -271,9 +271,9 @@ Tensor Tensor::matmul(Tensor& other) {
           for (size_t l = 0; l < p; ++l) { // input B col
             std::vector<size_t> grad_idx = {i, j, k, l};
             if (j == l) {
-              other_ptr->grad.at(grad_idx) = this->data()[i * n + k];
+              (other_ptr->grad)->at(grad_idx) = this->data()[i * n + k];
             } else {
-              other_ptr->grad.at(grad_idx) = 0.0;
+              (other_ptr->grad)->at(grad_idx) = 0.0;
             }
           }
         }
