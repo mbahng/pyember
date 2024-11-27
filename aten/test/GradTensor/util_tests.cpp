@@ -16,12 +16,12 @@ TEST(UtilsTest, Equality) {
 
 TEST(UtilsTest, Copy) {
   GradTensor t1 = GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
-  GradTensor t2 = t1.copy(); 
+  GradTensor* t2 = t1.copy(); 
 
   // They are copies
-  ASSERT_TRUE(t1 == t2); 
+  ASSERT_TRUE(t1 == *t2); 
   // But do not live in the same memory address 
-  ASSERT_TRUE(&t1 != &t2);
+  ASSERT_TRUE(&t1 != t2);
 }
 
 TEST(UtilsTest, Index) {
@@ -131,38 +131,6 @@ TEST(GradTensorTest, Slice2D) {
 
 
   }
-
-  /* Tensor r1 = Tensor({0., 1., 2., 3., 12., 13., 14., 15.}, {2, 1, 4}); */
-  /* Tensor r2 = Tensor({4., 5., 6., 7., 16., 17., 18., 19.}, {2, 1, 4}); */
-  /* Tensor r3 = Tensor({8., 9., 10., 11., 20., 21., 22., 23.}, {2, 1, 4}); */
-  /* std::vector<Tensor::Slice> r1s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(0, 1, 1), Tensor::Slice()}; */
-  /* std::vector<Tensor::Slice> r2s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(1, 2, 1), Tensor::Slice()}; */
-  /* std::vector<Tensor::Slice> r3s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(2, 3, 1), Tensor::Slice()}; */
-  /*  */
-  /* ASSERT_TRUE(*t.slice(r1s) == r1); */
-  /* ASSERT_TRUE(*t.slice(r2s) == r2); */
-  /* ASSERT_TRUE(*t.slice(r3s) == r3); */
-  /*  */
-  /* Tensor c1 = Tensor({0., 4., 8., 12., 16., 20.}, {2, 3, 1}); */
-  /* Tensor c2 = Tensor({1., 5., 9., 13., 17., 21.}, {2, 3, 1}); */
-  /* Tensor c3 = Tensor({2., 6., 10., 14., 18., 22.}, {2, 3, 1}); */
-  /* Tensor c4 = Tensor({3., 7., 11., 15., 19., 23.}, {2, 3, 1}); */
-  /* std::vector<Tensor::Slice> c1s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(), Tensor::Slice(0, 1, 1)}; */
-  /* std::vector<Tensor::Slice> c2s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(), Tensor::Slice(1, 2, 1)}; */
-  /* std::vector<Tensor::Slice> c3s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(), Tensor::Slice(2, 3, 1)}; */
-  /* std::vector<Tensor::Slice> c4s = {Tensor::Slice(),  */
-  /*   Tensor::Slice(), Tensor::Slice(3, 4, 1)}; */
-  /*  */
-  /* ASSERT_TRUE(*t.slice(c1s) == c1); */
-  /* ASSERT_TRUE(*t.slice(c2s) == c2); */
-  /* ASSERT_TRUE(*t.slice(c3s) == c3); */
-  /* ASSERT_TRUE(*t.slice(c4s) == c4); */
 }
 
 TEST(GradTensorTest, Slice3D) {

@@ -1,7 +1,7 @@
 #include "../Tensor.h"
 
-ScalarTensor ScalarTensor::copy() const {
-  return ScalarTensor(this->storage_);
+ScalarTensor* ScalarTensor::copy() const {
+  return new ScalarTensor(this->storage_);
 }
 
 double ScalarTensor::item() const {

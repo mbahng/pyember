@@ -19,8 +19,8 @@ bool GradTensor::operator==(GradTensor& other) const {
 bool GradTensor::operator!=(GradTensor& other) const {
     return !(*this == other);
 }
-GradTensor GradTensor::copy() const {
-  return GradTensor(this->storage_, this->shape_, this->pivot_);
+GradTensor* GradTensor::copy() const {
+  return new GradTensor(this->storage_, this->shape_, this->pivot_);
 }
 
 GradTensor& GradTensor::transpose(const std::vector<size_t>& axes) {

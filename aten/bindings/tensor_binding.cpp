@@ -66,144 +66,144 @@ void init_tensor_binding(py::module_ &m) {
       )
     // order of the bindings matter: most specific should go first
     .def("__neg__", 
-        [](Tensor &a) {
+        [](Tensor *a) {
           double c = -1.;
-          return a.mul(c);
+          return a->mul(&c);
         }
       )
     .def("__add__", 
-        [](Tensor &a, ScalarTensor &b) {
-          return a.add(b);
+        [](Tensor *a, ScalarTensor *b) {
+          return a->add(b);
         }
       )
     .def("__radd__", 
-        [](Tensor &a, ScalarTensor &b) {
-          return b.add(a);
+        [](Tensor *a, ScalarTensor *b) {
+          return b->add(a);
         }
       )
     .def("__add__", 
-        [](Tensor &a, Tensor &b) {
-          return a.add(b);
+        [](Tensor *a, Tensor *b) {
+          return a->add(b);
         }
       )
     .def("__radd__", 
-        [](Tensor &a, Tensor &b) {
-          return b.add(a);
+        [](Tensor *a, Tensor *b) {
+          return b->add(a);
         }
       )
     .def("__add__", 
-        [](Tensor &a, GradTensor &b) {
-          return a.add(b);
+        [](Tensor *a, GradTensor *b) {
+          return a->add(b);
         }
       )
     .def("__radd__", 
-        [](Tensor &a, GradTensor &b) {
-          return b.add(a);
+        [](Tensor *a, GradTensor *b) {
+          return b->add(a);
         }
       )
     .def("__add__", 
-        [](Tensor &a, double &b) {
-          return a.add(b);
+        [](Tensor *a, double *b) {
+          return a->add(b);
         }
       )
     .def("__radd__", 
-        [](Tensor &a, double &b) {
-          return a.add(b);
+        [](Tensor *a, double *b) {
+          return a->add(b);
         }
       )
 
     .def("__sub__", 
-        [](Tensor &a, ScalarTensor &b) {
-          return a.sub(b);
+        [](Tensor *a, ScalarTensor *b) {
+          return a->sub(b);
         }
       )
     .def("__rsub__", 
-        [](Tensor &a, ScalarTensor &b) {
-          return b.sub(a);
+        [](Tensor *a, ScalarTensor *b) {
+          return b->sub(a);
         }
       )
     .def("__sub__", 
-        [](Tensor &a, Tensor &b) {
-          return a.sub(b);
+        [](Tensor *a, Tensor *b) {
+          return a->sub(b);
         }
       )
     .def("__rsub__", 
-        [](Tensor &a, Tensor &b) {
-          return b.sub(a);
+        [](Tensor *a, Tensor *b) {
+          return b->sub(a);
         }
       )
     .def("__sub__", 
-        [](Tensor &a, GradTensor &b) {
-          return a.sub(b);
+        [](Tensor *a, GradTensor *b) {
+          return a->sub(b);
         }
       )
     .def("__rsub__", 
-        [](Tensor &a, GradTensor &b) {
-          return b.sub(a);
+        [](Tensor *a, GradTensor *b) {
+          return b->sub(a);
         }
       )
     .def("__sub__", 
-        [](Tensor &a, double &b) {
-          return a.sub(b);
+        [](Tensor *a, double *b) {
+          return a->sub(b);
         }
       )
     .def("__rsub__", 
-        [](Tensor &a, double &b) {
-          ScalarTensor scalar = ScalarTensor(b); 
-          return scalar.sub(a);
+        [](Tensor *a, double *b) {
+          ScalarTensor* scalar = new ScalarTensor(*b); 
+          return scalar->sub(a);
         }
       )
 
     .def("__mul__", 
-        [](Tensor &a, ScalarTensor &b) {
-          return a.mul(b);
+        [](Tensor *a, ScalarTensor *b) {
+          return a->mul(b);
         }
       )
     .def("__rmul__", 
-        [](Tensor &a, ScalarTensor &b) {
-          return b.mul(a);
+        [](Tensor *a, ScalarTensor *b) {
+          return b->mul(a);
         }
       )
     .def("__mul__", 
-        [](Tensor &a, Tensor &b) {
-          return a.mul(b);
+        [](Tensor *a, Tensor *b) {
+          return a->mul(b);
         }
       )
     .def("__rmul__", 
-        [](Tensor &a, Tensor &b) {
-          return b.mul(a);
+        [](Tensor *a, Tensor *b) {
+          return b->mul(a);
         }
       )
     .def("__mul__", 
-        [](Tensor &a, GradTensor &b) {
-          return a.mul(b);
+        [](Tensor *a, GradTensor *b) {
+          return a->mul(b);
         }
       )
     .def("__rmul__", 
-        [](Tensor &a, GradTensor &b) {
-          return b.mul(a);
+        [](Tensor *a, GradTensor *b) {
+          return b->mul(a);
         }
       )
     .def("__mul__", 
-        [](Tensor &a, double &b) {
-          return a.mul(b);
+        [](Tensor *a, double *b) {
+          return a->mul(b);
         }
       )
     .def("__rmul__", 
-        [](Tensor &a, double &b) {
-          return a.mul(b);
+        [](Tensor *a, double *b) {
+          return a->mul(b);
         }
       )
 
     .def("matmul", 
-       [](Tensor &a, Tensor &b) {
-         return a.matmul(b); 
-       })
+       [](Tensor *a, Tensor *b) {
+         return a->matmul(b); 
+       }
+     )
     .def("__matmul__", 
-       [](Tensor &a, Tensor &b) {
-         return a.matmul(b); 
-       })
+       [](Tensor *a, Tensor *b) {
+         return a->matmul(b); 
+       }
+     )
 
 ;}
-
-

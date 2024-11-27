@@ -8,13 +8,13 @@ Tensor::operator std::string() const {
   return result; 
 }
 
-Tensor Tensor::copy() const {
-  return Tensor(this->storage_, this->shape_);
+Tensor* Tensor::copy() const {
+  return new Tensor(this->storage_, this->shape_);
 }
 
-Tensor Tensor::transpose(const std::vector<size_t>& axes) const {
+Tensor* Tensor::transpose(const std::vector<size_t>& axes) const {
   // Create new tensor with copy of current data
-  Tensor result = copy();
+  Tensor* result = copy();
   
   // If no axes specified, reverse all dimensions
   std::vector<size_t> perm_axes = axes;
@@ -89,8 +89,8 @@ Tensor Tensor::transpose(const std::vector<size_t>& axes) const {
   }
   
   // Update shape and storage of result
-  result.shape_ = new_shape;
-  result.storage_ = std::move(temp_storage);
+  result->shape_ = new_shape;
+  result->storage_ = std::move(temp_storage);
   
   return result;
 }
