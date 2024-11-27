@@ -35,10 +35,10 @@
   | `double at(const std::vector<size_t>&) const` | `__getitem__()` | ✅ | ✅ | ✅ | ✅ | 
   | `double at(const std::vector<size_t>&)` | `__setitem__()` | ✅ | ✅ | ✅ | ✅  |
   | `std::unique_ptr<GradTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | ✅ | ✅ | ✅ | ✅ |
-  | `size_t pivot() const` | `pivot()` | ✅ | ❌ | ❌ | ❌ | 
-  | `GradTensor()` | `GradTensor()` | ✅ | ✅  | ✅  | ✅  | 
-  | `GradTensor(std::vector<double>, std::vector<size_t>, size_t)` | `GradTensor(List[double], List[int], int)` | ✅ | ✅  | ✅  | ✅  | 
-  | `GradTensor(std::vector<size_t>, size_t)` | `GradTensor(List[int], int)`| ✅ | ✅  | ✅  | ✅  | 
+  | `size_t pivot() const` | `pivot()` | ✅ | ✅ | ✅ | ✅ | 
+  | `GradTensor()` | `GradTensor()` | ✅ | ✅ | ✅ | ✅ | 
+  | `GradTensor(std::vector<double>, std::vector<size_t>, size_t)` | `GradTensor(List[double], List[int], int)` | ✅ | ✅ | ✅ | ✅ | 
+  | `GradTensor(std::vector<size_t>, size_t)` | `GradTensor(List[int], int)`| ✅ | ✅ | ✅ | ✅ | 
   | `GradTensor::eye(size_t, size_t)` | | ✅ | ✅  | ✅ | ✅ | 
   | `transpose()` |  `transpose()` | ✅ | ✅ | ✅ | ✅ | 
   | `GradTensor copy() const` | `copy()` | ✅ | ✅  | ✅  | ✅  |     
