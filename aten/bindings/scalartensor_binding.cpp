@@ -15,6 +15,12 @@ void init_scalartensor_binding(py::module_ &m) {
             return a.item();
         }
       )
+    .def("__neg__", 
+        [](ScalarTensor &a) {
+          double c = -1.;
+          return a.mul(c);
+        }
+      )
     .def("__add__", 
         [](ScalarTensor &a, ScalarTensor &b) {
             return a.add(b);

@@ -1,6 +1,16 @@
 import unittest
 from ember import ScalarTensor, Tensor
 
+class TestNeg(unittest.TestCase):
+
+  def testNegate(self): 
+    x = Tensor([1]) 
+    xt = Tensor([-1]) 
+    self.assertEqual(-x, xt)
+    x = Tensor([2]) 
+    xt = Tensor([-2]) 
+    self.assertEqual(-x, xt)
+
 class TestScalarTensorMath(unittest.TestCase): 
 
   def testSumScalarVector(self): 

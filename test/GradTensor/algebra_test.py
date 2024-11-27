@@ -1,6 +1,20 @@
 import unittest
 from ember import GradTensor, Tensor, ScalarTensor
 
+
+class TestNeg(unittest.TestCase):
+
+  def testNegate(self): 
+    x = GradTensor([1], [1], 0) 
+    y = GradTensor([1, 2, 3, 4], [4], 0) 
+    z = GradTensor([1, 2, 3, 4], [2, 2], 1) 
+    xt = GradTensor([-1], [1], 0) 
+    yt = GradTensor([-1, -2, -3, -4], [4], 0) 
+    zt = GradTensor([-1, -2, -3, -4], [2, 2], 1) 
+    self.assertEqual(-x, xt)
+    self.assertEqual(-y, yt)
+    self.assertEqual(-z, zt)
+
 # gradtensors with different pivots should not be added, 
 # These are covered in the C++ tests 
 
