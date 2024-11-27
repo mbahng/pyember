@@ -35,8 +35,8 @@
   | `double at(const std::vector<size_t>&) const`                        | `__getitem__()`                            | ✅     | ✅        | ✅           | ✅     |
   | `double at(const std::vector<size_t>&)`                              | `__setitem__()`                            | ✅     | ✅        | ✅           | ✅     |
   | `std::unique_ptr<GradTensor> slice(const std::vector<Slice>&) const` | `__getitem__()`                            | ✅     | ✅        | ✅           | ✅     |
-  | `BaseTensor::operator std::string() const`                           | `__str__()`                                | 🪧     | ❌        | ❌           | ❌     |
-  | `BaseTensor::operator std::string() const`                           | `__repr__()`                               | 🪧     | ❌        | ❌           | ❌     |
+  | `BaseTensor::operator std::string() const`                           | `__str__()`                                | 🪧     | ❌        | ❌           | ✅     |
+  | `BaseTensor::operator std::string() const`                           | `__repr__()`                               | 🪧     | ❌        | ❌           | ✅     |
   | `size_t pivot() const`                                               | `pivot()`                                  | ✅     | ✅        | ✅           | ✅     |
   | `GradTensor()`                                                       | `GradTensor()`                             | ✅     | ✅        | ✅           | ✅     |
   | `GradTensor(std::vector<double>, std::vector<size_t>, size_t)`       | `GradTensor(List[double], List[int], int)` | ✅     | ✅        | ✅           | ✅     |
@@ -44,7 +44,7 @@
   | `GradTensor::eye(size_t, size_t)`                                    |                                            | ✅     | ✅        | ✅           | ✅     |
   | `transpose()`                                                        | `transpose()`                              | ✅     | ✅        | ✅           | ✅     |
   | `GradTensor copy() const`                                            | `copy()`                                   | ✅     | ✅        | ✅           | ✅     |
-  | `GradTensor neg()`                                                   | `__neg__()`                                | ❌     | ❌        | ❌           | ❌     |
+  |                                                                      | `__neg__()`                                | ✅     | 🪧        | ✅           | ✅     |
   | `Tensor add(Tensor&)`                                                | `__add__(Tensor)`                          | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__radd__(Tensor)`                         | ✅     | 🪧        | ✅           |        |
   | `GradTensor add(GradTensor&)`                                        | `__add__(GradTensor)`                      | ✅     | ✅        | ✅           | ✅     |
@@ -75,31 +75,31 @@
 
   | C++ Method                                                              | PyBind Method                                 | Status | C++ Tests | Python Tests | Stubs  |
   |-------------------------------------------------------------------------|-----------------------------------------------|--------|-----------|--------------|--------|
-  | `std::string type() const`                                              | `type()`                                      | ✅     | ❌        | ❌           | ✅     |
-  | `std::string dtype() const`                                             | `dtype()`                                     | ✅     | ❌        | ❌           | ✅     |
-  | `bool operator==(Tensor&)`                                              | `__eq__()`                                    | ✅     | ❌        | ❌           | 🪧     |
-  | `bool operator!=(Tensor&)`                                              | `__ne__()`                                    | ✅     | ❌        | ❌           | 🪧     |
-  | `double at(const std::vector<size_t>&) const`                           | `__getitem__()`                               | ✅     | ❌        | ❌           | ✅     |
-  | `double at(const std::vector<size_t>&)`                                 | `__setitem__()`                               | ✅     | ❌        | ❌           | ✅     |
-  | `std::unique_ptr<Tensor> slice(const std::vector<Slice>&) const`        | `__getitem__()`                               | ✅     | ❌        | ❌           | ✅     |
-  | `BaseTensor::operator std::string() const`                              | `__str__()`                                   | 🪧     | ❌        | ❌           | ❌     |
-  | `BaseTensor::operator std::string() const`                              | `__repr__()`                                  | 🪧     | ❌        | ❌           | ❌     |
-  | `Tensor(std::vector<double>, std::vector<size_t>)`                      | `Tensor(List[float], List[int])`              | ✅     | ✅        | ❌           | ✅     |
-  | `Tensor(std::vector<double>)`                                           | `Tensor(List[float])`                         | ✅     | ✅        | ❌           | ✅     |
-  | `Tensor(std::vector<std::vector<double>>)`                              | `Tensor(List[List[float]])`                   | ✅     | ✅        | ❌           | ✅     |
-  | `Tensor(std::vector<std::vector<std::vector<double>>>)`                 | `Tensor(List[List[List[float]]])`             | ✅     | ✅        | ❌           | ✅     |
-  | `static Tensor arange(int, int, int)`                                   | `Tensor.arange(int, int, int)`                | ✅     | ✅        | ❌           | ✅     |
-  | `static Tensor linspace(double, double, int)`                           | `Tensor.linspace(float, float, int)`          | ✅     | ✅        | ❌           | ✅     |
-  | `static Tensor gaussian(std::vector<size_t>, double, double)`           | `Tensor.gaussian(List[int], float, float)`    | ✅     | ✅        | ❌           | ✅     |
-  | `static Tensor uniform(std::vector<size_t>, double, double)`            | `Tensor.uniform(List[int], int, int)`         | ✅     | ✅        | ❌           | ✅     |
-  | `static Tensor ones(std::vector<size_t>)`                               | `Tensor.ones(List[int])`                      | ✅     | ✅        | ❌           | ✅     |
-  | `static Tensor zeros(std::vector<size_t>)`                              | `Tensor.zeros(List[int])`                     | ✅     | ✅        | ❌           | ✅     |
+  | `std::string type() const`                                              | `type()`                                      | ✅     | ✅        | ✅           | ✅     |
+  | `std::string dtype() const`                                             | `dtype()`                                     | ✅     | ✅        | ✅           | ✅     |
+  | `bool operator==(Tensor&)`                                              | `__eq__()`                                    | ✅     | ✅        | ✅           | 🪧     |
+  | `bool operator!=(Tensor&)`                                              | `__ne__()`                                    | ✅     | ✅        | ✅           | 🪧     |
+  | `double at(const std::vector<size_t>&) const`                           | `__getitem__()`                               | ✅     | ✅        | ✅           | ✅     |
+  | `double at(const std::vector<size_t>&)`                                 | `__setitem__()`                               | ✅     | ✅        | ✅           | ✅     |
+  | `std::unique_ptr<Tensor> slice(const std::vector<Slice>&) const`        | `__getitem__()`                               | ✅     | ✅        | ✅           | ✅     |
+  | `BaseTensor::operator std::string() const`                              | `__str__()`                                   | 🪧     | ✅        | ✅           | ✅     |
+  | `BaseTensor::operator std::string() const`                              | `__repr__()`                                  | 🪧     | ✅        | ✅           | ✅     |
+  | `Tensor(std::vector<double>, std::vector<size_t>)`                      | `Tensor(List[float], List[int])`              | ✅     | ✅        | ✅           | ✅     |
+  | `Tensor(std::vector<double>)`                                           | `Tensor(List[float])`                         | ✅     | ✅        | ✅           | ✅     |
+  | `Tensor(std::vector<std::vector<double>>)`                              | `Tensor(List[List[float]])`                   | ✅     | ✅        | ✅           | ✅     |
+  | `Tensor(std::vector<std::vector<std::vector<double>>>)`                 | `Tensor(List[List[List[float]]])`             | ✅     | ✅        | ✅           | ✅     |
+  | `static Tensor arange(int, int, int)`                                   | `Tensor.arange(int, int, int)`                | ✅     | ✅        | ✅           | ✅     |
+  | `static Tensor linspace(double, double, int)`                           | `Tensor.linspace(float, float, int)`          | ✅     | ✅        | ✅           | ✅     |
+  | `static Tensor gaussian(std::vector<size_t>, double, double)`           | `Tensor.gaussian(List[int], float, float)`    | ✅     | ✅        | ✅           | ✅     |
+  | `static Tensor uniform(std::vector<size_t>, double, double)`            | `Tensor.uniform(List[int], int, int)`         | ✅     | ✅        | ✅           | ✅     |
+  | `static Tensor ones(std::vector<size_t>)`                               | `Tensor.ones(List[int])`                      | ✅     | ✅        | ✅           | ✅     |
+  | `static Tensor zeros(std::vector<size_t>)`                              | `Tensor.zeros(List[int])`                     | ✅     | ✅        | ✅           | ✅     |
   | `void build_topo(Tensor* v, std::set<Tensor*>&, std::vector<Tensor*>&)` | 🪧                                            | ✅     | ❌        | 🪧           | 🪧     |
   | `prev_`                                                                 | `prev`                                        | ✅     |           |              |        |
   | `std::vector<Tensor*> backprop(bool)`                                   | `backprop(bool)`                              | ✅     | ✅        | ✅           | ✅     |
   | `Tensor& reshape(std::vector<size_t>)`                                  | `reshape(List[int])`                          | ✅     | ✅        | ✅           | ✅     |
   | `Tensor copy() const`                                                   | `copy()`                                      | ✅     | ❌        | ✅           | ✅     |
-  | `Tensor neg()`                                                          | `__neg__()`                                   | ❌     | ❌        | ✅           | ❌     |
+  | `Tensor neg()`                                                          | `__neg__()`                                   | ✅     | 🪧        | ✅           | ✅     |
   | `Tensor add(Tensor&)`                                                   | `__add__(Tensor)`                             | ✅     | ✅        | ✅           | ✅     |
   |                                                                         | `__radd__(Tensor)`                            | ✅     | 🪧        | ✅           |        |
   | `Tensor add(GradTensor&)`                                               | `__add__(GradTensor)`                         | ✅     | ❌        | ✅           | ✅     |
