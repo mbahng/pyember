@@ -1,2 +1,2 @@
 from .model import Model
-from .regression import Regression, LinearRegression
+from .regression import Regression, LinearRegression, MultiLayerPerceptron

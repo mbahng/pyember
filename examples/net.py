@@ -1,56 +1,13 @@
-import ember
-from ember import Tensor    
+import ember 
 
-class CustomNet(): 
-  
-  def __init__(self): 
-    self.a = Tensor([2]) 
-    self.b = Tensor([4]) 
-    self.c = Tensor([3]) 
-    self.d = Tensor([1]) 
+model = ember.MultiLayerPerceptron(10, 10) 
 
-  def forward(self, x:ember.Tensor, intermediate) -> ember.Tensor: 
+X = ember.Tensor.arange(0, 10, 1).reshape([10, 1])
 
-    y1 = self.a * x 
-    y = y1 + self.b
-    z1 = self.c * y 
-    z = z1 + self.d
+y = model.forward(X) 
 
-    top_sort = z.backprop(intermediate)
-    # top_sort = []
+print(y)
 
-    # update parameters: W1
-    return z, top_sort
+y.backprop(False) 
 
-myNet = CustomNet()
-X = Tensor([10])
-res, top_sort = myNet.forward(X, True)
-
-# print(len(top_sort))
-# print(f"result : {res}") 
-# for tensor in top_sort: 
-#     print(tensor.data, tensor.grad)
-
-
-alpha = Tensor([-0.001])
-for i in range(150): 
-  print(i)
-  print(myNet.a.grad.shape)
-  print(myNet.b.grad.shape)
-  print(myNet.c.grad.shape)
-  print(myNet.d.grad.shape)
-
-  res, top_sort = myNet.forward(X, False)
-  print(res)
-  for tensor in top_sort: 
-    if tensor == myNet.a: 
-      myNet.a += alpha * myNet.a.grad
-    elif tensor == myNet.b: 
-      myNet.b += alpha * myNet.b.grad
-    elif tensor == myNet.c: 
-      myNet.c += alpha * myNet.c.grad
-    elif tensor == myNet.d: 
-      myNet.d += alpha * myNet.d.grad
-
-  print("***********")
-
+print(model.W1.grad)

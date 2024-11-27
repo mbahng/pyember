@@ -1,5 +1,5 @@
 from .aten import Tensor, GradTensor, ScalarTensor 
-from .models import Model, Regression, LinearRegression
+from .models import Model, Regression, LinearRegression, MultiLayerPerceptron
 
 __all__ = [
     "Tensor", 
@@ -8,4 +8,5 @@ __all__ = [
     "Model", 
     "Regression", 
     "LinearRegression", 
+    "MultiLayerPerceptron", 
 ]
