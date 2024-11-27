@@ -43,19 +43,30 @@
   | `transpose()` |  `transpose()` | ✅ | ✅ | ✅ | ✅ | 
   | `GradTensor copy() const` | `copy()` | ✅ | ✅  | ✅  | ✅  |     
   | `GradTensor neg()` | `__neg__()` | ❌ | ❌ | ❌ | ❌ |
-  | `GradTensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
   | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅  | ✅  | ✅  | 
+  |  | `__radd__(Tensor)` | | 🪧 | | |
+  | `GradTensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
+  |  | `__radd__(GradTensor)` | | 🪧 | | |
   | `GradTensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  |  | `__radd__(ScalarTensor)` | | 🪧 | | |
   | `GradTensor add(double&)` | `__add__(float)` | ✅ | ✅  | ✅  | ✅  |      
-  | `GradTensor sub(GradTensor&)` | `__sub__(GradTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  |  | `__radd__(float)` | | 🪧 | | |
   | `Tensor sub(Tensor&)` | `__sub__(Tensor)` | ✅ | ✅  | ✅ | ✅  | 
+  |  | `__rsub__(Tensor)` | | 🪧 | | |
+  | `GradTensor sub(GradTensor&)` | `__sub__(GradTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  |  | `__rsub__(GradTensor)` | | 🪧 | | |
   | `GradTensor sub(ScalarTensor&)` | `__sub__(ScalarTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  |  | `__rsub__(ScalarTensor)` | | 🪧 | | |
   | `GradTensor sub(double&)` | `__sub__(float)` | ✅ | ✅  | ✅  | ✅  |
-  | `GradTensor sub(double&)` | `__rsub__(float)` | ✅ | ✅  | ✅  | ✅  |
-  | `GradTensor mul(GradTensor&)` | `__mul__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
+  |  | `__rsub__(float)` | | 🪧 | | |
   | `Tensor mul(Tensor&)` | `__mul__(Tensor)` | ✅ | ✅  | ✅  | ✅  | 
+  |  | `__rmul__(Tensor)` | | 🪧 | | |
+  | `GradTensor mul(GradTensor&)` | `__mul__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
+  |  | `__rmul__(GradTensor)` | | 🪧 | | |
   | `GradTensor mul(ScalarTensor&)` | `__mul__(ScalarTensor)` | ✅ | ✅  | ✅  | ✅  |      
+  |  | `__rmul__(ScalarTensor)` | | 🪧 | | |
   | `GradTensor mul(double&)` | `__mul__(float)` | ✅ | ✅  | ✅  | ✅  | 
+  |  | `__rmul__(float)` | | 🪧 | | |
   | `GradTensor matmul(GradTensor&)` | `__matmul__(GradTensor)` | ✅ | ✅  | ✅  | ✅  | 
 
   ## Aten Tensor 
@@ -86,17 +97,29 @@
   | `Tensor copy() const` | `copy()` | ✅ | ❌ | ❌ | ✅ | 
   | `Tensor neg()` | `__neg__()` | ❌ | ❌ | ❌ | ❌ |
   | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅  | ✅  | ✅ |
+  |  | `__radd__(Tensor)` | | 🪧 | | |
   | `Tensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ❌ | ✅  | ✅ |
+  |  | `__radd__(GradTensor)` | | 🪧 | | |
   | `Tensor add(ScalarTensor&)` | `__add__(ScalarTensor)` | ✅  | ❌ | ❌ | ✅ |
+  |  | `__radd__(ScalarTensor)` | | 🪧 | | |
   | `Tensor add(double&)` | `__add__(float)` | ✅  | ❌ | ❌ | ✅ |
+  |  | `__radd__(float)` | | 🪧 | | |
   | `Tensor sub(Tensor&)` | `__sub__(Tensor)` | ✅| ✅ | ✅  | ✅ |
+  |  | `__rsub__(Tensor)` | | 🪧 | | |
   | `Tensor sub(GradTensor&)`  | `__sub__(GradTensor)` | ✅ | ❌ | ✅  | ✅ |
+  |  | `__rsub__(GradTensor)` | | 🪧 | | |
   | `Tensor sub(ScalarTensor&)` | `__sub__(ScalarTensor)` | ✅ | ❌ | ❌ | ✅ |
+  |  | `__rsub__(ScalarTensor)` | | 🪧 | | |
   | `Tensor sub(double&)` | `__sub__(float)` | ✅ | ❌ | ❌ | ✅ |
+  |  | `__rsub__(float)` | | 🪧 | | |
   | `Tensor mul(Tensor&)` | `__mul__(Tensor)` | ✅ | ❌ | ✅  | ✅ |
+  |  | `__rmul__(Tensor)` | | 🪧 | | |
   | `Tensor mul(GradTensor&)` | `__mul__(GradTensor)` | ✅ | ❌ | ✅  | ✅ |
+  |  | `__rmul__(GradTensor)` | | 🪧 | | |
   | `Tensor mul(ScalarTensor&)` | `__mul__(ScalarTensor)` | ✅ | ❌ | ❌ | ✅ |
+  |  | `__rmul__(ScalarTensor)` | | 🪧 | | |
   | `Tensor mul(double&)` | `__mul__(float)` | ✅ | ❌ | ❌ | ✅  |
+  |  | `__rmul__(float)` | | 🪧 | | |
   | `Tensor exp(ScalarTensor&, double&)` | | ❌ | ❌ | ❌ | ❌ |
   | `Tensor exp(double&, double&)` | | ❌ | ❌ | ❌ | ❌ |
   | `Tensor log(ScalarTensor&, double&)` | | ❌ | ❌ | ❌ | ❌ |
@@ -133,6 +156,7 @@
   | `std::unique_ptr<ScalarTensor> slice(const std::vector<Slice>&) const` | `__getitem__()` | 
   | `double item() const` |  | ✅
   | `ScalarTensor copy() const` |  | ✅
+  | `GradTensor neg()` | `__neg__()` | ❌ | ❌ | ❌ | ❌ |
   | `Tensor add(Tensor&)` | `__add__(Tensor)` | ✅ | ✅ |
   |  | `__radd__(Tensor)` | ✅
   | `GradTensor add(GradTensor&)` | `__add__(GradTensor)` | ✅ | ✅ |
