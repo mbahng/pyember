@@ -20,7 +20,7 @@ BaseTensor::operator std::string() const {
       oss << std::setw(2) << std::string(2, ' '); 
       if (storage_[i] > 0) {oss << '+' << storage_[i]; }
       else if (storage_[i] == 0) {oss << ' ' << storage_[i]; }
-      else {oss << '-' << storage_[i]; }
+      else {oss << storage_[i]; }
     }
   }
   else {
@@ -69,7 +69,7 @@ BaseTensor::operator std::string() const {
   for (int i = 0; i < shape_.size() - 1; i++) {
     oss << shape_[i] << ", ";
   }
-  oss << shape_[shape_.size()-1] << "), dtype = " << this->dtype() << "\n";
+  oss << shape_[shape_.size()-1] << "), dtype = " << this->dtype(); 
   return oss.str();
 }
 

@@ -1,5 +1,13 @@
 #include "../Tensor.h"
 
+Tensor::operator std::string() const {
+  std::string result = BaseTensor::operator std::string(); 
+  if (result.back() != '\n') {
+    result += '\n';
+  }
+  return result; 
+}
+
 Tensor Tensor::copy() const {
   return Tensor(this->storage_, this->shape_);
 }
