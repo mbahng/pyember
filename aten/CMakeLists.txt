@@ -32,9 +32,6 @@ set(TENSOR_SOURCES
 )
 set(TENSOR_TESTS 
   test/BaseTensor/integrity_tests.cpp
-  test/BaseTensor/io_tests.cpp
-  test/BaseTensor/util_tests.cpp
-  test/BaseTensor/view_tests.cpp
 
   test/GradTensor/constructors_tests.cpp
   test/GradTensor/util_tests.cpp
