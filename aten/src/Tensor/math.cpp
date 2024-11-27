@@ -17,15 +17,15 @@ void array_matches_shape(
   std::vector<size_t> shape
 );
 
-Tensor Tensor::sum() { 
+Tensor* Tensor::sum() { 
   std::vector<double> out_data {0.0};  
   size_t length = shape_to_length(this->shape());
   for (int i = 0; i < length; ++i) {
     out_data[0] += this->data()[i]; 
   }
 
-  Tensor out = Tensor(out_data); 
-  out.prev = std::vector<Tensor*> {this}; 
+  Tensor* out = new Tensor(out_data); 
+  out->prev = std::vector<Tensor*> {this}; 
  
   std::vector<size_t> newshape = {1}; 
   newshape.insert(newshape.end(), this->shape().begin(), this->shape().end());
@@ -36,7 +36,7 @@ Tensor Tensor::sum() {
     1
   ); 
 
-  out.backward = [this, length] {
+  out->backward = [this, length] {
     for (size_t i = 0; i < length; ++i) {
       (this->grad)->storage_[i] = 1.0;
     }

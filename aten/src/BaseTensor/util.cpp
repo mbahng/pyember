@@ -73,20 +73,20 @@ BaseTensor::operator std::string() const {
   return oss.str();
 }
 
-BaseTensor& BaseTensor::reshape(std::vector<size_t> new_shape) {
+BaseTensor* BaseTensor::reshape(std::vector<size_t> new_shape) {
   if (shape_to_length(new_shape) != shape_to_length(this->shape_)) {
     throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
   }
   this->shape_ = new_shape; 
-  return *this; 
+  return this; 
 }
 
-Tensor& Tensor::reshape(std::vector<size_t> new_shape) {
+Tensor* Tensor::reshape(std::vector<size_t> new_shape) {
   if (shape_to_length(new_shape) != shape_to_length(this->shape_)) {
     throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
   }
   this->shape_ = new_shape; 
-  return *this; 
+  return this; 
 }
 double BaseTensor::at(const std::vector<size_t>& indices) const {
   validate_indices(indices);
