@@ -8,5 +8,4 @@ print(y.has_grad)
 
 print(z) 
 z.backprop(False)
-
 print(y.grad)

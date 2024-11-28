@@ -17,7 +17,7 @@ void init_basetensor_binding(py::module_ &m) {
     .def_property("shape",
       [](const BaseTensor &t) -> const std::vector<size_t>& { return t.shape_; },
       [](BaseTensor &t, const std::vector<size_t> &value) { t.shape_ = value; })
-    .def("__repr__", &BaseTensor::operator std::string, py::is_operator())
+    .def("__repr__", &BaseTensor::operator std::string, py::is_operator()) 
     .def("__str__", &BaseTensor::operator std::string, py::is_operator())
     .def("__eq__", &BaseTensor::operator==, py::is_operator())
     .def("__ne__", &BaseTensor::operator!=, py::is_operator()) 
@@ -27,6 +27,12 @@ void init_basetensor_binding(py::module_ &m) {
     .def("size", &BaseTensor::shape, py::is_operator())
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at))
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at, py::const_))
+
+    .def("__len__", 
+        [](Tensor *a) {
+          return shape_to_length(a->shape()); 
+        }
+      )
 
     .def("__getitem__", [](BaseTensor &t, const py::object &index) -> py::object {
       if (py::isinstance<py::tuple>(index)) {
