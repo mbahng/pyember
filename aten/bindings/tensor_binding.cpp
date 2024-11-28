@@ -18,18 +18,51 @@ void init_tensor_binding(py::module_ &m) {
         return new Tensor(data);
       }))
 
-    .def_static("arange", &Tensor::arange, 
-      py::arg("start"), py::arg("stop"), py::arg("step"))
-    .def_static("linspace", &Tensor::linspace, 
-      py::arg("start"), py::arg("stop"), py::arg("numsteps"))
-    .def_static("gaussian", &Tensor::gaussian, 
-      py::arg("shape"), py::arg("mean"), py::arg("stddev"))
-    .def_static("uniform", &Tensor::uniform, 
-      py::arg("shape"), py::arg("min"), py::arg("max"))
-    .def_static("ones", &Tensor::ones, 
-      py::arg("shape"))
-    .def_static("zeros", &Tensor::zeros, 
-      py::arg("shape"))
+    .def_static("arange", 
+        [](int start, int stop, int step = 1) {
+            return Tensor::arange(start, stop, step);
+        }, 
+        py::arg("start"), 
+        py::arg("stop"), 
+        py::arg("step") = 1
+      )
+    .def_static("linspace", 
+        [](double start, double stop, int numsteps) {
+            return Tensor::linspace(start, stop, numsteps);
+        }, 
+        py::arg("start"), 
+        py::arg("stop"), 
+        py::arg("numsteps")
+      )
+    .def_static("gaussian", 
+        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0) {
+            return Tensor::gaussian(shape, mean, stddev);
+        }, 
+        py::arg("shape") = std::vector<size_t>{1}, 
+        py::arg("mean") = 0.0, 
+        py::arg("stddev") = 1.0
+      )
+    .def_static("uniform", 
+        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0) {
+            return Tensor::uniform(shape, min, max);
+        }, 
+        py::arg("shape") = std::vector<size_t>{1}, 
+        py::arg("min") = 0.0, 
+        py::arg("max") = 1.0
+      )
+    .def_static("ones", 
+        [](std::vector<size_t> shape = {1}) {
+            return Tensor::ones(shape);
+        }, 
+        py::arg("shape") = std::vector<size_t>{1}
+      )
+    .def_static("zeros", 
+        [](std::vector<size_t> shape = {1}) {
+            return Tensor::zeros(shape);
+        }, 
+        py::arg("shape") = std::vector<size_t>{1}
+      )
+
     .def("copy", 
         [](Tensor &a) {
           return a.copy();
@@ -38,7 +71,12 @@ void init_tensor_binding(py::module_ &m) {
 
     // Expose grad attribute
     .def_property("grad",
-      [](const Tensor &t) -> const GradTensor* { return t.grad; },
+      [](const Tensor &t) -> const GradTensor* { 
+        if (t.grad == nullptr) {
+          throw std::logic_error("Gradient is not initialized. Call backprop(). ");
+        }
+        return t.grad; 
+      },
       [](Tensor &t, GradTensor *g) { t.grad = g; })
 
     // Expose prev vector
@@ -69,7 +107,14 @@ void init_tensor_binding(py::module_ &m) {
     .def("transpose", 
         [](Tensor &a, const std::vector<size_t> &axes) {
             return a.transpose();
-        }
+        }, 
+        py::arg("axes") = std::vector<size_t>{0, 1}
+      )
+    .def("T", 
+        [](Tensor &a, const std::vector<size_t> &axes) {
+            return a.transpose();
+        },
+        py::arg("axes") = std::vector<size_t>{0, 1}
       )
     // order of the bindings matter: most specific should go first
     .def("__neg__", 
