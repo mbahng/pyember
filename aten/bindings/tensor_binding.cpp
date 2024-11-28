@@ -206,4 +206,25 @@ void init_tensor_binding(py::module_ &m) {
        }
      )
 
+    .def("sum", 
+       [](Tensor *a) {
+         return a->sum();
+       }
+     )
+    .def("__pow__", 
+       [](Tensor *a, double* x) {
+         return a->pow(x);
+       }
+     )
+    .def("exp", 
+       [](Tensor *a, double* x) {
+         return a->pow(x);
+       }
+     )
+    .def("relu", 
+       [](Tensor *a) {
+         return a->relu();
+       }
+     )
+
 ;}

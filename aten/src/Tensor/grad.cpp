@@ -42,10 +42,9 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
     }
   }
 
-  if (!intermediate) { 
-    // need to reverse again since we're multiplying incoming gradients 
-    std::reverse(topo.begin(), topo.end()); 
-    for (Tensor* now : topo) {
+  if (!intermediate) {  
+    // go backwards again, accumulating gradients
+    for (Tensor* now : topo) { 
       for (Tensor* p : now->prev) { 
         p->grad = (now->grad)->matmul(p->grad);
       }

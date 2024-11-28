@@ -144,6 +144,19 @@ class Tensor : public BaseTensor {
     Tensor* copy() const; 
     operator std::string() const override; 
 
+    double at(const std::vector<size_t>& indices) const override {
+        return BaseTensor::at(indices);
+    }
+
+    double& at(const std::vector<size_t>& indices) override {
+        return BaseTensor::at(indices);
+    }
+
+    std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
+        auto base_result = BaseTensor::slice(slices);
+        return std::make_unique<Tensor>(base_result->storage_, base_result->shape_);
+    }
+
     // backprop functions 
     void build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo); 
     std::vector<Tensor*> backprop(bool intermediate); 
@@ -166,19 +179,8 @@ class Tensor : public BaseTensor {
     Tensor* matmul(Tensor* other); 
 
     Tensor* sum(); 
-
-    double at(const std::vector<size_t>& indices) const override {
-        return BaseTensor::at(indices);
-    }
-
-    double& at(const std::vector<size_t>& indices) override {
-        return BaseTensor::at(indices);
-    }
-
-    std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
-        auto base_result = BaseTensor::slice(slices);
-        return std::make_unique<Tensor>(base_result->storage_, base_result->shape_);
-    }
+    Tensor* relu(); 
+    Tensor* pow(double* x); 
 
     Tensor* transpose(const std::vector<size_t>& axes = {}) const;
 };
