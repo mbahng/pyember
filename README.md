@@ -79,7 +79,101 @@ f = ember.Tensor([-2])
 g = f * e
 ```
 
-The C++ backend computes a directed acyclic graph (DAG) representing the operations done to compute `g`. You can then run `g.backwards()` to compute the gradients by applying the chain rule. This constructs the DAG and returns a topological sorting of its nodes. The gradients themselves, which are technically Jacobian matrices, are updated, with each mapping `x -> y` constructing a gradient tensor on `x` with value `dy/dx`. For now, the gradients are not accumulated for flexibility.  
+### Linear Regression 
+
+To perform linear regression, use the `LinearRegression` model. 
+```
+import ember 
+
+X = ember.Tensor.uniform([20, 5], 0, 10, has_grad=False) 
+params = ember.Tensor.arange(1, 6, 1, has_grad=False).reshape([5, 1], inplace=True)
+Y_truth = X @ params 
+noise = ember.Tensor.gaussian([20, 1], 0, 1, has_grad=False)
+Y = Y_truth + noise
+
+model = ember.LinearRegression(5) 
+a = 1e-4
+
+for i in range(1000): 
+  y = model.forward(X) 
+  diff = Y - y 
+  squared_diff = diff ** 2 
+  loss = squared_diff.sum() 
+  loss.backprop(False) 
+
+  model.W = model.W - a * model.W.grad.reshape([5, 1], inplace=False)
+  model.b = model.b - a * model.b.grad.reshape([20, 1], inplace=False)
+
+  if i % 25 == 0: 
+    print(f"LOSS = {loss[0].item()}")
+    print(model.W.reshape([5], inplace=False))
+    print(model.b.reshape([20], inplace=False))
+
+  del y, diff, squared_diff, loss 
+```
+
+### Multilayer Perceptrons 
+
+To instantiate a MLP, just call it from models. In here we make a 2-layer MLP with a dummy dataset. For now only SGD with batch size 1 is supported.  
+```
+import ember 
+
+X = ember.Tensor.uniform([20, 15], 0, 10, has_grad=False) 
+params = ember.Tensor.arange(1, 16, 1, has_grad=False).reshape([15, 1], inplace=True)
+Y_truth = X @ params 
+noise = ember.Tensor.gaussian([20, 1], 0, 1, has_grad=False)
+Y = Y_truth + noise
+
+model = ember.MultiLayerPerceptron(15, 10) 
+a = 1e-4
+
+for epoch in range(500):  
+  loss = ember.ScalarTensor(0)
+  for i in range(20): 
+    x = X[i] # (1, 15)
+    y = Y[i] # (1, 1)
+    y_ = model.forward(x) 
+    diff = y - y_
+    squared_diff = diff ** 2 
+    loss = squared_diff.sum() 
+    loss.backprop(False) 
+
+    model.W1 = model.W1 - a * model.W1.grad.reshape(model.W1.shape, inplace=False)
+    model.b1 = model.b1 - a * model.b1.grad.reshape(model.b1.shape, inplace=False)
+    model.W2 = model.W2 - a * model.W2.grad.reshape(model.W2.shape, inplace=False)
+    model.b2 = model.b2 - a * model.b2.grad.reshape(model.b2.shape, inplace=False)
+
+  if epoch % 25 == 0: 
+    print(f"LOSS = {loss[0].item()}")
+```
+Its outputs over 1 minute. 
+```
+LOSS = 256733.64437981808
+LOSS = 203239.08846901066
+LOSS = 160223.4554735339
+LOSS = 125704.33716141782
+LOSS = 98074.96981384761
+LOSS = 76026.19871949886
+LOSS = 58491.92389906721
+LOSS = 44604.493032865605
+LOSS = 33658.23285350788
+LOSS = 25079.638682869212
+LOSS = 18403.01062298029
+LOSS = 13250.54496118543
+LOSS = 9316.069468116035
+LOSS = 6351.758695807299
+LOSS = 4157.286052245369
+LOSS = 2570.96819208677
+LOSS = 1462.5380952427417
+LOSS = 727.2493587808174
+LOSS = 281.0683664354656
+LOSS = 56.75530418715159
+```
+
+
+### Autograd
+
+The C++ backend computes a directed acyclic graph (DAG) representing the operations done to compute `g`. You can then run `g.backprop()` to compute the gradients by applying the chain rule. This constructs the DAG and returns a topological sorting of its nodes. The gradients themselves, which are technically Jacobian matrices, are updated, with each mapping `x -> y` constructing a gradient tensor on `x` with value `dy/dx`. The gradients can be either accumulated by setting `backprop(intermediate=False)` so that the chain rule is not applied yet, or we can set `=True` to apply the chain rule to calculate the derivative of the tensor we called backprop on w.r.t. the rest of the tensors. 
 
 ```
 top_sort = g.backprop()
@@ -93,30 +187,6 @@ print(f.grad) # [[165.0]]
 print(g.grad) # [[1.0]]
 ```
 
-This works for matrix multiplication as well, although in the backend the matrices are flattened and the 4-tensor is stored as a matrix. 
-```
-a = ember.Tensor([[1, 2, 3], [4, 5, 6]]) # 2 x 3
-b =  ember.Tensor([[1, 2], [4, 8]]) # 2 x 2
-c = b.matmul(a)
-
-top_sort = c.backprop() 
-
-pprint(a.grad)
-[[1.0, 0.0, 0.0, 2.0, 0.0, 0.0],
- [0.0, 1.0, 0.0, 0.0, 2.0, 0.0],
- [4.0, 0.0, 1.0, 8.0, 0.0, 2.0],
- [0.0, 4.0, 0.0, 0.0, 8.0, 0.0],
- [0.0, 0.0, 4.0, 0.0, 0.0, 8.0],
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
-
-pprint(b.grad)
-[[1.0, 4.0, 0.0, 0.0],
- [2.0, 5.0, 0.0, 0.0],
- [3.0, 6.0, 1.0, 4.0],
- [0.0, 0.0, 2.0, 5.0],
- [0.0, 0.0, 3.0, 6.0],
- [0.0, 0.0, 0.0, 0.0]]
-```
 
 Finally, we can visualize this using the `networkx` package. 
 
