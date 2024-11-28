@@ -31,8 +31,11 @@ Tensor* Tensor::add(Tensor* other) {
     res_data[i] = this->data()[i] + other->data()[i];
   }
   Tensor* out = new Tensor(res_data, this->shape()); 
+  // set has_grad of output 
+  if (this->has_grad || other->has_grad) { out->has_grad = true; }
+  else { out->has_grad = false; }
 
-  out->prev = {}; 
+  out->prev = std::vector<Tensor*> {}; 
   if (this->has_grad) { out->prev.push_back(this); }
   if (other->has_grad) { out->prev.push_back(other); }
 
@@ -110,7 +113,7 @@ Tensor* Tensor::sub(Tensor* other) {
   if (this->has_grad || other->has_grad) { out->has_grad = true; }
   else { out->has_grad = false; }
 
-  out->prev = {}; 
+  out->prev = std::vector<Tensor*> {}; 
   if (this->has_grad) { out->prev.push_back(this); }
   if (other->has_grad) { out->prev.push_back(other); }
 
@@ -184,7 +187,7 @@ Tensor* Tensor::mul(Tensor* other) {
   if (this->has_grad || other->has_grad) { out->has_grad = true; }
   else { out->has_grad = false; }
 
-  out->prev = {}; 
+  out->prev = std::vector<Tensor*> {}; 
   if (this->has_grad) { out->prev.push_back(this); }
   if (other->has_grad) { out->prev.push_back(other); }
 
@@ -273,7 +276,7 @@ Tensor* Tensor::matmul(Tensor* other) {
     }
   }
 
-  out->prev = {}; 
+  out->prev = std::vector<Tensor*> {}; 
   if (this->has_grad) { out->prev.push_back(this); }
   if (other->has_grad) { out->prev.push_back(other); }
 
