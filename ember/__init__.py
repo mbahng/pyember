@@ -1,12 +1,13 @@
 from .aten import Tensor, GradTensor, ScalarTensor 
-from .models import Model, Regression, LinearRegression, MultiLayerPerceptron
+from . import datasets 
+from . import models 
+from . import optimizers
 
 __all__ = [
     "Tensor", 
     "GradTensor", 
-    "ScalarTensor", 
-    "Model", 
-    "Regression", 
-    "LinearRegression", 
-    "MultiLayerPerceptron", 
+    "ScalarTensor",  
+    "datasets", 
+    "models", 
+    "optimizers"
 ]

@@ -1,11 +1,6 @@
-from ember import Tensor, GradTensor
+from ember import Tensor 
+from ember.datasets import LinearDataset 
 
-x = Tensor.arange(0, 6, 1, has_grad=False)
-y = Tensor.arange(0, 6, 1, has_grad=True)
-z = x * y 
-print(x.has_grad)
-print(y.has_grad)
+ds = LinearDataset(N=100, D=10, noise="gaussian")
 
-print(z) 
-z.backprop(False)
-print(y.grad)
+print(ds.X)

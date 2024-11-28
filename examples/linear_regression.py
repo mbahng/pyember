@@ -6,7 +6,7 @@ Y_truth = X @ params
 noise = ember.Tensor.gaussian([20, 1], 0, 1, has_grad=False)
 Y = Y_truth + noise
 
-model = ember.LinearRegression(5) 
+model = ember.models.LinearRegression(5) 
 a = 1e-4
 
 for i in range(1000): 
