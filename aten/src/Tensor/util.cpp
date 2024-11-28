@@ -8,11 +8,11 @@ Tensor::operator std::string() const {
   return result; 
 }
 
-Tensor* Tensor::copy() const {
-  return new Tensor(this->storage_, this->shape_);
+Tensor* Tensor::copy(bool has_grad) const {
+  return new Tensor(this->storage_, this->shape_, has_grad);
 }
 
-Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace) {
+Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool has_grad) {
   if (shape_to_length(new_shape) != shape_to_length(this->shape_)) {
     throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
   }
@@ -21,15 +21,12 @@ Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace) {
     return this; 
   }
   else {
-    Tensor* out = new Tensor(storage_, new_shape);
-    return this; 
+    Tensor* out = new Tensor(storage_, new_shape, has_grad);
+    return out; 
   }
 }
 
-Tensor* Tensor::transpose(const std::vector<size_t>& axes) const {
-  // Create new tensor with copy of current data
-  Tensor* result = copy();
-  
+Tensor* Tensor::transpose(const std::vector<size_t>& axes, bool inplace, bool has_grad) {
   // If no axes specified, reverse all dimensions
   std::vector<size_t> perm_axes = axes;
   if (perm_axes.empty()) {
@@ -60,6 +57,13 @@ Tensor* Tensor::transpose(const std::vector<size_t>& axes) const {
   std::vector<size_t> new_shape(shape_.size());
   for (size_t i = 0; i < shape_.size(); ++i) {
       new_shape[i] = shape_[perm_axes[i]];
+  }
+  
+  Tensor* result;
+  if (inplace) {
+      result = this;
+  } else {
+      result = copy(has_grad);
   }
   
   // Create temporary storage for the transposed data
@@ -102,7 +106,7 @@ Tensor* Tensor::transpose(const std::vector<size_t>& axes) const {
       temp_storage[new_flat_idx] = storage_[i];
   }
   
-  // Update shape and storage of result
+  // Update shape and storage
   result->shape_ = new_shape;
   result->storage_ = std::move(temp_storage);
   

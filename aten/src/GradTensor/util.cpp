@@ -31,9 +31,10 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
     this->shape_ = new_shape; 
     return this; 
   }
-  else {
+  else { 
+    // usually pivot will become meaningless when you reshape it. 
     GradTensor* out = new GradTensor(storage_, new_shape, pivot_);
-    return this; 
+    return out; 
   }
 }
 

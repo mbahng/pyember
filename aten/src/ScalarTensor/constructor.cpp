@@ -16,13 +16,13 @@ void array_matches_shape(
 );
 
 ScalarTensor::ScalarTensor() 
-  : Tensor({0.}, {1}){}
+  : Tensor({0.}, std::vector<size_t>{1}){}
 
 ScalarTensor::ScalarTensor(double data) 
-  : Tensor({data}, {1}) {}
+  : Tensor({data}, std::vector<size_t>{1}) {}
 
 ScalarTensor::ScalarTensor(std::vector<double> data) 
-  : Tensor(data, {1}) {
+  : Tensor(data, std::vector<size_t>{1}) {
     if (data.size() != 1) {
       throw std::logic_error("The data is not of length 1.");
     }
