@@ -119,7 +119,7 @@ class GradTensor : public BaseTensor {
 
 class Tensor : public BaseTensor { 
   public: 
-    GradTensor* grad = new GradTensor();
+    GradTensor* grad = nullptr; 
     std::vector<Tensor*> prev = std::vector<Tensor*>();
     std::function<void()> backward;
 
