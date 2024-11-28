@@ -12,6 +12,20 @@ Tensor* Tensor::copy() const {
   return new Tensor(this->storage_, this->shape_);
 }
 
+Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace) {
+  if (shape_to_length(new_shape) != shape_to_length(this->shape_)) {
+    throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
+  }
+  if (inplace) {
+    this->shape_ = new_shape; 
+    return this; 
+  }
+  else {
+    Tensor* out = new Tensor(storage_, new_shape);
+    return this; 
+  }
+}
+
 Tensor* Tensor::transpose(const std::vector<size_t>& axes) const {
   // Create new tensor with copy of current data
   Tensor* result = copy();

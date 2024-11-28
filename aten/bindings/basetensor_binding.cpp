@@ -19,7 +19,6 @@ void init_basetensor_binding(py::module_ &m) {
       [](BaseTensor &t, const std::vector<size_t> &value) { t.shape_ = value; })
     .def("__repr__", &BaseTensor::operator std::string, py::is_operator())
     .def("__str__", &BaseTensor::operator std::string, py::is_operator())
-    .def("reshape", &BaseTensor::reshape, py::is_operator())
     .def("__eq__", &BaseTensor::operator==, py::is_operator())
     .def("__ne__", &BaseTensor::operator!=, py::is_operator()) 
     .def("type", &BaseTensor::type, py::is_operator())

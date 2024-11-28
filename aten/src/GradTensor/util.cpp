@@ -23,6 +23,20 @@ GradTensor* GradTensor::copy() const {
   return new GradTensor(this->storage_, this->shape_, this->pivot_);
 }
 
+GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
+  if (shape_to_length(new_shape) != shape_to_length(this->shape_)) {
+    throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
+  }
+  if (inplace) {
+    this->shape_ = new_shape; 
+    return this; 
+  }
+  else {
+    GradTensor* out = new GradTensor(storage_, new_shape, pivot_);
+    return this; 
+  }
+}
+
 GradTensor& GradTensor::transpose(const std::vector<size_t>& axes) {
   // If no axes specified, reverse all dimensions
   std::vector<size_t> perm_axes = axes;
