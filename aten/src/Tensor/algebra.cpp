@@ -192,7 +192,7 @@ Tensor* Tensor::mul(Tensor* other) {
   if (other->has_grad) { out->prev.push_back(other); }
 
   out->backward = [this, other, out] {
-    std::vector<size_t> newshape = concat_indices(out->shape(), this->shape());
+    std::vector<size_t> newshape = concat_indices(out->shape(), this->shape()); 
 
     if (this->has_grad) {
       this->grad = new GradTensor(newshape, this->shape().size()); 
@@ -211,7 +211,7 @@ Tensor* Tensor::mul(Tensor* other) {
       }
     }
     if (other->has_grad) {
-      other->grad = new GradTensor(newshape, this->shape().size()); 
+      other->grad = new GradTensor(newshape, other->shape().size()); 
       std::vector<size_t> pairshape = duplicate_indices(this->shape_);
 
       for (std::vector<size_t> l_idx : generate_all_indices(this->shape_)) {
@@ -252,10 +252,22 @@ Tensor* Tensor::mul(double* other) {
 }
 
 Tensor* Tensor::matmul(Tensor* other) {
-  // Check if the tensors are at least 2D
-  assert(this->shape().size() == 2 || other->shape().size() == 2);
-  // Check if the last dimension of this tensor matches the second-to-last dimension of other
-  assert(this->shape()[1] == other->shape()[0]);
+  if (this->shape().size() != 2 || other->shape().size() != 2) { 
+    std::string this_shape = ""; 
+    for (auto s : this->shape()) { this_shape += " " + std::to_string(s); } 
+    std::string other_shape = ""; 
+    for (auto s : other->shape()) { other_shape += " " + std::to_string(s); } 
+    throw std::logic_error("Only rank-2 tensors x rank-2 tensors are supported. \n"
+        "Attempting to multiply (" + this_shape + " ) and (" + other_shape + " )");
+  }
+  if (this->shape()[1] != other->shape()[0]) {
+    std::string this_shape = ""; 
+    for (auto s : this->shape()) { this_shape += " " + std::to_string(s); } 
+    std::string other_shape = ""; 
+    for (auto s : other->shape()) { other_shape += " " + std::to_string(s); } 
+    throw std::logic_error("The dimension of the contracted rank does not match. \n"
+        "Attempting to multiply (" + this_shape + " ) and (" + other_shape + " )");
+  }
   // Determine the dimensions of the result
   std::vector<size_t> result_shape {this->shape()[0], other->shape()[1]};
   Tensor* out = new Tensor(std::vector<double> (shape_to_length(result_shape), 0.0), result_shape);
@@ -286,10 +298,10 @@ Tensor* Tensor::matmul(Tensor* other) {
 
     if (this->has_grad) {
       this->grad = new GradTensor(left_grad_shape, 2);  
-      for (size_t i = 0; i < m; ++i) {     // output row
-        for (size_t j = 0; j < p; ++j) {   // output col
-          for (size_t k = 0; k < m; ++k) { // input A row
-            for (size_t l = 0; l < n; ++l) { // input A col
+      for (size_t i = 0; i < m; ++i) {     
+        for (size_t j = 0; j < p; ++j) {   
+          for (size_t k = 0; k < m; ++k) { 
+            for (size_t l = 0; l < n; ++l) { 
               std::vector<size_t> grad_idx = {i, j, k, l};
               if (i == k) {
                 (this->grad)->at(grad_idx) = other->data()[l * p + j];

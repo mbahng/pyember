@@ -29,7 +29,7 @@ Tensor* Tensor::sum() {
     out_data += this->data()[i]; 
   }
 
-  Tensor* out = new Tensor({out_data}, std::vector<size_t>{1}); 
+  Tensor* out = new Tensor({out_data}, std::vector<size_t>{1, 1}); 
   // set has_grad of output 
   if (this->has_grad) { out->has_grad = true; }
   else { out->has_grad = false; }
@@ -39,8 +39,8 @@ Tensor* Tensor::sum() {
  
   out->backward = [this] { 
     if (this->has_grad) {
-      std::vector<size_t> newshape = concat_indices({1}, this->shape());
-      this->grad = new GradTensor(newshape, 1);  
+      std::vector<size_t> newshape = concat_indices({1, 1}, this->shape());
+      this->grad = new GradTensor(newshape, 2);  
       for (size_t i = 0; i < ((this->grad)->storage_).size(); ++i) {
         (this->grad)->storage_[i] = 1.0;
       }
