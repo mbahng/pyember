@@ -114,31 +114,23 @@ To perform linear regression, use the `LinearRegression` model.
 ```
 import ember 
 
-X = ember.Tensor.uniform([20, 5], 0, 10, has_grad=False) 
-params = ember.Tensor.arange(1, 6, 1, has_grad=False).reshape([5, 1], inplace=True)
-Y_truth = X @ params 
-noise = ember.Tensor.gaussian([20, 1], 0, 1, has_grad=False)
-Y = Y_truth + noise
-
-model = ember.LinearRegression(5) 
+ds = ember.datasets.LinearDataset(N=20, D=4)
+model = ember.models.LinearRegression(5) 
+mse = ember.objectives.MSELoss()
 a = 1e-4
 
-for i in range(1000): 
-  y = model.forward(X) 
-  diff = Y - y 
-  squared_diff = diff ** 2 
-  loss = squared_diff.sum() 
-  loss.backprop(False) 
+for epoch in range(1000):
+  loss = ember.ScalarTensor(0) 
+  for j in range(20): 
+    x, y = ds.X[j], ds.Y[j].reshape([1, 1], inplace=False, has_grad=False)
+    y_ = model.forward(x) 
+    loss = mse(y, y_)
+    loss.backprop(False)  
+    model.W = model.W - a * model.W.grad.reshape(model.W.shape, inplace=False)
+    model.b = model.b - a * model.b.grad.reshape(model.b.shape, inplace=False)
 
-  model.W = model.W - a * model.W.grad.reshape([5, 1], inplace=False)
-  model.b = model.b - a * model.b.grad.reshape([20, 1], inplace=False)
-
-  if i % 25 == 0: 
+  if epoch % 25 == 0: 
     print(f"LOSS = {loss[0].item()}")
-    print(model.W.reshape([5], inplace=False))
-    print(model.b.reshape([20], inplace=False))
-
-  del y, diff, squared_diff, loss 
 ```
 
 ### Multilayer Perceptrons 
@@ -147,24 +139,17 @@ To instantiate a MLP, just call it from models. In here we make a 2-layer MLP wi
 ```
 import ember 
 
-X = ember.Tensor.uniform([20, 15], 0, 10, has_grad=False) 
-params = ember.Tensor.arange(1, 16, 1, has_grad=False).reshape([15, 1], inplace=True)
-Y_truth = X @ params 
-noise = ember.Tensor.gaussian([20, 1], 0, 1, has_grad=False)
-Y = Y_truth + noise
-
-model = ember.MultiLayerPerceptron(15, 10) 
+ds = ember.datasets.LinearDataset(N=20, D=14)
+model = ember.models.MultiLayerPerceptron(15, 10) 
+mse = ember.objectives.MSELoss()
 a = 1e-4
 
 for epoch in range(500):  
   loss = ember.ScalarTensor(0)
-  for i in range(20): 
-    x = X[i] # (1, 15)
-    y = Y[i] # (1, 1)
+  for j in range(20): 
+    x, y = ds.X[j], ds.Y[j].reshape([1, 1], inplace=False, has_grad=False)
     y_ = model.forward(x) 
-    diff = y - y_
-    squared_diff = diff ** 2 
-    loss = squared_diff.sum() 
+    loss = mse(y, y_)
     loss.backprop(False) 
 
     model.W1 = model.W1 - a * model.W1.grad.reshape(model.W1.shape, inplace=False)
