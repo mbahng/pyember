@@ -1,2 +1,14 @@
-from .model import Model
-from .regression import Regression, LinearRegression, MultiLayerPerceptron
+from .linreg import (
+  LinearRegression, 
+  BayesianLinearRegression
+)
+
+from .mlp import (
+  MultiLayerPerceptron
+)
+
+__all__ = [
+  "LinearRegression", 
+  "BayesianLinearRegression",
+  "MultiLayerPerceptron"
+]
