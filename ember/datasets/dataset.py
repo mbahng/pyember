@@ -34,7 +34,7 @@ class LinearDataset(Dataset):
     """
     X = Tensor.uniform([N, D + 1], 0, 10, has_grad = False) # +1 for bias term 
     for i in range(N): 
-      X[i, 0] = 1.0
+      X[i, 0] = 1.0 
     self.truth_param = Tensor.uniform([D + 1, 1], -10, 10, has_grad = False)
     Y_truth = X @ self.truth_param
     noise = Tensor.gaussian([N, 1], 0, 1, has_grad=False)

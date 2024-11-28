@@ -2,6 +2,7 @@ from .aten import Tensor, GradTensor, ScalarTensor
 from . import datasets 
 from . import models 
 from . import optimizers
+from . import objectives 
 
 __all__ = [
     "Tensor", 
@@ -9,5 +10,6 @@ __all__ = [
     "ScalarTensor",  
     "datasets", 
     "models", 
-    "optimizers"
+    "optimizers",
+    "objectives"
 ]
