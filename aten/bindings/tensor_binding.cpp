@@ -59,6 +59,13 @@ void init_tensor_binding(py::module_ &m) {
           py::arg("intermediate") = false 
       )
 
+    .def("reshape", 
+        [](Tensor &a, std::vector<size_t> newshape, bool inplace = true) {
+            return a.reshape(newshape, inplace);
+        }, 
+        py::arg("shape"), 
+        py::arg("inplace") = true
+      )
     .def("transpose", 
         [](Tensor &a, const std::vector<size_t> &axes) {
             return a.transpose();

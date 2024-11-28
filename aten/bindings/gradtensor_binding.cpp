@@ -26,6 +26,14 @@ void init_gradtensor_binding(py::module_ &m) {
     .def("__eq__", &GradTensor::operator==, py::is_operator())
     .def("__ne__", &GradTensor::operator!=, py::is_operator()) 
 
+
+    .def("reshape", 
+        [](GradTensor &a, std::vector<size_t> newshape, bool inplace = true) {
+            return a.reshape(newshape, inplace);
+        },
+        py::arg("shape"), 
+        py::arg("inplace") = true
+      )
     .def("transpose", 
         [](GradTensor &a, const std::vector<size_t> &axes) {
             return a.transpose();

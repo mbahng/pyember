@@ -39,7 +39,6 @@ class BaseTensor {
   
     const std::vector<size_t>& shape() const { return shape_; }
     const std::vector<double>& data() const { return storage_; } 
-    BaseTensor* reshape(std::vector<size_t> new_shape);
 
     virtual bool operator==(BaseTensor& other) const; 
     virtual bool operator!=(BaseTensor& other) const;  
@@ -83,6 +82,7 @@ class GradTensor : public BaseTensor {
     bool operator!=(GradTensor& other) const;  
     GradTensor* copy() const; 
     operator std::string() const override; 
+    GradTensor* reshape(std::vector<size_t> new_shape, bool inplace = true);
 
     GradTensor* add(GradTensor* other); 
     Tensor* add(Tensor* other); 
@@ -140,7 +140,7 @@ class Tensor : public BaseTensor {
     static Tensor* zeros(std::vector<size_t> shape); 
 
     std::string type() const override { return "Tensor"; }
-    virtual Tensor* reshape(std::vector<size_t> new_shape);
+    virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true);
     Tensor* copy() const; 
     operator std::string() const override; 
 
