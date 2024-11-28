@@ -5,68 +5,88 @@ void init_tensor_binding(py::module_ &m) {
   py::class_<Tensor, BaseTensor>(m, "Tensor")
 
     // Constructors
-    .def(py::init([](std::vector<double> data, std::vector<size_t> shape) {
-        return new Tensor(data, shape);
-      }))
-    .def(py::init([](std::vector<double> data) {
-        return new Tensor(data);
-      }))
-    .def(py::init([](std::vector<std::vector<double>> data) {
-        return new Tensor(data);
-      }))
-    .def(py::init([](std::vector<std::vector<std::vector<double>>> data) {
-        return new Tensor(data);
-      }))
+    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, bool has_grad = true) {
+        return new Tensor(data, shape, has_grad);
+        }), 
+        py::arg("data"), 
+        py::arg("shape"), 
+        py::arg("has_grad") = true
+      )
+    .def(py::init([](std::vector<double> data, bool has_grad = true) {
+        return new Tensor(data, has_grad);
+        }),
+        py::arg("data"), 
+        py::arg("has_grad") = true
+      )
+    .def(py::init([](std::vector<std::vector<double>> data, bool has_grad = true) {
+        return new Tensor(data, has_grad);
+        }),
+        py::arg("data"), 
+        py::arg("has_grad") = true
+      )
+    .def(py::init([](std::vector<std::vector<std::vector<double>>> data, bool has_grad = true) {
+        return new Tensor(data, has_grad);
+        }),
+        py::arg("data"), 
+        py::arg("has_grad") = true
+      )
 
     .def_static("arange", 
-        [](int start, int stop, int step = 1) {
-            return Tensor::arange(start, stop, step);
+        [](int start, int stop, int step = 1, bool has_grad = true) {
+            return Tensor::arange(start, stop, step, has_grad);
         }, 
         py::arg("start"), 
         py::arg("stop"), 
-        py::arg("step") = 1
+        py::arg("step") = 1, 
+        py::arg("has_grad") = true
       )
     .def_static("linspace", 
-        [](double start, double stop, int numsteps) {
-            return Tensor::linspace(start, stop, numsteps);
+        [](double start, double stop, int numsteps, bool has_grad = true) {
+            return Tensor::linspace(start, stop, numsteps, has_grad);
         }, 
         py::arg("start"), 
         py::arg("stop"), 
-        py::arg("numsteps")
+        py::arg("numsteps"),
+        py::arg("has_grad") = true
       )
     .def_static("gaussian", 
-        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0) {
-            return Tensor::gaussian(shape, mean, stddev);
+        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0, bool has_grad = true) {
+            return Tensor::gaussian(shape, mean, stddev, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("mean") = 0.0, 
-        py::arg("stddev") = 1.0
+        py::arg("stddev") = 1.0,
+        py::arg("has_grad") = true
       )
     .def_static("uniform", 
-        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0) {
-            return Tensor::uniform(shape, min, max);
+        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0, bool has_grad = true) {
+            return Tensor::uniform(shape, min, max, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("min") = 0.0, 
-        py::arg("max") = 1.0
+        py::arg("max") = 1.0,
+        py::arg("has_grad") = true
       )
     .def_static("ones", 
-        [](std::vector<size_t> shape = {1}) {
-            return Tensor::ones(shape);
+        [](std::vector<size_t> shape = {1}, bool has_grad = true) {
+            return Tensor::ones(shape, has_grad);
         }, 
-        py::arg("shape") = std::vector<size_t>{1}
+        py::arg("shape") = std::vector<size_t>{1},
+        py::arg("has_grad") = true
       )
     .def_static("zeros", 
-        [](std::vector<size_t> shape = {1}) {
-            return Tensor::zeros(shape);
+        [](std::vector<size_t> shape = {1}, bool has_grad = true) {
+            return Tensor::zeros(shape, has_grad);
         }, 
-        py::arg("shape") = std::vector<size_t>{1}
+        py::arg("shape") = std::vector<size_t>{1},
+        py::arg("has_grad") = true
       )
 
     .def("copy", 
-        [](Tensor &a) {
-          return a.copy();
-        }
+        [](Tensor &a, bool has_grad = true) {
+          return a.copy(has_grad);
+        }, 
+        py::arg("has_grad") = true
       )
 
     // Expose grad attribute
@@ -84,6 +104,10 @@ void init_tensor_binding(py::module_ &m) {
       [](const Tensor &t) -> const std::vector<Tensor*>& { return t.prev; },
       [](Tensor &t, const std::vector<Tensor*> &p) { t.prev = p; }) 
 
+    .def_property("has_grad",
+      [](const Tensor &t) -> const bool { return t.has_grad; },
+      [](Tensor &t, bool has_grad) { t.has_grad = has_grad; }) 
+
     // Backpropagation Functions 
       .def("backward", 
         [](Tensor &t) {
@@ -98,23 +122,28 @@ void init_tensor_binding(py::module_ &m) {
       )
 
     .def("reshape", 
-        [](Tensor &a, std::vector<size_t> newshape, bool inplace = true) {
-            return a.reshape(newshape, inplace);
+        [](Tensor &a, std::vector<size_t> newshape, bool inplace = true, bool has_grad = true) {
+            return a.reshape(newshape, inplace, has_grad);
         }, 
         py::arg("shape"), 
-        py::arg("inplace") = true
+        py::arg("inplace") = true, 
+        py::arg("has_grad") = true
       )
     .def("transpose", 
-        [](Tensor &a, const std::vector<size_t> &axes) {
-            return a.transpose();
+        [](Tensor &a, const std::vector<size_t> &axes, bool inplace = false, bool has_grad = true) {
+            return a.transpose(axes, inplace, has_grad);
         }, 
-        py::arg("axes") = std::vector<size_t>{0, 1}
+        py::arg("axes") = std::vector<size_t>{1, 0}, 
+        py::arg("inplace") = false,
+        py::arg("has_grad") = true
       )
     .def("T", 
-        [](Tensor &a, const std::vector<size_t> &axes) {
-            return a.transpose();
+        [](Tensor &a, const std::vector<size_t> &axes, bool inplace = false, bool has_grad = true) {
+            return a.transpose(axes, inplace, has_grad);
         },
-        py::arg("axes") = std::vector<size_t>{0, 1}
+        py::arg("axes") = std::vector<size_t>{1, 0},
+        py::arg("inplace") = false,
+        py::arg("has_grad") = true
       )
     // order of the bindings matter: most specific should go first
     .def("__neg__", 

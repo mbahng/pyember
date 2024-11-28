@@ -29,7 +29,7 @@ Tensor* Tensor::sum() {
     out_data += this->data()[i]; 
   }
 
-  Tensor* out = new Tensor({out_data}, {1}); 
+  Tensor* out = new Tensor({out_data}, std::vector<size_t>{1}); 
 
   out->prev = std::vector<Tensor*> {this}; 
  

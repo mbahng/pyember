@@ -16,18 +16,20 @@ void array_matches_shape(
   std::vector<size_t> shape
 );
 
-Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape) {
+Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, bool has_grad) {
   this->storage_ = data; 
   this->shape_ = shape;  
+  this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<double> data) {
+Tensor::Tensor(std::vector<double> data, bool has_grad) {
   this->storage_ = data; 
   std::vector<size_t> s = {data.size()};
   this->shape_ = s; 
+  this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<double>> data) {
+Tensor::Tensor(std::vector<std::vector<double>> data, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size()};
   array_matches_shape(data, shape); 
   this->shape_ = shape; 
@@ -36,9 +38,10 @@ Tensor::Tensor(std::vector<std::vector<double>> data) {
     res.insert(res.end(), data[i].begin(), data[i].end()); 
   }
   this->storage_ = res;  
+  this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data) {
+Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size(), data[0][0].size()};
   array_matches_shape(data, shape); 
   this->shape_ = shape; 
@@ -49,26 +52,27 @@ Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data) {
     }
   }
   this->storage_ = res;  
+  this->has_grad = has_grad; 
 }
 
-Tensor* Tensor::arange(int start, int stop, int step) {
+Tensor* Tensor::arange(int start, int stop, int step, bool has_grad) {
   std::vector<double> storage_ = {}; 
   for (int i = start; i < stop; i += step) {
     storage_.push_back(i);
   }
-  return new Tensor(storage_, std::vector<size_t>{storage_.size()});
+  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, has_grad);
 }
 
-Tensor* Tensor::linspace(double start, double stop, int numsteps){
+Tensor* Tensor::linspace(double start, double stop, int numsteps, bool has_grad){
   std::vector<double> storage_ = {}; 
   double stepsize = (stop - start) / (numsteps - 1); 
   for (double i = start; i <= stop; i += stepsize) {
     storage_.push_back(i);
   }
-  return new Tensor(storage_, std::vector<size_t>{storage_.size()});
+  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, has_grad);
 }
 
-Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev) {
+Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev, bool has_grad) {
   // Create a unique seed by combining high-resolution time and a counter
   static std::atomic<unsigned long long> seed_counter{0};
 
@@ -91,10 +95,10 @@ Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev) 
     result[i] = distribution(generator);
   }
 
-  return new Tensor(result, shape);
+  return new Tensor(result, shape, has_grad);
 }
 
-Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max) {
+Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, bool has_grad) {
   // (Use the same unique seeding method as in the gaussian function)
   static std::atomic<unsigned long long> seed_counter{0};
 
@@ -111,16 +115,16 @@ Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max) {
     result[i] = distribution(generator);
   }
 
-  return new Tensor(result, shape);
+  return new Tensor(result, shape, has_grad);
 }
 
-Tensor* Tensor::ones(std::vector<size_t> shape) {
+Tensor* Tensor::ones(std::vector<size_t> shape, bool has_grad) {
   std::vector<double> data(shape_to_length(shape), 1.0); 
-  return new Tensor(data, shape); 
+  return new Tensor(data, shape, has_grad); 
 }
 
-Tensor* Tensor::zeros(std::vector<size_t> shape) {
+Tensor* Tensor::zeros(std::vector<size_t> shape, bool has_grad) {
   std::vector<double> data(shape_to_length(shape), 0.0); 
-  return new Tensor(data, shape); 
+  return new Tensor(data, shape, has_grad); 
 }
 

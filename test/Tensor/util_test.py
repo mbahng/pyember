@@ -275,7 +275,7 @@ class TestTensorUtils(unittest.TestCase):
 
   def testTranspose(self): 
     t1 = Tensor.arange(0, 6, 1).reshape([2, 3]) 
-    t2 = t1.transpose([0, 1])
+    t2 = t1.transpose()
     truth = Tensor([0, 3, 1, 4, 2, 5], [3, 2]) 
 
     self.assertEqual(t2, truth)

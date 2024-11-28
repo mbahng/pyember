@@ -82,7 +82,9 @@ class GradTensor : public BaseTensor {
     bool operator!=(GradTensor& other) const;  
     GradTensor* copy() const; 
     operator std::string() const override; 
-    GradTensor* reshape(std::vector<size_t> new_shape, bool inplace = true);
+
+    // default should be false since we don't want original gradient shapes being corrupted
+    GradTensor* reshape(std::vector<size_t> new_shape, bool inplace = false); 
 
     GradTensor* add(GradTensor* other); 
     Tensor* add(Tensor* other); 
@@ -119,29 +121,31 @@ class GradTensor : public BaseTensor {
 
 class Tensor : public BaseTensor { 
   public: 
+    bool has_grad = true; 
     GradTensor* grad = nullptr; 
     std::vector<Tensor*> prev = std::vector<Tensor*>();
     std::function<void()> backward;
 
     // constructors
-    Tensor(std::vector<double> data, std::vector<size_t> shape);
-    Tensor(std::vector<double> data);
-    Tensor(std::vector<std::vector<double>> data);
-    Tensor(std::vector<std::vector<std::vector<double>>> data);
+    Tensor(std::vector<double> data, std::vector<size_t> shape, bool has_grad = true);
+    Tensor(std::vector<double> data, bool has_grad = true);
+    Tensor(std::vector<std::vector<double>> data, bool has_grad = true);
+    Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad = true);
 
     // Destructors 
     ~Tensor() { prev.clear(); }
 
-    static Tensor* arange(int start, int stop, int step = 1);
-    static Tensor* linspace(double start, double stop, int numsteps);
-    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0);
-    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0);
-    static Tensor* ones(std::vector<size_t> shape);
-    static Tensor* zeros(std::vector<size_t> shape); 
+    static Tensor* arange(int start, int stop, int step = 1, bool has_grad = true);
+    static Tensor* linspace(double start, double stop, int numsteps, bool has_grad = true);
+    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, bool has_grad = true);
+    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, bool has_grad = true);
+    static Tensor* ones(std::vector<size_t> shape, bool has_grad = true);
+    static Tensor* zeros(std::vector<size_t> shape, bool has_grad = true); 
 
     std::string type() const override { return "Tensor"; }
-    virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true);
-    Tensor* copy() const; 
+    virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
+    Tensor* copy(bool has_grad = true) const; 
+    Tensor* transpose(const std::vector<size_t>& axes = {}, bool inplace = false, bool has_grad = true);
     operator std::string() const override; 
 
     double at(const std::vector<size_t>& indices) const override {
@@ -181,8 +185,6 @@ class Tensor : public BaseTensor {
     Tensor* sum(); 
     Tensor* relu(); 
     Tensor* pow(double* x); 
-
-    Tensor* transpose(const std::vector<size_t>& axes = {}) const;
 };
 
 class ScalarTensor : public Tensor {

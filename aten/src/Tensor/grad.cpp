@@ -37,7 +37,7 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
 
   // Backpropagate through the computation graph
   for (Tensor* v : topo) {
-    if (v->backward) {
+    if (v->has_grad && v->backward) {
       v->backward();
     }
   }

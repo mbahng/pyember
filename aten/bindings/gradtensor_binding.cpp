@@ -28,11 +28,11 @@ void init_gradtensor_binding(py::module_ &m) {
 
 
     .def("reshape", 
-        [](GradTensor &a, std::vector<size_t> newshape, bool inplace = true) {
+        [](GradTensor &a, std::vector<size_t> newshape, bool inplace = false) {
             return a.reshape(newshape, inplace);
         },
         py::arg("shape"), 
-        py::arg("inplace") = true
+        py::arg("inplace") = false 
       )
     .def("transpose", 
         [](GradTensor &a, const std::vector<size_t> &axes) {
