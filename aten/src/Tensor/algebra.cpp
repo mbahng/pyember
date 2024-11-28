@@ -32,16 +32,15 @@ Tensor* Tensor::add(Tensor* other) {
   }
   Tensor* out = new Tensor(res_data, this->shape()); 
 
-  std::vector<size_t> newshape = concat_indices(out->shape(), this->shape());
-  this->grad = new GradTensor(newshape, out->shape().size()); 
-  other->grad = new GradTensor(newshape, out->shape().size()); 
-
   Tensor* this_ptr = this;
   Tensor* other_ptr = other; 
 
   out->prev = {this_ptr, other_ptr};
 
-  out->backward = [this, other_ptr] {
+  out->backward = [this, other_ptr, out] {
+    std::vector<size_t> newshape = concat_indices(out->shape(), this->shape());
+    this->grad = new GradTensor(newshape, out->shape().size()); 
+    other_ptr->grad = new GradTensor(newshape, out->shape().size()); 
     // update gradient to form d out[i]/ d this[i] = 1.  
     // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
     for (std::vector<size_t> l_idx : generate_all_indices(this->shape())) {
@@ -95,17 +94,15 @@ Tensor* Tensor::sub(Tensor* other) {
   }
   Tensor* out = new Tensor(res_data, this->shape()); 
 
-  std::vector<size_t> newshape = out->shape(); 
-  newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
-  this->grad = new GradTensor(newshape, this->shape().size()); 
-  other->grad = new GradTensor(newshape, this->shape().size()); 
-
   Tensor* this_ptr = this;
   Tensor* other_ptr = other;
 
   out->prev = {this_ptr, other_ptr};
 
-  out->backward = [this, other_ptr] {
+  out->backward = [this, other_ptr, out] {
+    std::vector<size_t> newshape = concat_indices(out->shape(), this->shape());
+    this->grad = new GradTensor(newshape, this->shape().size()); 
+    other_ptr->grad = new GradTensor(newshape, this->shape().size()); 
     // update gradient to form d out[i]/ d this[i] = 1.  
     // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
     for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
@@ -157,18 +154,16 @@ Tensor* Tensor::mul(Tensor* other) {
   }
   Tensor* out = new Tensor(res_data, this->shape()); 
 
-  std::vector<size_t> newshape = out->shape(); 
-  newshape.insert(newshape.end(), this->shape().begin(), this->shape().end()); 
-  this->grad = new GradTensor(newshape, this->shape().size()); 
-  other->grad = new GradTensor(newshape, this->shape().size()); 
-
   Tensor* this_ptr = this;
   Tensor* other_ptr = other;
   
   out->prev = {this_ptr, other_ptr};
   out->grad = new GradTensor(duplicate_indices(this->shape()), (this->shape()).size());
 
-  out->backward = [this, other_ptr] {
+  out->backward = [this, other_ptr, out] {
+    std::vector<size_t> newshape = concat_indices(out->shape(), this->shape());
+    this->grad = new GradTensor(newshape, this->shape().size()); 
+    other_ptr->grad = new GradTensor(newshape, this->shape().size()); 
     // update gradient to form d out[i]/ d this[i] = 1.  
     // Given sizes of (x_1, ..., x_N), we concat it to get (x_1..x_N, x_1..x_N) 
     std::vector<size_t> pairshape = duplicate_indices(this->shape_);
@@ -230,21 +225,20 @@ Tensor* Tensor::matmul(Tensor* other) {
     }
   }
 
-  // Set up gradients with correct shapes
-  // For A: shape is (M, K, M, N) where M,K is output shape and M,N is input shape
-  std::vector<size_t> left_grad_shape = {m, p, m, n};
-  // For B: shape is (M, K, N, K) where M,K is output shape and N,K is input shape
-  std::vector<size_t> right_grad_shape = {m, p, n, p};
-  
-  this->grad = new GradTensor(left_grad_shape, 2);  // pivot after output dimensions
-  other->grad = new GradTensor(right_grad_shape, 2); // pivot after output dimensions
-
   Tensor* this_ptr = this;
   Tensor* other_ptr = other;
 
   out->prev = {this_ptr, other_ptr};
 
   out->backward = [this, other_ptr, m, n, p] {
+    // Set up gradients with correct shapes
+    // For A: shape is (M, K, M, N) where M,K is output shape and M,N is input shape
+    std::vector<size_t> left_grad_shape = {m, p, m, n};
+    // For B: shape is (M, K, N, K) where M,K is output shape and N,K is input shape
+    std::vector<size_t> right_grad_shape = {m, p, n, p};
+    
+    this->grad = new GradTensor(left_grad_shape, 2);  // pivot after output dimensions
+    other_ptr->grad = new GradTensor(right_grad_shape, 2); // pivot after output dimensions
     // For the left matrix (A):
     // ∂C[i,j]/∂A[k,l] = B[l,j] if i=k, 0 otherwise
     for (size_t i = 0; i < m; ++i) {     // output row
