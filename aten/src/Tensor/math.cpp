@@ -35,14 +35,16 @@ Tensor* Tensor::sum() {
   else { out->has_grad = false; }
 
   out->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad) { out->prev.push_back(this); }
+  if (this->has_grad) { out->prev.push_back(this); } 
+
+  Tensor* this_ptr = this; 
  
-  out->backward = [this] { 
-    if (this->has_grad) {
-      std::vector<size_t> newshape = concat_indices({1, 1}, this->shape());
-      this->grad = new GradTensor(newshape, 2);  
-      for (size_t i = 0; i < ((this->grad)->storage_).size(); ++i) {
-        (this->grad)->storage_[i] = 1.0;
+  out->backward = [this_ptr] { 
+    if (this_ptr->has_grad) {
+      std::vector<size_t> newshape = concat_indices({1, 1}, this_ptr->shape());
+      this_ptr->grad = new GradTensor(newshape, 2);  
+      for (size_t i = 0; i < ((this_ptr->grad)->storage_).size(); ++i) {
+        (this_ptr->grad)->storage_[i] = 1.0;
       }
     }
   };
@@ -63,19 +65,20 @@ Tensor* Tensor::pow(double* x) {
 
   // need to allocate this x on heap for it to be accessible by backward
   double* x_ptr = new double(2); 
-
-  out->backward = [this, x_ptr] {  
-    if (this->has_grad) {
-      std::vector<size_t> newshape = duplicate_indices(this->shape());
-      this->grad = new GradTensor(newshape, (this->shape()).size());  
-      for (std::vector<size_t> l_idx : generate_all_indices(this->shape())) {
-        for (std::vector<size_t> r_idx : generate_all_indices(this->shape())) {
+  
+  Tensor* this_ptr = this; 
+  out->backward = [this_ptr, x_ptr] {  
+    if (this_ptr->has_grad) {
+      std::vector<size_t> newshape = duplicate_indices(this_ptr->shape());
+      this_ptr->grad = new GradTensor(newshape, (this_ptr->shape()).size());  
+      for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
+        for (std::vector<size_t> r_idx : generate_all_indices(this_ptr->shape())) {
           std::vector<size_t> idx = concat_indices(l_idx, r_idx); 
           if (l_idx == r_idx) {
-            (this->grad)->at(idx) = *x_ptr * std::pow(this->at(l_idx), (*x_ptr)-1);  
+            (this_ptr->grad)->at(idx) = *x_ptr * std::pow(this_ptr->at(l_idx), (*x_ptr)-1);  
           }
           else {
-            (this->grad)->at(idx) = 0.0; 
+            (this_ptr->grad)->at(idx) = 0.0; 
           }
         }
       }
@@ -98,18 +101,20 @@ Tensor* Tensor::relu() {
   out->prev = std::vector<Tensor*> {}; 
   if (this->has_grad) { out->prev.push_back(this); }
 
-  out->backward = [this] { 
-    if (this->has_grad) {
-      std::vector<size_t> newshape = duplicate_indices(this->shape());
-      this->grad = new GradTensor(newshape, (this->shape()).size());  
-      for (std::vector<size_t> l_idx : generate_all_indices(this->shape())) {
-        for (std::vector<size_t> r_idx : generate_all_indices(this->shape())) {
+  Tensor* this_ptr = this;  
+
+  out->backward = [this_ptr] { 
+    if (this_ptr->has_grad) {
+      std::vector<size_t> newshape = duplicate_indices(this_ptr->shape());
+      this_ptr->grad = new GradTensor(newshape, (this_ptr->shape()).size());  
+      for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
+        for (std::vector<size_t> r_idx : generate_all_indices(this_ptr->shape())) {
           std::vector<size_t> idx = concat_indices(l_idx, r_idx); 
-          if ((l_idx == r_idx) && (this->at(l_idx) >= 0.0)) {
-            (this->grad)->at(idx) = 1.0; 
+          if ((l_idx == r_idx) && (this_ptr->at(l_idx) >= 0.0)) {
+            (this_ptr->grad)->at(idx) = 1.0; 
           }
           else {
-            (this->grad)->at(idx) = 0.0; 
+            (this_ptr->grad)->at(idx) = 0.0; 
           }
         }
       }

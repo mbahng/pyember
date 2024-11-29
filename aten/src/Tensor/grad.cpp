@@ -17,7 +17,6 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   // Set the gradient of the final output (this tensor) to 1.0
-  auto self_ref = this; 
   std::vector<size_t> pairshape = duplicate_indices(this->shape_);
   this->grad = new GradTensor(pairshape, (this->shape_).size()); 
 

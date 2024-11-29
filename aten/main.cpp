@@ -2,11 +2,9 @@
 #include <vector>
 
 int main() {
-  Tensor* t1 = Tensor::arange(0, 6)->reshape({2, 3}, true); 
-  Tensor* t2 = t1->transpose();
-  Tensor truth = Tensor({0., 3., 1., 4., 2., 5.}, {3, 2});
-
-  std::cout << std::string(*t2) << std::endl;
-  std::cout << std::string(truth) << std::endl;
+  Tensor* a = new Tensor({2}, std::vector<size_t>{1});
+  Tensor* b = new Tensor({3}, std::vector<size_t>{1}); 
+  Tensor* c = a->mul(b); 
+  c->backprop(true);
   return 0;
 }
