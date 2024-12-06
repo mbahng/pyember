@@ -3,3 +3,4 @@ ember.egg-info/
 **/__pycache__/
 **/*.so
 **/playground.py
+*.DS_store
