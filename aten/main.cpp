@@ -1,4 +1,6 @@
-#include "./src/Tensor.h"
+// including src/Tensor.h is essentially a forward declaration of 
+// everything inside Tensor.h
+#include "./src/Tensor.h" // double quotes mean look in current directory
 #include <vector>
 
 int main() {
