@@ -1,4 +1,5 @@
-#include <cassert>
+#pragma once
+#include <cassert> // angle brackets mean for it to look in include directories
 #include <algorithm> 
 #include <vector>
 #include <string>
