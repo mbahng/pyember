@@ -8,7 +8,7 @@ TEST(UtilsTst, NullConstructor) {
 
   ASSERT_EQ(g1.data(), std::vector<double>{}); 
   ASSERT_EQ(g1.shape(), std::vector<size_t>{}); 
-  ASSERT_EQ(g1.pivot(), 0); 
+  ASSERT_EQ(g1.pidx(), 0); 
   ASSERT_TRUE(g1 == g2);
 }
 
@@ -18,7 +18,7 @@ TEST(UtilsTst, FullConstructor) {
   std::vector<size_t> g_shape = {2, 2}; 
   ASSERT_EQ(g.data(), g_data); 
   ASSERT_EQ(g.shape(), g_shape); 
-  ASSERT_EQ(g.pivot(), 1); 
+  ASSERT_EQ(g.pidx(), 1); 
 }
 
 TEST(UtilsTst, DefaultConstructor) {
@@ -26,7 +26,7 @@ TEST(UtilsTst, DefaultConstructor) {
   std::vector<size_t> g_shape = {2, 2}; 
   ASSERT_EQ(g.data(), std::vector<double>(4, 0.)); 
   ASSERT_EQ(g.shape(), g_shape); 
-  ASSERT_EQ(g.pivot(), 1); 
+  ASSERT_EQ(g.pidx(), 1); 
 }
 
 TEST(UtilsTst, EyeConstructor) {
@@ -35,6 +35,6 @@ TEST(UtilsTst, EyeConstructor) {
   std::vector<size_t> g_shape = {2, 2}; 
   ASSERT_EQ(g->data(), g_data);
   ASSERT_EQ(g->shape(), g_shape); 
-  ASSERT_EQ(g->pivot(), 1); 
+  ASSERT_EQ(g->pidx(), 1); 
 }
 

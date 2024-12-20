@@ -27,10 +27,10 @@ std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
 std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, size_t idx);
 
 GradTensor* GradTensor::add(GradTensor* other) {
-  if (this->shape() != other->shape()) {
-    throw std::logic_error("Shapes do not match");
+  if (this->nb_indices() != other->nb_indices()) {
+    throw std::logic_error("Shapes do not match across non-batch dimensions.");
   }
-  else if (this->pivot_ != other->pivot_) {
+  else if (this->pidx_ != other->pidx_) {
     throw std::logic_error("Pivots do not match");
   }
   int length = shape_to_length(this->shape());
@@ -39,7 +39,7 @@ GradTensor* GradTensor::add(GradTensor* other) {
     res_data[i] = this->data()[i] + other->data()[i];
   }
 
-  return new GradTensor(res_data, this->shape(), this->pivot_);   
+  return new GradTensor(res_data, this->shape(), this->pidx_);   
 }
 
 Tensor* GradTensor::add(Tensor* other) {
@@ -69,7 +69,7 @@ GradTensor* GradTensor::sub(GradTensor* other) {
   if (this->shape() != other->shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  else if (this->pivot_ != other->pivot_) {
+  else if (this->pidx_ != other->pidx_) {
     throw std::logic_error("Pivots do not match");
   }
   int length = shape_to_length(this->shape());
@@ -78,7 +78,7 @@ GradTensor* GradTensor::sub(GradTensor* other) {
     res_data[i] = this->data()[i] - other->data()[i];
   }
 
-  return new GradTensor(res_data, this->shape(), this->pivot_);   
+  return new GradTensor(res_data, this->shape(), this->pidx_);   
 }
 
 Tensor* GradTensor::sub(Tensor* other) {
@@ -111,7 +111,7 @@ GradTensor* GradTensor::mul(GradTensor* other) {
   if (this->shape() != other->shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  else if (this->pivot_ != other->pivot_) {
+  else if (this->pidx_ != other->pidx_) {
     throw std::logic_error("Pivots do not match");
   }
   int length = shape_to_length(this->shape());
@@ -120,7 +120,7 @@ GradTensor* GradTensor::mul(GradTensor* other) {
     res_data[i] = this->data()[i] * other->data()[i];
   }
 
-  return new GradTensor(res_data, this->shape(), this->pivot_);   
+  return new GradTensor(res_data, this->shape(), this->pidx_);   
 }
 
 Tensor* GradTensor::mul(Tensor* other) {
@@ -147,10 +147,10 @@ GradTensor* GradTensor::mul(double* other) {
 
 GradTensor* GradTensor::matmul(GradTensor* other) { 
   // tensor contraction this * other 
-  std::vector<size_t> otherL = std::vector<size_t> (other->shape().begin(), other->shape().begin() + other->pivot());
-  std::vector<size_t> otherR = std::vector<size_t> (other->shape().begin() + other->pivot(), other->shape().end());
-  std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin(), this->shape().begin() + this->pivot());
-  std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pivot(), this->shape().end());
+  std::vector<size_t> otherL = std::vector<size_t> (other->shape().begin(), other->shape().begin() + other->pidx());
+  std::vector<size_t> otherR = std::vector<size_t> (other->shape().begin() + other->pidx(), other->shape().end());
+  std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin(), this->shape().begin() + this->pidx());
+  std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pidx(), this->shape().end());
 
   // thisR and otherL are hyperdimesions to be contracted 
   if (thisR != otherL) {

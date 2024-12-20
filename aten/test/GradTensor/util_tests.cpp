@@ -39,10 +39,10 @@ TEST(UtilsTest, Pivot) {
   GradTensor t3 = GradTensor({1., 2., 3., 4.}, {1, 1, 2, 2}, 3); 
   GradTensor t4 = GradTensor({1., 2., 3., 4.}, {2, 1, 2, 1}, 2); 
 
-  ASSERT_TRUE(t1.pivot() == 1);    
-  ASSERT_TRUE(t2.pivot() == 2);    
-  ASSERT_TRUE(t3.pivot() == 3);    
-  ASSERT_TRUE(t4.pivot() == 2);    
+  ASSERT_TRUE(t1.pidx() == 1);    
+  ASSERT_TRUE(t2.pidx() == 2);    
+  ASSERT_TRUE(t3.pidx() == 3);    
+  ASSERT_TRUE(t4.pidx() == 2);    
 }
 
 TEST(GradTensorTest, Index) {
@@ -74,7 +74,7 @@ TEST(GradTensorTest, Slice1D) {
 
 TEST(GradTensorTest, Slice2D) {
   // GradTensor does not and should not support arange constructor
-  for (size_t pivot = 1; pivot < 3; pivot++) {
+  for (size_t pidx = 1; pidx < 3; pidx++) {
     GradTensor t = GradTensor(
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 
       13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0},
