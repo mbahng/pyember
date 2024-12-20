@@ -1,12 +1,9 @@
 import ember 
 
-# generate dataset with 100 samples, 8 features
-X = ember.Tensor.arange(0, 3, 1).reshape([3, 1])
-W = ember.Tensor.arange(3, 6, 1).reshape([1, 3])
-b = ember.Tensor([[0]])
-z1 = W @ X 
+ds = ember.datasets.LinearDataset(N=20, D=14) 
+dl = ember.datasets.Dataloader(ds, batch_size=2) 
 
-print(X.grad)
-print(W.grad)
-print(b.grad)
-print(z1.grad)
+for batch in dl: 
+  print(batch)
+  break
+
