@@ -2,19 +2,20 @@
 
 void init_gradtensor_binding(py::module_ &m) {
   py::class_<GradTensor, BaseTensor>(m, "GradTensor")
-    .def_readwrite("pivot", &GradTensor::pivot_)
+    .def_readwrite("pivot", &GradTensor::pidx_)
+    .def_readwrite("pidx", &GradTensor::pidx_)
 
     .def(py::init([]() {
         return new GradTensor();
       }))
-    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t pivot) {
-        return new GradTensor(data, shape, pivot);
+    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t pidx) {
+        return new GradTensor(data, shape, pidx);
       }))
-    .def(py::init([](std::vector<size_t> shape, size_t pivot) {
-        return new GradTensor(shape, pivot);
+    .def(py::init([](std::vector<size_t> shape, size_t pidx) {
+        return new GradTensor(shape, pidx);
       }))
     .def_static("eye", &GradTensor::eye, 
-      py::arg("n"), py::arg("pivot"))
+      py::arg("n"), py::arg("pidx"))
     .def("copy", 
         [](GradTensor &a) {
           return a.copy();

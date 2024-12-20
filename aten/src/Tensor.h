@@ -22,6 +22,7 @@ class BaseTensor {
   public: 
     std::vector<double> storage_; 
     std::vector<size_t> shape_; 
+    std::size_t batch_ = 1; 
 
     struct Slice {
       size_t start;
@@ -36,7 +37,10 @@ class BaseTensor {
 
     virtual std::string type() const { return "BaseTensor"; } 
     virtual std::string dtype() const { return "double"; }
-    virtual ~BaseTensor() = default;
+    virtual ~BaseTensor() = default; 
+
+    const std::vector<size_t> b_indices() const;  
+    const std::vector<size_t> nb_indices() const;  
   
     const std::vector<size_t>& shape() const { return shape_; }
     const std::vector<double>& data() const { return storage_; } 
@@ -67,16 +71,16 @@ class BaseTensor {
 
 class GradTensor : public BaseTensor {
   public: 
-    size_t pivot_; 
+    size_t pidx_; 
 
     // Constrcutors
     GradTensor(); 
-    GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pivot); 
-    GradTensor(std::vector<size_t> shape, size_t pivot); 
+    GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pidx); 
+    GradTensor(std::vector<size_t> shape, size_t pidx); 
     std::string type() const override { return "GradTensor"; }
-    size_t pivot() const { return pivot_; } 
+    size_t pidx() const { return pidx_; } 
     
-    static GradTensor* eye(size_t n, size_t pivot = 1); 
+    static GradTensor* eye(size_t n, size_t pidx = 1); 
 
     // utils 
     bool operator==(GradTensor& other) const; 
@@ -114,7 +118,7 @@ class GradTensor : public BaseTensor {
 
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
         auto base_result = BaseTensor::slice(slices);
-        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, pivot_);
+        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, pidx_);
     }
     // Add to GradTensor class:
     GradTensor& transpose(const std::vector<size_t>& axes = {});
@@ -216,5 +220,4 @@ class ScalarTensor : public Tensor {
     GradTensor* mul(GradTensor* other); 
     ScalarTensor* mul(ScalarTensor* other); 
     ScalarTensor* mul(double* other); 
-     
 };
