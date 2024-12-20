@@ -131,7 +131,7 @@ class Tensor : public BaseTensor {
     Tensor(std::vector<double> data, std::vector<size_t> shape, bool has_grad = true);
     Tensor(std::vector<double> data, bool has_grad = true);
     Tensor(std::vector<std::vector<double>> data, bool has_grad = true);
-    Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad = true);
+    Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad = true); 
 
     // Destructors 
     ~Tensor() { prev.clear(); }
