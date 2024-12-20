@@ -7,6 +7,7 @@
 #include <cxxabi.h>
 
 int shape_to_length(std::vector<size_t> shape);
+void print(std::vector<size_t> input);
 
 BaseTensor::operator std::string() const {  
   // recursive call on each row. 
@@ -184,10 +185,10 @@ bool BaseTensor::operator!=(BaseTensor& other) const {
 }
 
 const std::vector<size_t> BaseTensor::b_indices() const { 
-  return std::vector<size_t>((this->shape()).begin(), (this->shape()).begin() + this->batch_ - 1);
+  return std::vector<size_t>((this->shape()).begin(), (this->shape()).begin() + this->bidx()); 
 }
 
 const std::vector<size_t> BaseTensor::nb_indices() const { 
-  return std::vector<size_t>((this->shape()).begin() + this->batch_ - 1, (this->shape()).end());
+  return std::vector<size_t>((this->shape()).begin() + this->bidx(), (this->shape()).end()); 
 }
 

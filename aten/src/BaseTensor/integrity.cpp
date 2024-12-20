@@ -1,5 +1,6 @@
 #include <vector>
 #include <cassert> 
+#include <iostream>
 
 int shape_to_length(std::vector<size_t> shape) { 
   int len = 1; 
@@ -105,3 +106,17 @@ std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, 
   return result; 
 }
 
+size_t prod(std::vector<size_t> input) {
+  int product = 1; 
+  for (const auto& num : input) {
+    product *= num; 
+  }
+  return product; 
+}
+
+void print(std::vector<size_t> input) {
+  for (auto p : input) {
+    std::cout << p << " ";
+  }
+  std::cout << "\n";
+}
