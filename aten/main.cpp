@@ -4,9 +4,9 @@
 #include <vector>
 
 int main() {
-  Tensor* A = Tensor::gaussian({2, 3, 2}, 0, 1, 1, true);
-  Tensor* B = Tensor::gaussian({4, 3, 2}, 0, 1, 1, true); 
-  Tensor* C = A->add(B); 
-  C->backprop(false);
+  Tensor* A = Tensor::gaussian({3, 2}, 0, 1, 0, true);
+  Tensor* B = Tensor::gaussian({2, 3}, 0, 1, 0, true); 
+  Tensor* C = A->matmul(B); 
+  C->backprop(true); 
   return 0;
 }
