@@ -17,6 +17,12 @@ void init_basetensor_binding(py::module_ &m) {
     .def_property("shape",
       [](const BaseTensor &t) -> const std::vector<size_t>& { return t.shape_; },
       [](BaseTensor &t, const std::vector<size_t> &value) { t.shape_ = value; })
+    .def_property("bidx",
+      [](const BaseTensor &t) -> const size_t { return t.bidx_ ; },
+      [](BaseTensor &t, const size_t &value) { t.bidx_ = value; }) 
+
+    .def("b_indices", &BaseTensor::b_indices, py::is_operator())
+    .def("nb_indices", &BaseTensor::nb_indices, py::is_operator())
     .def("__repr__", &BaseTensor::operator std::string, py::is_operator()) 
     .def("__str__", &BaseTensor::operator std::string, py::is_operator())
     .def("__eq__", &BaseTensor::operator==, py::is_operator())
@@ -30,7 +36,7 @@ void init_basetensor_binding(py::module_ &m) {
 
     .def("__len__", 
         [](Tensor *a) {
-          return shape_to_length(a->shape()); 
+          return (a->data()).size();
         }
       )
 
@@ -63,7 +69,7 @@ void init_basetensor_binding(py::module_ &m) {
         }
 
         auto out = t.slice(slices); 
-        if (shape_to_length(out->shape()) == 1) {
+        if ((out->data()).size() == 1) {
           return py::cast(ScalarTensor(out->data()));
         }
         
@@ -80,7 +86,7 @@ void init_basetensor_binding(py::module_ &m) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
-        if (shape_to_length(out->shape()) == 1) {
+        if ((out->data()).size() == 1) {
           return py::cast(ScalarTensor(out->data()));
         }
         return py::cast(t.slice(slices)); 
@@ -98,7 +104,7 @@ void init_basetensor_binding(py::module_ &m) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
-        if (shape_to_length(out->shape()) == 1) {
+        if ((out->data()).size() == 1) {
           return py::cast(ScalarTensor(out->data()));
         }
         return py::cast(t.slice(slices)); 

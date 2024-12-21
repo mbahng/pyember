@@ -1,9 +1,14 @@
 #include "../Tensor.h"
+#include "../utils.h"
 
 Tensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string(); 
   if (result.back() != '\n') {
-    result += '\n';
+    result += ", bidx = " + std::to_string(this->bidx()) + '\n'; 
+  }
+  else {
+    result.pop_back();
+    result += ", bidx = " + std::to_string(this->bidx()) + '\n'; 
   }
   return result; 
 }
@@ -12,10 +17,15 @@ Tensor* Tensor::copy(bool has_grad) const {
   return new Tensor(this->storage_, this->shape_, has_grad);
 }
 
-Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool has_grad) {
-  if (shape_to_length(new_shape) != shape_to_length(this->shape_)) {
-    throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
+Tensor* Tensor::reshape(std::vector<size_t> new_shape, size_t bidx, bool inplace, bool has_grad) { 
+  std::vector<size_t> new_b_indices = std::vector<size_t>(new_shape.begin(), new_shape.begin() + this->bidx()); 
+  if (prod(new_b_indices) != prod(this->b_indices())) {
+    throw std::logic_error("New shape must have the same total number of batch elements as current shape. ");
   }
+  if (prod(new_shape) != prod(this->nb_indices())) {
+    throw std::invalid_argument("New shape must have the same total number of non-batch elements as the current shape");
+  } 
+
   if (inplace) {
     this->shape_ = new_shape; 
     return this; 
@@ -24,6 +34,14 @@ Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool has_gr
     Tensor* out = new Tensor(storage_, new_shape, has_grad);
     return out; 
   }
+}
+
+Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool has_grad) { 
+  std::vector<size_t> new_b_indices = std::vector<size_t>(new_shape.begin(), new_shape.begin() + this->bidx()); 
+  if (new_b_indices != this->b_indices()) {
+    throw std::logic_error("The new batch indices do not match the old ones. Alternatively, call this function with the bidx argument. ");
+  }
+  return this->reshape(new_shape, this->bidx(), inplace, has_grad);
 }
 
 Tensor* Tensor::transpose(const std::vector<size_t>& axes, bool inplace, bool has_grad) {

@@ -1,26 +1,27 @@
 #include "../Tensor.h"
+#include "../utils.h"
 
 GradTensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string();  
   if (result.back() != '\n') {
-    result += ", pivot = " + std::to_string(this->pivot_) + '\n'; 
+    result += ", pidx = " + std::to_string(this->pidx()) + ", bidx = " + std::to_string(this->bidx()) + '\n'; 
   }
   else {
     result.pop_back();
-    result += ", pivot = " + std::to_string(this->pivot_) + '\n'; 
+    result += ", pidx = " + std::to_string(this->pidx()) + ", bidx = " + std::to_string(this->bidx()) + '\n'; 
   }
   return result; 
 }
 
 bool GradTensor::operator==(GradTensor& other) const {
-  return (BaseTensor::operator==(other) && this->pivot_ == other.pivot_);
+  return (BaseTensor::operator==(other) && this->pidx() == other.pidx());
 }
 
 bool GradTensor::operator!=(GradTensor& other) const {
     return !(*this == other);
 }
 GradTensor* GradTensor::copy() const {
-  return new GradTensor(this->storage_, this->shape_, this->pivot_);
+  return new GradTensor(this->storage_, this->shape_, this->pidx(), this->bidx());
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
@@ -32,8 +33,8 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
     return this; 
   }
   else { 
-    // usually pivot will become meaningless when you reshape it. 
-    GradTensor* out = new GradTensor(storage_, new_shape, pivot_);
+    // usually pidx will become meaningless when you reshape it. 
+    GradTensor* out = new GradTensor(storage_, new_shape, pidx_, bidx_);
     return out; 
   }
 }

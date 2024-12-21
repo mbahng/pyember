@@ -1,9 +1,6 @@
 #include "../Tensor.h"
 #include <vector>
-
-std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
-std::vector<size_t> concat_indices(std::vector<size_t> shape1, std::vector<size_t> shape2);
-std::vector<size_t> duplicate_indices(std::vector<size_t> shape);
+#include "../utils.h"
 
 Tensor* ScalarTensor::add(Tensor* other) {
   Tensor* out = other->copy();
@@ -13,9 +10,9 @@ Tensor* ScalarTensor::add(Tensor* other) {
   }
 
   std::vector<size_t> this_grad_shape
-    = concat_indices(out->shape(), this->shape()); 
+    = concat(out->shape(), this->shape()); 
   std::vector<size_t> other_grad_shape
-    = concat_indices(out->shape(), other->shape()); 
+    = concat(out->shape(), other->shape()); 
 
 
   this->grad = new GradTensor(this_grad_shape, out->shape().size());
@@ -28,9 +25,9 @@ Tensor* ScalarTensor::add(Tensor* other) {
   out->backward = [this, other_ptr] { 
     for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
       // update gradient of scalar 
-      (this->grad)->at(concat_indices(l_idx, {0})) = 1.0; 
+      (this->grad)->at(concat(l_idx, {0})) = 1.0; 
       for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape())) {
-        std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+        std::vector<size_t> idx = concat(l_idx, r_idx);
         if (l_idx == r_idx) {
           (other_ptr->grad)->at(idx) = 1.0;
         }
@@ -82,9 +79,9 @@ Tensor* ScalarTensor::sub(Tensor* other) {
   }
 
   std::vector<size_t> this_grad_shape
-    = concat_indices(out->shape(), this->shape()); 
+    = concat(out->shape(), this->shape()); 
   std::vector<size_t> other_grad_shape
-    = concat_indices(out->shape(), other->shape()); 
+    = concat(out->shape(), other->shape()); 
 
 
   this->grad = new GradTensor(this_grad_shape, out->shape().size());
@@ -97,9 +94,9 @@ Tensor* ScalarTensor::sub(Tensor* other) {
   out->backward = [this, other_ptr] { 
     for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
       // update gradient of scalar 
-      (this->grad)->at(concat_indices(l_idx, {0})) = 1.0; 
+      (this->grad)->at(concat(l_idx, {0})) = 1.0; 
       for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape())) {
-        std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+        std::vector<size_t> idx = concat(l_idx, r_idx);
         if (l_idx == r_idx) {
           (other_ptr->grad)->at(idx) = -1.0;
         }
@@ -151,9 +148,9 @@ Tensor* ScalarTensor::mul(Tensor* other) {
   }
 
   std::vector<size_t> this_grad_shape
-    = concat_indices(out->shape(), this->shape()); 
+    = concat(out->shape(), this->shape()); 
   std::vector<size_t> other_grad_shape
-    = concat_indices(out->shape(), other->shape()); 
+    = concat(out->shape(), other->shape()); 
 
 
   this->grad = new GradTensor(this_grad_shape, out->shape().size());
@@ -166,9 +163,9 @@ Tensor* ScalarTensor::mul(Tensor* other) {
   out->backward = [this, other_ptr] { 
     for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
       // update gradient of scalar 
-      (this->grad)->at(concat_indices(l_idx, {0})) = other_ptr->at(l_idx); 
+      (this->grad)->at(concat(l_idx, {0})) = other_ptr->at(l_idx); 
       for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape())) {
-        std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+        std::vector<size_t> idx = concat(l_idx, r_idx);
         if (l_idx == r_idx) {
           (other_ptr->grad)->at(idx) = this->item();
         }
