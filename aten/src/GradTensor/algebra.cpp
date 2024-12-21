@@ -208,23 +208,23 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
     throw std::logic_error(msg.str());
   }
   
-  GradTensor* out = new GradTensor(other->shape(), other->pidx(), other->bidx()); 
+  GradTensor* out = new GradTensor(concat(this->b_indices(), other->b_indices(), thisL, otherR), other->pidx(), other->bidx()); 
 
   std::vector<size_t> diff_indices;
   for (size_t i = this->bidx(); i < other->bidx(); i++) {
       diff_indices.push_back(other->b_indices()[i]);
-  }
+  } 
 
   for (std::vector<size_t> b_outer : generate_all_indices(this->b_indices())) {
     for (std::vector<size_t> b_inner : generate_all_indices(diff_indices)) {
       for (std::vector<size_t> m : generate_all_indices(thisL)) {
-        for (std::vector<size_t> k : generate_all_indices(otherR)) {
+        for (std::vector<size_t> k : generate_all_indices(otherR)) { 
           double contraction = 0.0; 
           for (std::vector<size_t> n : generate_all_indices(thisR)) {
             std::vector<size_t> l_idx = concat(m, n);
             std::vector<size_t> r_idx = concat(n, k); 
-            contraction += (this->at(concat(b_outer, l_idx)) * other->at(concat(b_outer, b_inner, r_idx))); 
-          }
+            contraction += this->at(concat(b_outer, l_idx)) * other->at(concat(b_outer, b_inner, r_idx)); 
+          } 
           out->at(concat(b_outer, b_inner, m, k)) = contraction; 
         }
       }
