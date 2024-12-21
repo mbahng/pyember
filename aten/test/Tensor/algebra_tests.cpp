@@ -1,5 +1,6 @@
 #include <gtest/gtest.h> 
 #include "../../src/Tensor.h"
+#include "../../src/utils.h"
 #include <vector>
 
 TEST(TensorAlgebraTest, AddTensorVector) {
@@ -7,6 +8,8 @@ TEST(TensorAlgebraTest, AddTensorVector) {
   Tensor* t2 = Tensor::arange(0, 5); 
   Tensor* s1 = t1->add(t2);
   Tensor* truth_sum = Tensor::arange(0, 10, 2);
+  std::cout << std::string(*truth_sum) << "\n"; 
+  std::cout << std::string(*s1) << "\n"; 
   
   ASSERT_TRUE(*s1 == *truth_sum); 
   
