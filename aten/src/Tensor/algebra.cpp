@@ -33,25 +33,24 @@ Tensor* Tensor::add(Tensor* other) {
   Tensor* this_ptr = this; 
 
   out->backward = [this_ptr, other, out] { 
+    std::vector<size_t> newshape = concat( 
+      this_ptr->b_indices(), 
+      other->b_indices(), 
+      this_ptr->nb_indices(), 
+      other->nb_indices()
+    ); 
+    size_t bidx = this_ptr->bidx() + other->bidx(); 
+    size_t pidx = this_ptr->shape().size() + other->b_indices().size(); 
 
     // fill in gradients for this 
     if (this_ptr->has_grad) {
-      std::vector<size_t> this_newshape = concat( 
-        this_ptr->b_indices(), 
-        other->b_indices(), 
-        this_ptr->b_indices(), 
-        this_ptr->nb_indices(), 
-        other->nb_indices()
-      ); 
-      size_t this_bidx = this_ptr->bidx() + other->bidx() + this_ptr->bidx(); 
-      size_t this_pidx = 2 * this_ptr->b_indices().size() + other->bidx() + this_ptr->nb_indices().size();
 
-      this_ptr->grad = new GradTensor(this_newshape, this_pidx, this_bidx); 
+      this_ptr->grad = new GradTensor(newshape, pidx, bidx); 
       for (std::vector<size_t> b1 : generate_all_indices(this_ptr->b_indices())) {
         for (std::vector<size_t> b2 : generate_all_indices(other->b_indices())) {
           for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->nb_indices())) {
             for (std::vector<size_t> r_idx : generate_all_indices(other->nb_indices())) {
-              std::vector<size_t> idx = concat(b1, b2, b1, l_idx, r_idx);
+              std::vector<size_t> idx = concat(b1, b2, l_idx, r_idx);
               if (l_idx == r_idx) { 
                 (this_ptr->grad)->at(idx) = 1.0;
               }
@@ -65,22 +64,12 @@ Tensor* Tensor::add(Tensor* other) {
     }
     // fill in gradients for other 
     if (other->has_grad) {
-      std::vector<size_t> other_newshape = concat( 
-        this_ptr->b_indices(), 
-        other->b_indices(), 
-        other->b_indices(), 
-        this_ptr->nb_indices(), 
-        other->nb_indices()
-      ); 
-      size_t other_bidx = this_ptr->bidx() + other->bidx() + other->bidx(); 
-      size_t other_pidx = 2 * other->b_indices().size() + this_ptr->bidx() + other->nb_indices().size();
-
-      other->grad = new GradTensor(other_newshape, other_pidx, other_bidx); 
+      other->grad = new GradTensor(newshape, pidx, bidx); 
       for (std::vector<size_t> b1 : generate_all_indices(this_ptr->b_indices())) {
         for (std::vector<size_t> b2 : generate_all_indices(other->b_indices())) {
           for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->nb_indices())) {
             for (std::vector<size_t> r_idx : generate_all_indices(other->nb_indices())) {
-              std::vector<size_t> idx = concat(b1, b2, b2, l_idx, r_idx);
+              std::vector<size_t> idx = concat(b1, b2, l_idx, r_idx);
               if (l_idx == r_idx) { 
                 (other->grad)->at(idx) = 1.0;
               }
