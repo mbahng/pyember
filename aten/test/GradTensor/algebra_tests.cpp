@@ -3,9 +3,6 @@
 #include "../../src/Tensor.h"
 #include "../../src/utils.h"
 
-
-void print(std::vector<double> input);
-
 namespace GT_Add_GT {
 
   TEST(GradTensorTest, NB_add_NB) {
@@ -58,20 +55,18 @@ namespace GT_Add_GT {
 
 namespace GT_Sub_GT { 
 
-  TEST(GradTensorTest, SubGradTensor) {
-    // regular adding GT + GT
-    GradTensor* t1 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
-    GradTensor* t2 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
-    GradTensor* truth = new GradTensor({0., 0., 0., 0.}, {2, 2}, 1);
+  TEST(GradTensorTest, NB_sub_NB) {
+    GradTensor* t1 = new GradTensor(range(3, 11, 2), {2, 2}, 1, 0);
+    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 1, 0);
+    GradTensor* truth = new GradTensor(range(2, 6, 1), {2, 2}, 1, 0);
     GradTensor* s1 = t1->sub(t2); 
     ASSERT_TRUE(*s1 == *truth);
-    // Should throw errors when shapes or pivots do not match 
+
     GradTensor* t3 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 2); 
     GradTensor* t4 = new GradTensor({1., 2., 3., 4., 5., 6.}, {3, 2}, 2); 
     ASSERT_THROW(t1->sub(t3), std::logic_error); 
     ASSERT_THROW(t1->sub(t4), std::logic_error);
 
-    // Cleanup
     delete t1;
     delete t2;
     delete t3;
@@ -80,11 +75,30 @@ namespace GT_Sub_GT {
     delete s1;
   }
 
+  TEST(GradTensorTest, B_sub_NB) {
+    GradTensor* t1 = new GradTensor(concat(range(3, 11, 2), range(3, 11, 2)), {2, 2, 2}, 2, 1);
+    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 1, 0);
+    GradTensor* truth = new GradTensor(concat(range(2, 6, 1), range(2, 6, 1)), {2, 2, 2}, 2, 1);
+    GradTensor* s1 = t1->sub(t2); 
+    ASSERT_TRUE(*s1 == *truth);
+
+    GradTensor* t3 = new GradTensor(concat(range(3, 11, 2), range(3, 11, 2)), {2, 2, 2}, 2, 0);
+    GradTensor* t4 = new GradTensor(range(1, 5, 1), {2, 2}, 1, 1);
+    ASSERT_THROW(t1->sub(t3), std::logic_error); 
+    ASSERT_THROW(t1->sub(t4), std::logic_error); 
+  }
+
+  TEST(GradTensorTest, NB_sub_B) {
+  }
+
+  TEST(GradTensorTest, B_sub_B) {
+  }
+
 }
 
 namespace GT_Mul_GT { 
 
-  TEST(GradTensorTest, MulGradTensor) {
+  TEST(GradTensorTest, NB_sub_NB) {
     // regular adding GT + GT
     GradTensor* t1 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
     GradTensor* t2 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 1);
@@ -97,13 +111,21 @@ namespace GT_Mul_GT {
     ASSERT_THROW(t1->mul(t3), std::logic_error); 
     ASSERT_THROW(t1->mul(t4), std::logic_error);
 
-    // Cleanup
     delete t1;
     delete t2;
     delete t3;
     delete t4;
     delete truth;
     delete s1;
+  }
+
+  TEST(GradTensorTest, B_sub_NB) {
+  }
+
+  TEST(GradTensorTest, NB_sub_B) {
+  }
+
+  TEST(GradTensorTest, B_sub_B) {
   }
 
 }
@@ -170,7 +192,7 @@ namespace GT_Mul_T {
 
 }
 
-namespace GT_Mul_GT {
+namespace GT_Matmul_GT {
 
   TEST(GradTensorTest, MatMulGradTensor) {
     GradTensor* t1 = new GradTensor(
