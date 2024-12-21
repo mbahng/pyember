@@ -6,52 +6,88 @@
 Tensor* Tensor::add(Tensor* other) {
   if (this->nb_indices() != other->nb_indices()) {
     throw std::logic_error("Shapes do not match");
+  } 
+
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());
+  size_t new_bidx = this->bidx() + other->bidx(); 
+  std::vector<double> res_data(prod(new_shape), 0.0); 
+  Tensor* out = new Tensor(res_data, new_shape, new_bidx); 
+
+  // fill in data in batches
+  for (std::vector<size_t> b1 : generate_all_indices(this->b_indices())) {
+    for (std::vector<size_t> b2 : generate_all_indices(other->b_indices())) {
+      for (std::vector<size_t> i : generate_all_indices(this->nb_indices())) {
+        out->at(concat(b1, b2, i)) = this->at(concat(b1, i)) + other->at(concat(b2, i));
+      }
+    }
   }
 
-  size_t length = shape_to_length(this->shape());
-  std::vector<double> res_data(length, 0.0);  
-  for (int i = 0; i < length; i++) {
-    res_data[i] = this->data()[i] + other->data()[i];
-  }
-  Tensor* out = new Tensor(res_data, this->shape()); 
   // set has_grad of output 
   if (this->has_grad || other->has_grad) { out->has_grad = true; }
   else { out->has_grad = false; }
 
   out->prev = std::vector<Tensor*> {}; 
   if (this->has_grad) { out->prev.push_back(this); }
-  if (other->has_grad) { out->prev.push_back(other); } 
+  if (other->has_grad) { out->prev.push_back(other); }
 
   Tensor* this_ptr = this; 
 
   out->backward = [this_ptr, other, out] { 
-    std::vector<size_t> newshape = concat(out->shape(), this_ptr->shape());
+
     // fill in gradients for this 
     if (this_ptr->has_grad) {
-      this_ptr->grad = new GradTensor(newshape, out->shape().size()); 
-      for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
-        for (std::vector<size_t> r_idx : generate_all_indices(other->shape())) {
-          std::vector<size_t> idx = concat(l_idx, r_idx);
-          if (l_idx == r_idx) { 
-            (this_ptr->grad)->at(idx) = 1.0;
-          }
-          else {
-            (this_ptr->grad)->at(idx) = 0.0;
+      std::vector<size_t> this_newshape = concat( 
+        this_ptr->b_indices(), 
+        other->b_indices(), 
+        this_ptr->b_indices(), 
+        this_ptr->nb_indices(), 
+        other->nb_indices()
+      ); 
+      size_t this_bidx = this_ptr->bidx() + other->bidx() + this_ptr->bidx(); 
+      size_t this_pidx = 2 * this_ptr->b_indices().size() + other->bidx() + this_ptr->nb_indices().size();
+
+      this_ptr->grad = new GradTensor(this_newshape, this_pidx, this_bidx); 
+      for (std::vector<size_t> b1 : generate_all_indices(this_ptr->b_indices())) {
+        for (std::vector<size_t> b2 : generate_all_indices(other->b_indices())) {
+          for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->nb_indices())) {
+            for (std::vector<size_t> r_idx : generate_all_indices(other->nb_indices())) {
+              std::vector<size_t> idx = concat(b1, b2, b1, l_idx, r_idx);
+              if (l_idx == r_idx) { 
+                (this_ptr->grad)->at(idx) = 1.0;
+              }
+              else {
+                (this_ptr->grad)->at(idx) = 0.0;
+              }
+            }
           }
         }
       }
     }
     // fill in gradients for other 
     if (other->has_grad) {
-      other->grad = new GradTensor(newshape, out->shape().size()); 
-      for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
-        for (std::vector<size_t> r_idx : generate_all_indices(other->shape())) {
-          std::vector<size_t> idx = concat(l_idx, r_idx);
-          if (l_idx == r_idx) { 
-            (other->grad)->at(idx) = 1.0;
-          }
-          else {
-            (other->grad)->at(idx) = 0.0;
+      std::vector<size_t> other_newshape = concat( 
+        this_ptr->b_indices(), 
+        other->b_indices(), 
+        other->b_indices(), 
+        this_ptr->nb_indices(), 
+        other->nb_indices()
+      ); 
+      size_t other_bidx = this_ptr->bidx() + other->bidx() + other->bidx(); 
+      size_t other_pidx = 2 * other->b_indices().size() + this_ptr->bidx() + other->nb_indices().size();
+
+      other->grad = new GradTensor(other_newshape, other_pidx, other_bidx); 
+      for (std::vector<size_t> b1 : generate_all_indices(this_ptr->b_indices())) {
+        for (std::vector<size_t> b2 : generate_all_indices(other->b_indices())) {
+          for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->nb_indices())) {
+            for (std::vector<size_t> r_idx : generate_all_indices(other->nb_indices())) {
+              std::vector<size_t> idx = concat(b1, b2, b2, l_idx, r_idx);
+              if (l_idx == r_idx) { 
+                (other->grad)->at(idx) = 1.0;
+              }
+              else {
+                (other->grad)->at(idx) = 0.0;
+              }
+            }
           }
         }
       }

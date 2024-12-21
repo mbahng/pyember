@@ -1,5 +1,5 @@
 #pragma once
-#include <cassert> // angle brackets mean for it to look in include directories
+#include <cassert> 
 #include <algorithm> 
 #include <vector>
 #include <string>
@@ -9,8 +9,6 @@
 #include <stdexcept>
 #include <cmath> 
 #include <set>
-
-int shape_to_length(std::vector<size_t> shape);
 
 class Tensor; 
 class GradTensor; 
@@ -143,12 +141,13 @@ class Tensor : public BaseTensor {
 
     static Tensor* arange(int start, int stop, int step = 1, bool has_grad = true);
     static Tensor* linspace(double start, double stop, int numsteps, bool has_grad = true);
-    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, bool has_grad = true);
-    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, bool has_grad = true);
-    static Tensor* ones(std::vector<size_t> shape, bool has_grad = true);
-    static Tensor* zeros(std::vector<size_t> shape, bool has_grad = true); 
+    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool has_grad = true);
+    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, size_t bidx = 0, bool has_grad = true);
+    static Tensor* ones(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true);
+    static Tensor* zeros(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true); 
 
     std::string type() const override { return "Tensor"; }
+    virtual Tensor* reshape(std::vector<size_t> new_shape, size_t bidx, bool inplace = true, bool has_grad = true);
     virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
     Tensor* copy(bool has_grad = true) const; 
     Tensor* transpose(const std::vector<size_t>& axes = {}, bool inplace = false, bool has_grad = true);

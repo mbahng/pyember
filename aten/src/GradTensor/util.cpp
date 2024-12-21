@@ -1,4 +1,5 @@
 #include "../Tensor.h"
+#include "../utils.h"
 
 GradTensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string();  

@@ -184,8 +184,14 @@ GradTensor* GradTensor::mul(double* other) {
   return scalar->mul(this); 
 }
 
-GradTensor* GradTensor::matmul(GradTensor* other) { 
+GradTensor* GradTensor::matmul(GradTensor* other) {   
   // tensor contraction this * other 
+  // unlike matrix multiplication of regular Tensors, we don't need to worry 
+  // about batching across multiple dimensions, since the only time you 
+  // will do grad matmul is when doing tensor contractions. 
+  // e.g. (2, 3, 4) x (4, 4, 3) will never happen. 
+  // other's batch indices will always cover this.
+
   std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin() + this->bidx(), this->shape().begin() + this->pidx());
   std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pidx(), this->shape().end());
   std::vector<size_t> otherL = std::vector<size_t> (other->shape().begin() + other->bidx(), other->shape().begin() + other->pidx());
@@ -202,24 +208,24 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
     throw std::logic_error(msg.str());
   }
   
-  // Create result vector initialized with zeros 
-  std::vector res_shape = concat(this->b_indices(), other->b_indices(), thisL, otherR);
-  size_t pidx = this->bidx() + other->bidx() + thisL.size(); 
-  size_t bidx = this->bidx() + other->bidx();
-  GradTensor* out = new GradTensor(res_shape, pidx, bidx); 
+  GradTensor* out = new GradTensor(other->shape(), other->pidx(), other->bidx()); 
 
-  for (std::vector<size_t> b1 : generate_all_indices(this->b_indices())) {
-    for (std::vector<size_t> b2 : generate_all_indices(other->b_indices())) {
+  std::vector<size_t> diff_indices;
+  for (size_t i = this->bidx(); i < other->bidx(); i++) {
+      diff_indices.push_back(other->b_indices()[i]);
+  }
+
+  for (std::vector<size_t> b_outer : generate_all_indices(this->b_indices())) {
+    for (std::vector<size_t> b_inner : generate_all_indices(diff_indices)) {
       for (std::vector<size_t> m : generate_all_indices(thisL)) {
         for (std::vector<size_t> k : generate_all_indices(otherR)) {
           double contraction = 0.0; 
           for (std::vector<size_t> n : generate_all_indices(thisR)) {
             std::vector<size_t> l_idx = concat(m, n);
             std::vector<size_t> r_idx = concat(n, k); 
-            contraction += (this->at(concat(b1, l_idx)) * other->at(concat(b2, r_idx)));
+            contraction += (this->at(concat(b_outer, l_idx)) * other->at(concat(b_outer, b_inner, r_idx))); 
           }
-          std::vector<size_t> batch_idx = concat(b1, b2); 
-          out->at(concat(batch_idx, m, k)) = contraction; 
+          out->at(concat(b_outer, b_inner, m, k)) = contraction; 
         }
       }
     }
