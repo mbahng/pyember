@@ -104,8 +104,11 @@ size_t BaseTensor::get_flat_index(const std::vector<size_t>& indices) const {
   for (int i = shape_.size() - 1; i >= 0; --i) {
     flat_idx += indices[i] * multiplier;
     multiplier *= shape_[i];
+  } 
+
+  if (flat_idx >= storage_.size()) {
+    throw std::logic_error("Index is out of bounds for shape.") ;
   }
-  
   return flat_idx;
 }
 
