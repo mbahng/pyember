@@ -69,9 +69,40 @@ namespace T_Mul_T {
 
 namespace T_Matmul_T {
 
-  TEST(TensorAlgebraTest, MatMulTensor) {
-    // Empty test placeholder
+  TEST(TensorAlgebraTest, NB_matmul_NB) { 
+    Tensor* t1 = Tensor::arange(0, 10, 1)->reshape({5, 2}, true); 
+    Tensor* t2 = Tensor::arange(0, 6, 1)->reshape({2, 3}, true); 
+    Tensor* prod = t1->matmul(t2); 
+    Tensor* gt = new Tensor(
+      concat(
+        range(3, 6, 1), 
+        range(9, 20, 5), 
+        range(15, 34, 9), 
+        range(21, 48, 13), 
+        range(27, 62, 17)
+      ), 
+      {5, 3}, 0, true
+    );
+    ASSERT_TRUE(*prod == *gt);
   }
+
+  TEST(TensorAlgebraTest, B_matmul_NB) { 
+    Tensor* t1 = new Tensor(
+      concat(range(0, 10, 1), range(0, 10, 1)), 
+      {2, 5, 2}, 1, true
+    );
+    Tensor* t2 = Tensor::arange(0, 6, 1)->reshape({2, 3}, true); 
+    Tensor* prod = t1->matmul(t2); 
+    Tensor* gt = new Tensor(
+      concat(
+        range(3, 6, 1), range(9, 20, 5), range(15, 34, 9), range(21, 48, 13), range(27, 62, 17), 
+        range(3, 6, 1), range(9, 20, 5), range(15, 34, 9), range(21, 48, 13), range(27, 62, 17)
+      ), 
+      {2, 5, 3}, 1, true
+    );
+    ASSERT_TRUE(*prod == *gt);
+  }
+  
 
 }
 
