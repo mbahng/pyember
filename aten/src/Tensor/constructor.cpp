@@ -1,20 +1,8 @@
 #include <vector> 
 #include <random> 
 #include <ctime>
-#include "../Tensor.h"
-
-void array_matches_shape(
-  std::vector<double> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<double>> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<std::vector<double>>> data, 
-  std::vector<size_t> shape
-);
+#include "../Tensor.h" 
+#include "../utils.h"
 
 Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool has_grad) {
   this->storage_ = data; 

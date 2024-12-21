@@ -1,10 +1,8 @@
 #include <vector>
 #include <gtest/gtest.h>
 #include "../../src/Tensor.h"
+#include "../../src/utils.h"
 
-std::vector<double> range(int l, int u, int s);
-std::vector<double> range(int u, int s = 1); 
-std::vector<double> concat(std::vector<double> v1, std::vector<double> v2); 
 
 void print(std::vector<double> input);
 

@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # List all source files except main.cpp
 set(TENSOR_SOURCES
+  src/utils.cpp
+
   src/BaseTensor/integrity.cpp
   src/BaseTensor/util.cpp
 
