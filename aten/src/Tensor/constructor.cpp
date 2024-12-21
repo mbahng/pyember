@@ -52,7 +52,7 @@ Tensor* Tensor::arange(int start, int stop, int step, bool has_grad) {
   for (int i = start; i < stop; i += step) {
     storage_.push_back(i);
   }
-  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, has_grad);
+  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, 0, has_grad);
 }
 
 Tensor* Tensor::linspace(double start, double stop, int numsteps, bool has_grad){
@@ -61,7 +61,7 @@ Tensor* Tensor::linspace(double start, double stop, int numsteps, bool has_grad)
   for (double i = start; i <= stop; i += stepsize) {
     storage_.push_back(i);
   }
-  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, has_grad);
+  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, 0, has_grad);
 }
 
 Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev, size_t bidx, bool has_grad) {
