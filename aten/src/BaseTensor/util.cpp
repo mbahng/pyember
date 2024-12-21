@@ -6,9 +6,6 @@
 #include <functional>
 #include <cxxabi.h>
 
-int shape_to_length(std::vector<size_t> shape);
-void print(std::vector<size_t> input);
-
 BaseTensor::operator std::string() const {  
   // recursive call on each row. 
   std::ostringstream oss;

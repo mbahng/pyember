@@ -2,25 +2,7 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
-
-int shape_to_length(std::vector<size_t> shape); 
-
-void array_matches_shape(
-  std::vector<double> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<double>> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<std::vector<double>>> data, 
-  std::vector<size_t> shape
-);
-
-std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
-std::vector<size_t> concat_indices(std::vector<size_t> shape1, std::vector<size_t> shape2);
-std::vector<size_t> duplicate_indices(std::vector<size_t> shape);
+#include "../utils.h"
 
 Tensor* Tensor::sum() { 
   double out_data = 0.0;
@@ -41,7 +23,7 @@ Tensor* Tensor::sum() {
  
   out->backward = [this_ptr] { 
     if (this_ptr->has_grad) {
-      std::vector<size_t> newshape = concat_indices({1, 1}, this_ptr->shape());
+      std::vector<size_t> newshape = concat({1, 1}, this_ptr->shape());
       this_ptr->grad = new GradTensor(newshape, 2);  
       for (size_t i = 0; i < ((this_ptr->grad)->storage_).size(); ++i) {
         (this_ptr->grad)->storage_[i] = 1.0;
@@ -69,11 +51,11 @@ Tensor* Tensor::pow(double* x) {
   Tensor* this_ptr = this; 
   out->backward = [this_ptr, x_ptr] {  
     if (this_ptr->has_grad) {
-      std::vector<size_t> newshape = duplicate_indices(this_ptr->shape());
+      std::vector<size_t> newshape = duplicate(this_ptr->shape());
       this_ptr->grad = new GradTensor(newshape, (this_ptr->shape()).size());  
       for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
         for (std::vector<size_t> r_idx : generate_all_indices(this_ptr->shape())) {
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx); 
+          std::vector<size_t> idx = concat(l_idx, r_idx); 
           if (l_idx == r_idx) {
             (this_ptr->grad)->at(idx) = *x_ptr * std::pow(this_ptr->at(l_idx), (*x_ptr)-1);  
           }
@@ -105,11 +87,11 @@ Tensor* Tensor::relu() {
 
   out->backward = [this_ptr] { 
     if (this_ptr->has_grad) {
-      std::vector<size_t> newshape = duplicate_indices(this_ptr->shape());
+      std::vector<size_t> newshape = duplicate(this_ptr->shape());
       this_ptr->grad = new GradTensor(newshape, (this_ptr->shape()).size());  
       for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
         for (std::vector<size_t> r_idx : generate_all_indices(this_ptr->shape())) {
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx); 
+          std::vector<size_t> idx = concat(l_idx, r_idx); 
           if ((l_idx == r_idx) && (this_ptr->at(l_idx) >= 0.0)) {
             (this_ptr->grad)->at(idx) = 1.0; 
           }

@@ -2,19 +2,6 @@
 #include <ctime>
 #include "../Tensor.h"
 
-void array_matches_shape(
-  std::vector<double> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<double>> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<std::vector<double>>> data, 
-  std::vector<size_t> shape
-);
-
 ScalarTensor::ScalarTensor() 
   : Tensor({0.}, std::vector<size_t>{1}){}
 

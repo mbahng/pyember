@@ -1,30 +1,13 @@
 #include <vector>
 #include <cassert>
 #include "../Tensor.h"
-
-int shape_to_length(std::vector<size_t> shape); 
-
-void array_matches_shape(
-  std::vector<double> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<double>> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<std::vector<double>>> data, 
-  std::vector<size_t> shape
-);
-
-std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
-std::vector<size_t> concat_indices(std::vector<size_t> shape1, std::vector<size_t> shape2);
-std::vector<size_t> duplicate_indices(std::vector<size_t> shape);
+#include "../utils.h"
 
 Tensor* Tensor::add(Tensor* other) {
-  if (this->shape() != other->shape()) {
+  if (this->nb_indices() != other->nb_indices()) {
     throw std::logic_error("Shapes do not match");
   }
+
   size_t length = shape_to_length(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
@@ -42,13 +25,13 @@ Tensor* Tensor::add(Tensor* other) {
   Tensor* this_ptr = this; 
 
   out->backward = [this_ptr, other, out] { 
-    std::vector<size_t> newshape = concat_indices(out->shape(), this_ptr->shape());
+    std::vector<size_t> newshape = concat(out->shape(), this_ptr->shape());
     // fill in gradients for this 
     if (this_ptr->has_grad) {
       this_ptr->grad = new GradTensor(newshape, out->shape().size()); 
       for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
         for (std::vector<size_t> r_idx : generate_all_indices(other->shape())) {
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          std::vector<size_t> idx = concat(l_idx, r_idx);
           if (l_idx == r_idx) { 
             (this_ptr->grad)->at(idx) = 1.0;
           }
@@ -63,7 +46,7 @@ Tensor* Tensor::add(Tensor* other) {
       other->grad = new GradTensor(newshape, out->shape().size()); 
       for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape())) {
         for (std::vector<size_t> r_idx : generate_all_indices(other->shape())) {
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          std::vector<size_t> idx = concat(l_idx, r_idx);
           if (l_idx == r_idx) { 
             (other->grad)->at(idx) = 1.0;
           }
@@ -122,13 +105,13 @@ Tensor* Tensor::sub(Tensor* other) {
   Tensor* this_ptr = this; 
 
   out->backward = [this_ptr, other, out] {
-    std::vector<size_t> newshape = concat_indices(out->shape(), this_ptr->shape());
+    std::vector<size_t> newshape = concat(out->shape(), this_ptr->shape());
     
     if (this_ptr->has_grad) {
       this_ptr->grad = new GradTensor(newshape, this_ptr->shape().size()); 
       for (std::vector<size_t> l_idx : generate_all_indices(other->shape())) {
         for (std::vector<size_t> r_idx : generate_all_indices(this_ptr->shape())) {
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          std::vector<size_t> idx = concat(l_idx, r_idx);
           if (l_idx == r_idx) {
             (this_ptr->grad)->at(idx) = 1.0;
           }
@@ -142,7 +125,7 @@ Tensor* Tensor::sub(Tensor* other) {
       other->grad = new GradTensor(newshape, this_ptr->shape().size()); 
       for (std::vector<size_t> l_idx : generate_all_indices(other->shape())) {
         for (std::vector<size_t> r_idx : generate_all_indices(this_ptr->shape())) {
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          std::vector<size_t> idx = concat(l_idx, r_idx);
           if (l_idx == r_idx) {
             (other->grad)->at(idx) = -1.0;
           }
@@ -198,15 +181,15 @@ Tensor* Tensor::mul(Tensor* other) {
   Tensor* this_ptr = this; 
 
   out->backward = [this_ptr, other, out] {
-    std::vector<size_t> newshape = concat_indices(out->shape(), this_ptr->shape()); 
+    std::vector<size_t> newshape = concat(out->shape(), this_ptr->shape()); 
 
     if (this_ptr->has_grad) {
       this_ptr->grad = new GradTensor(newshape, this_ptr->shape().size()); 
-      std::vector<size_t> pairshape = duplicate_indices(this_ptr->shape_);
+      std::vector<size_t> pairshape = duplicate(this_ptr->shape_);
 
       for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape_)) {
         for (std::vector<size_t> r_idx : generate_all_indices(other->shape_)) { 
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          std::vector<size_t> idx = concat(l_idx, r_idx);
           if (l_idx == r_idx) {
             (this_ptr->grad)->at(idx) = other->at(r_idx);
           }
@@ -218,11 +201,11 @@ Tensor* Tensor::mul(Tensor* other) {
     }
     if (other->has_grad) {
       other->grad = new GradTensor(newshape, other->shape().size()); 
-      std::vector<size_t> pairshape = duplicate_indices(this_ptr->shape_);
+      std::vector<size_t> pairshape = duplicate(this_ptr->shape_);
 
       for (std::vector<size_t> l_idx : generate_all_indices(this_ptr->shape_)) {
         for (std::vector<size_t> r_idx : generate_all_indices(other->shape_)) { 
-          std::vector<size_t> idx = concat_indices(l_idx, r_idx);
+          std::vector<size_t> idx = concat(l_idx, r_idx);
           if (l_idx == r_idx) {
             (other->grad)->at(idx) = this_ptr->at(l_idx);
           }

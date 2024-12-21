@@ -1,9 +1,7 @@
 #include "../Tensor.h" 
 #include <vector> 
 #include <cassert>
-
-std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
-std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
+#include "../utils.h"
 
 void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo) {
   if (visited.find(v) == visited.end()) {
@@ -17,12 +15,12 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   // Set the gradient of the final output (this tensor) to 1.0
-  std::vector<size_t> pairshape = duplicate_indices(this->shape_);
+  std::vector<size_t> pairshape = duplicate(this->shape_);
   this->grad = new GradTensor(pairshape, (this->shape_).size()); 
 
   // initialize grad[i, i] to 1s, where i may be a vector  
   for (std::vector<size_t> i : generate_all_indices(this->shape_)) { 
-    std::vector<size_t> i_dup = duplicate_indices(i); 
+    std::vector<size_t> i_dup = duplicate(i); 
     (this->grad)->at(i_dup) = 1.0; 
   } 
 

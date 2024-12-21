@@ -1,32 +1,7 @@
 #include <vector>
 #include <cassert>
 #include "../Tensor.h" 
-
-int shape_to_length(std::vector<size_t> shape); 
-void print(std::vector<size_t> input);
-
-void array_matches_shape(
-  std::vector<double> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<double>> data, 
-  std::vector<size_t> shape
-);
-void array_matches_shape(
-  std::vector<std::vector<std::vector<double>>> data, 
-  std::vector<size_t> shape
-);
-
-std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape); 
-
-std::vector<size_t> concat_indices(
-    std::vector<size_t> shape1,
-    std::vector<size_t> shape2);
-
-std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
-std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, size_t idx);
-size_t prod(std::vector<size_t> input); 
+#include "../utils.h" 
 
 GradTensor* GradTensor::add(GradTensor* other) {
   if (this->nb_indices() != other->nb_indices()) {
@@ -37,7 +12,7 @@ GradTensor* GradTensor::add(GradTensor* other) {
   } 
 
   // set up new shape 
-  std::vector<size_t> new_shape = concat_indices(this->b_indices(), other->shape());  
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
   size_t new_pidx = (this->pidx()) + (other->bidx()); 
 
   int length = shape_to_length(new_shape); 
@@ -60,7 +35,7 @@ Tensor* GradTensor::add(Tensor* other) {
     throw std::logic_error("Shapes do not match across non-batch dimensions.");
   }
   // set up new shape 
-  std::vector<size_t> new_shape = concat_indices(this->b_indices(), other->shape());  
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
   size_t new_pidx = (this->pidx()) + (other->bidx()); 
 
   int length = shape_to_length(new_shape); 
@@ -96,7 +71,7 @@ GradTensor* GradTensor::sub(GradTensor* other) {
   } 
 
   // set up new shape 
-  std::vector<size_t> new_shape = concat_indices(this->b_indices(), other->shape());  
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
   size_t new_pidx = (this->pidx()) + (other->bidx()); 
 
   int length = shape_to_length(new_shape); 
@@ -119,7 +94,7 @@ Tensor* GradTensor::sub(Tensor* other) {
     throw std::logic_error("Shapes do not match across non-batch dimensions.");
   }
   // set up new shape 
-  std::vector<size_t> new_shape = concat_indices(this->b_indices(), other->shape());  
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
   size_t new_pidx = (this->pidx()) + (other->bidx()); 
 
   int length = shape_to_length(new_shape); 
@@ -159,7 +134,7 @@ GradTensor* GradTensor::mul(GradTensor* other) {
   } 
 
   // set up new shape 
-  std::vector<size_t> new_shape = concat_indices(this->b_indices(), other->shape());  
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
   size_t new_pidx = (this->pidx()) + (other->bidx()); 
 
   int length = shape_to_length(new_shape); 
@@ -182,7 +157,7 @@ Tensor* GradTensor::mul(Tensor* other) {
     throw std::logic_error("Shapes do not match across non-batch dimensions.");
   }
   // set up new shape 
-  std::vector<size_t> new_shape = concat_indices(this->b_indices(), other->shape());  
+  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
   size_t new_pidx = (this->pidx()) + (other->bidx()); 
 
   int length = shape_to_length(new_shape); 
@@ -228,7 +203,7 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
   }
   
   // Create result vector initialized with zeros 
-  std::vector res_shape = concat_indices(concat_indices(this->b_indices(), other->b_indices()), concat_indices(thisL, otherR));
+  std::vector res_shape = concat(this->b_indices(), other->b_indices(), thisL, otherR);
   size_t pidx = this->bidx() + other->bidx() + thisL.size(); 
   size_t bidx = this->bidx() + other->bidx();
   GradTensor* out = new GradTensor(res_shape, pidx, bidx); 
@@ -239,12 +214,12 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
         for (std::vector<size_t> k : generate_all_indices(otherR)) {
           double contraction = 0.0; 
           for (std::vector<size_t> n : generate_all_indices(thisR)) {
-            std::vector<size_t> l_idx = concat_indices(m, n);
-            std::vector<size_t> r_idx = concat_indices(n, k); 
-            contraction += (this->at(concat_indices(b1, l_idx)) * other->at(concat_indices(b2, r_idx)));
+            std::vector<size_t> l_idx = concat(m, n);
+            std::vector<size_t> r_idx = concat(n, k); 
+            contraction += (this->at(concat(b1, l_idx)) * other->at(concat(b2, r_idx)));
           }
-          std::vector<size_t> batch_idx = concat_indices(b1, b2); 
-          out->at(concat_indices(batch_idx, concat_indices(m, k))) = contraction; 
+          std::vector<size_t> batch_idx = concat(b1, b2); 
+          out->at(concat(batch_idx, m, k)) = contraction; 
         }
       }
     }
