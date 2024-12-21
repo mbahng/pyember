@@ -1,5 +1,9 @@
 import torch 
 
-x = torch.randn(4, 3, 2) 
-y = torch.randn(7, 3, 2)
-print((x + y).shape)
+A = torch.arange(0, 10).reshape(5, 2) 
+B = torch.arange(0, 6).reshape(2, 3)
+C = A @ B 
+
+print(C)
+
+

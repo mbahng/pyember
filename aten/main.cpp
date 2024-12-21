@@ -1,13 +1,9 @@
 #include "./src/Tensor.h" 
 
 int main() {
-  Tensor* t1 = Tensor::arange(0, 5);
-  Tensor* t2 = Tensor::arange(0, 5); 
-  Tensor* s1 = t1->add(t2);
-  Tensor* truth_sum = Tensor::arange(0, 10, 2);
-  std::cout << std::string(*t1) << "\n"; 
-  std::cout << std::string(*t2) << "\n"; 
-  std::cout << std::string(*truth_sum) << "\n"; 
-  std::cout << std::string(*s1) << "\n"; 
+  Tensor* t1 = Tensor::arange(0, 10, 1)->reshape({5, 2}, true); 
+  Tensor* t2 = Tensor::arange(0, 6, 1)->reshape({2, 3}, true); 
+  Tensor* prod = t1->matmul(t2); 
+  std::cout << std::string(*prod); 
   return 0;
 }
