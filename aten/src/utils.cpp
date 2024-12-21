@@ -78,8 +78,13 @@ std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>&
   while (increment_indices(current, shape)) {
     result.push_back(current);
   }
-  
-  return result;
+ 
+  if (result.size() > 0) {
+    return result;
+  } 
+  else {
+    return {{}};
+  }
 }
 
 std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, size_t idx) {

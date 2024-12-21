@@ -36,7 +36,7 @@ void init_basetensor_binding(py::module_ &m) {
 
     .def("__len__", 
         [](Tensor *a) {
-          return shape_to_length(a->shape()); 
+          return (a->data()).size();
         }
       )
 
@@ -69,7 +69,7 @@ void init_basetensor_binding(py::module_ &m) {
         }
 
         auto out = t.slice(slices); 
-        if (shape_to_length(out->shape()) == 1) {
+        if ((out->data()).size() == 1) {
           return py::cast(ScalarTensor(out->data()));
         }
         
@@ -86,7 +86,7 @@ void init_basetensor_binding(py::module_ &m) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
-        if (shape_to_length(out->shape()) == 1) {
+        if ((out->data()).size() == 1) {
           return py::cast(ScalarTensor(out->data()));
         }
         return py::cast(t.slice(slices)); 
@@ -104,7 +104,7 @@ void init_basetensor_binding(py::module_ &m) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
-        if (shape_to_length(out->shape()) == 1) {
+        if ((out->data()).size() == 1) {
           return py::cast(ScalarTensor(out->data()));
         }
         return py::cast(t.slice(slices)); 
