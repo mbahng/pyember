@@ -8,14 +8,15 @@ void init_gradtensor_binding(py::module_ &m) {
     .def(py::init([]() {
         return new GradTensor();
       }))
-    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t pidx) {
-        return new GradTensor(data, shape, pidx);
+    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t pidx, size_t bidx) {
+        return new GradTensor(data, shape, pidx, bidx);
       }))
-    .def(py::init([](std::vector<size_t> shape, size_t pidx) {
-        return new GradTensor(shape, pidx);
+    .def(py::init([](std::vector<size_t> shape, size_t pidx, size_t bidx) {
+        return new GradTensor(shape, pidx, bidx);
       }))
     .def_static("eye", &GradTensor::eye, 
-      py::arg("n"), py::arg("pidx"))
+      py::arg("n"), py::arg("pidx"), py::arg("bidx"))
+
     .def("copy", 
         [](GradTensor &a) {
           return a.copy();

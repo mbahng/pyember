@@ -1,9 +1,9 @@
-import ember 
+from ember import GradTensor, Tensor
 
-ds = ember.datasets.LinearDataset(N=20, D=14) 
-dl = ember.datasets.Dataloader(ds, batch_size=2) 
+data = list(range(6)) 
+A = GradTensor(data + data, [2, 2, 3], 2, 1)
+B = GradTensor(data, [3, 2], 1, 0) 
+print(A) 
+print(B)
 
-for batch in dl: 
-  print(batch)
-  break
-
+print(A @ B)

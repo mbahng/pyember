@@ -115,8 +115,36 @@ size_t prod(std::vector<size_t> input) {
 }
 
 void print(std::vector<size_t> input) {
-  for (auto p : input) {
+  for (size_t p : input) {
     std::cout << p << " ";
   }
   std::cout << "\n";
 }
+
+void print(std::vector<double> input) {
+  for (double p : input) {
+    std::cout << p << " ";
+  }
+  std::cout << "\n";
+}
+
+std::vector<double> range(int l, int u, int s) {
+  std::vector<double> res; 
+  for (int p = l; p < u; p += s) {
+    res.push_back(p);
+  }
+  return res; 
+}
+
+std::vector<double> range(int u, int s = 1) {
+  return range(0, u, s);
+} 
+
+std::vector<double> concat(
+    std::vector<double> v1,
+    std::vector<double> v2) {
+  std::vector<double> pairshape = v1;
+  pairshape.insert(pairshape.end(), v2.begin(), v2.end());
+  return pairshape;
+}
+
