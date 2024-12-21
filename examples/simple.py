@@ -33,4 +33,7 @@ def testB():
   print(D.grad.shape)
   print(E.grad.shape)
 
-testA()
+
+t1 = GradTensor(list(range(1, 11)), [5, 2], 1, 0) 
+t2 = GradTensor([2, 3, 4, 5, 7, 8, 9, 10], [2, 4], 1, 0) 
+print(t1 @ t2)
