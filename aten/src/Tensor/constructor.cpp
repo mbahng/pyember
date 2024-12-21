@@ -16,20 +16,20 @@ void array_matches_shape(
   std::vector<size_t> shape
 );
 
-Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, bool has_grad) {
+Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool has_grad) {
   this->storage_ = data; 
   this->shape_ = shape;  
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<double> data, bool has_grad) {
+Tensor::Tensor(std::vector<double> data, size_t bidx, bool has_grad) {
   this->storage_ = data; 
   std::vector<size_t> s = {data.size()};
   this->shape_ = s; 
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<double>> data, bool has_grad) {
+Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size()};
   array_matches_shape(data, shape); 
   this->shape_ = shape; 
@@ -41,7 +41,7 @@ Tensor::Tensor(std::vector<std::vector<double>> data, bool has_grad) {
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad) {
+Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size(), data[0][0].size()};
   array_matches_shape(data, shape); 
   this->shape_ = shape; 

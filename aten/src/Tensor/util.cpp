@@ -3,7 +3,11 @@
 Tensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string(); 
   if (result.back() != '\n') {
-    result += '\n';
+    result += ", bidx = " + std::to_string(this->bidx()) + '\n'; 
+  }
+  else {
+    result.pop_back();
+    result += ", bidx = " + std::to_string(this->bidx()) + '\n'; 
   }
   return result; 
 }
