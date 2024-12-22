@@ -249,8 +249,6 @@ namespace Integrity {
       std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + pidx2, s2.end());
 
       if (R1 != L2) {
-        std::cout << std::string(*t1) << "\n"; 
-        std::cout << std::string(*t2) << "\n"; 
         std::ostringstream msg;
         msg << "Dimensions to be contracted are not equal: left (";  
         for (size_t s : R1) { msg << " " << s; }

@@ -78,8 +78,6 @@ namespace T_Matmul_T {
       {5, 3}, true
     ); 
 
-    std::cout << std::string(*prod) << "\n"; 
-    std::cout << std::string(*gt) << "\n"; 
     ASSERT_TRUE(*prod == *gt);
   }
 

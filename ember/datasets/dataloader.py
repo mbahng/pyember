@@ -1,4 +1,3 @@
-from .. import Tensor 
 from .dataset import Dataset 
 import random
 
@@ -34,8 +33,6 @@ class Dataloader():
 
     batch_X = self.dataset.X[start:end]
     batch_Y = self.dataset.Y[start:end] 
-    batch_X.bidx = 1 
-    batch_Y.bidx = 1 
     batch_X.has_grad = False
     batch_Y.has_grad = False
     self.idx += 1 
