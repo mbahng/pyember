@@ -14,27 +14,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(TENSOR_SOURCES
   src/utils.cpp
 
-  src/BaseTensor/integrity.cpp
-  src/BaseTensor/util.cpp
+  src/BaseTensor/base.cpp
 
   src/GradTensor/constructor.cpp
-  src/GradTensor/util.cpp
+  src/GradTensor/base.cpp
   src/GradTensor/math.cpp
   src/GradTensor/algebra.cpp
 
   src/Tensor/constructor.cpp
-  src/Tensor/util.cpp
+  src/Tensor/base.cpp
   src/Tensor/grad.cpp
   src/Tensor/math.cpp
   src/Tensor/algebra.cpp
 
   src/ScalarTensor/constructor.cpp
-  src/ScalarTensor/util.cpp
+  src/ScalarTensor/base.cpp
   src/ScalarTensor/math.cpp
 )
 set(TENSOR_TESTS 
-  test/BaseTensor/integrity_tests.cpp
-
   test/GradTensor/constructors_tests.cpp
   test/GradTensor/util_tests.cpp
   test/GradTensor/algebra_tests.cpp

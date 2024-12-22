@@ -11,6 +11,8 @@ for epoch in range(1000):
   for x, y in dl: 
     x.bidx = 1 
     y.bidx = 1
+    print(x) 
+    print(y)
     x.has_grad = False
     y.has_grad = False
     y_ = model.forward(x)  
@@ -22,7 +24,8 @@ for epoch in range(1000):
 
     model.W -= 1e-5 * dW
     model.b -= 1e-5 * db
+    break 
 
-  if epoch % 25 == 0: 
-    print(loss)
+  break
+
 
