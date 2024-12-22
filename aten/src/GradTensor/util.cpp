@@ -4,11 +4,11 @@
 GradTensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string();  
   if (result.back() != '\n') {
-    result += ", pidx = " + std::to_string(this->pidx()) + ", bidx = " + std::to_string(this->bidx()) + '\n'; 
+    result += ", pidx = " + std::to_string(this->pidx()) + '\n'; 
   }
   else {
     result.pop_back();
-    result += ", pidx = " + std::to_string(this->pidx()) + ", bidx = " + std::to_string(this->bidx()) + '\n'; 
+    result += ", pidx = " + std::to_string(this->pidx()) + '\n'; 
   }
   return result; 
 }
@@ -21,7 +21,7 @@ bool GradTensor::operator!=(GradTensor& other) const {
     return !(*this == other);
 }
 GradTensor* GradTensor::copy() const {
-  return new GradTensor(this->storage_, this->shape_, this->pidx(), this->bidx());
+  return new GradTensor(this->storage_, this->shape_, this->pidx());
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
@@ -34,7 +34,7 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
   }
   else { 
     // usually pidx will become meaningless when you reshape it. 
-    GradTensor* out = new GradTensor(storage_, new_shape, pidx_, bidx_);
+    GradTensor* out = new GradTensor(storage_, new_shape, pidx_);
     return out; 
   }
 }

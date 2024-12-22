@@ -183,12 +183,3 @@ bool BaseTensor::operator==(BaseTensor& other) const {
 bool BaseTensor::operator!=(BaseTensor& other) const {
   return !(*this == other);
 }
-
-const std::vector<size_t> BaseTensor::b_indices() const { 
-  return std::vector<size_t>((this->shape()).begin(), (this->shape()).begin() + this->bidx()); 
-}
-
-const std::vector<size_t> BaseTensor::nb_indices() const { 
-  return std::vector<size_t>((this->shape()).begin() + this->bidx(), (this->shape()).end()); 
-}
-
