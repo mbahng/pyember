@@ -26,10 +26,7 @@ class MSELoss(Loss):
       self.y_truth = y_truth
       self.y_pred = y_pred 
 
-      # set bidx = 0 for both y's so they don't batch over all combinations 
-      self.y_truth.bidx = self.y_pred.bidx = 0
       self.diff = self.y_truth - self.y_pred  
-      self.y_truth.bidx = self.y_pred.bidx = 1
       self.sq_diff = self.diff ** 2  
       self.sum_sq_diff = self.sq_diff.sum()  
       self.loss = self.sum_sq_diff 

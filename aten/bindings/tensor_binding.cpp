@@ -287,11 +287,11 @@ void init_tensor_binding(py::module_ &m) {
        }
      )
 
-    /* .def("dot",  */
-    /*    [](Tensor *a, Tensor*b) { */
-    /*      return a->dot(b); */
-    /*    } */
-    /*  ) */
+    .def("dot", 
+       [](Tensor *a, Tensor*b) {
+         return a->dot(b);
+       }
+     )
     .def("sum", 
        [](Tensor *a) {
          return a->sum();

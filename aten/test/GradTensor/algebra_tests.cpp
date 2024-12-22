@@ -184,10 +184,6 @@ namespace GT_Matmul_GT {
       }, 
       {5, 4}, 1);
 
-    std::cout << std::string(*t1) << "\n";
-    std::cout << std::string(*t2) << "\n"; 
-    std::cout << std::string(*gt) << "\n"; 
-
     GradTensor* result = t1->matmul(t2);
     ASSERT_TRUE(*result == *gt);
 

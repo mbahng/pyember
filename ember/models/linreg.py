@@ -9,8 +9,6 @@ class LinearRegression(Regression):
     self.b = ember.Tensor.gaussian([1], 0, 1)
 
   def forward(self, X: ember.Tensor): # B x D 
-    print(X) 
-    print(self.W)
     self.z1 = X.dot(self.W) # B x D, D => B x 1
     self.z = self.z1 + self.b # B x 1, 1 => B x 1 
     return self.z
