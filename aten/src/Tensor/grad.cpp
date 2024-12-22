@@ -14,17 +14,15 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 }
 
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
-  // Set the gradient of the final output (this tensor) to 1.0
-  std::vector<size_t> newshape = concat(this->b_indices(), duplicate(this->nb_indices()));
-  this->grad = new GradTensor(newshape, (this->shape()).size(), this->bidx()); 
-
-  // initialize grad[i, i] to 1s, where i may be a vector  
-  for (std::vector<size_t> b : generate_all_indices(this->b_indices())) {
-    for (std::vector<size_t> i : generate_all_indices(this->nb_indices())) { 
-      std::vector<size_t> idx = concat(b, i, i); 
-      (this->grad)->at(idx) = 1.0; 
-    } 
+  // all losses must be scalar 
+  if (prod(this->shape()) > 1) {
+    throw std::logic_error("You must call backprop on a scalar value.");
   }
+
+  // Set the gradient of the final output (this tensor) to 1.0 
+  this->grad = new GradTensor(
+      std::vector<double>{1.0},
+      std::vector<size_t>{1, 1}, 1, 0); 
 
   // Build the topological ordering
   std::vector<Tensor*> topo;
@@ -45,7 +43,11 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
     // go backwards again, accumulating gradients
     for (Tensor* now : topo) { 
       for (Tensor* p : now->prev) { 
+        std::cout << "====================\n";
+        std::cout << std::string(*now->grad) << "\n"; 
+        std::cout << std::string(*p->grad) << "\n"; 
         p->grad = (now->grad)->matmul(p->grad);
+        std::cout << "====================\n";
       }
     }
   }

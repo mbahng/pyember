@@ -23,11 +23,14 @@ class MSELoss(Loss):
         warnings.warn(f"y_truth does has gradients, which will likely backprop the data. Did you mean to do this?") 
       if not self.check_has_grad(y_pred):
         warnings.warn(f"y_pred does not have gradients. You won't be able to backprop the model parameters. ")  
-      # N_inv = Tensor([1/(y_truth.shape[0])], shape=[1, 1], has_grad=False) 
       self.y_truth = y_truth
       self.y_pred = y_pred 
-      self.diff = self.y_truth - self.y_pred 
-      self.sq_diff = self.diff ** 2 
+
+      # set bidx = 0 for both y's so they don't batch over all combinations 
+      self.y_truth.bidx = self.y_pred.bidx = 0
+      self.diff = self.y_truth - self.y_pred  
+      self.y_truth.bidx = self.y_pred.bidx = 1
+      self.sq_diff = self.diff ** 2  
       self.sum_sq_diff = self.sq_diff.sum()  
       self.loss = self.sum_sq_diff 
       return self.loss

@@ -190,7 +190,7 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
   // about batching across multiple dimensions, since the only time you 
   // will do grad matmul is when doing tensor contractions. 
   // e.g. (2, 3, 4) x (4, 4, 3) will never happen. 
-  // other's batch indices will always cover this.
+  // other's batch indices will always cover this's indices.
 
   std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin() + this->bidx(), this->shape().begin() + this->pidx());
   std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pidx(), this->shape().end());
@@ -199,6 +199,9 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
 
   // thisR and otherL are hyperdimesions to be contracted 
   if (thisR != otherL) {
+
+    std::cout << std::string(*this) << "\n"; 
+    std::cout << std::string(*other) << "\n"; 
     std::ostringstream msg;
     msg << "Dimensions to be contracted are not equal: left (";  
     for (size_t s : thisR) { msg << " " << s; }
@@ -208,25 +211,16 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
     throw std::logic_error(msg.str());
   }
   
-  GradTensor* out = new GradTensor(concat(this->b_indices(), other->b_indices(), thisL, otherR), other->pidx(), other->bidx()); 
+  GradTensor* out = new GradTensor(concat(this->b_indices(), thisL, otherR), this->pidx(), this->bidx()); 
 
-  std::vector<size_t> diff_indices;
-  for (size_t i = this->bidx(); i < other->bidx(); i++) {
-      diff_indices.push_back(other->b_indices()[i]);
-  } 
-
-  for (std::vector<size_t> b_outer : generate_all_indices(this->b_indices())) {
-    for (std::vector<size_t> b_inner : generate_all_indices(diff_indices)) {
-      for (std::vector<size_t> m : generate_all_indices(thisL)) {
-        for (std::vector<size_t> k : generate_all_indices(otherR)) { 
-          double contraction = 0.0; 
-          for (std::vector<size_t> n : generate_all_indices(thisR)) {
-            std::vector<size_t> l_idx = concat(m, n);
-            std::vector<size_t> r_idx = concat(n, k); 
-            contraction += this->at(concat(b_outer, l_idx)) * other->at(concat(b_outer, b_inner, r_idx)); 
-          } 
-          out->at(concat(b_outer, b_inner, m, k)) = contraction; 
-        }
+  for (std::vector<size_t> b : generate_all_indices(this->b_indices())) {
+    for (std::vector<size_t> m : generate_all_indices(thisL)) {
+      for (std::vector<size_t> k : generate_all_indices(otherR)) { 
+        double contraction = 0.0; 
+        for (std::vector<size_t> n : generate_all_indices(thisR)) {
+          contraction += this->at(concat(b, m, n)) * other->at(concat(b, n, k)); 
+        } 
+        out->at(concat(b, m, k)) = contraction; 
       }
     }
   }

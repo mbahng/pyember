@@ -16,6 +16,12 @@ class Dataset():
   def __len__(self): 
     return self.limit 
 
+  def __getitem__(self, i):  
+    if i < self.limit: 
+      return self.X[i,:], self.Y[i,:] 
+    else: 
+      raise Exception("Indices are out of bound. ")
+
   def __iter__(self): 
     return self 
 

@@ -187,6 +187,7 @@ class Tensor : public BaseTensor {
 
     Tensor* matmul(Tensor* other); 
 
+    Tensor* dot(Tensor* other);
     Tensor* sum(); 
     Tensor* relu(); 
     Tensor* pow(double* x); 

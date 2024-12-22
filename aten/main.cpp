@@ -1,9 +1,16 @@
 #include "./src/Tensor.h" 
+#include "./src/utils.h" 
+#include <vector> 
+#include <iostream> 
 
 int main() {
-  Tensor* t1 = Tensor::arange(0, 10, 1)->reshape({5, 2}, true); 
-  Tensor* t2 = Tensor::arange(0, 6, 1)->reshape({2, 3}, true); 
-  Tensor* prod = t1->matmul(t2); 
-  std::cout << std::string(*prod); 
+  Tensor* A = new Tensor(range(0, 12, 1), {2, 6}, 1, true); 
+  Tensor* B = new Tensor(range(0, 6, 1), {6}, 0, true); 
+
+  Tensor* C = A->dot(B); 
+
+  std::cout << std::string(*C) << std::endl; 
+
+  C->backprop(false);  
   return 0;
 }
