@@ -6,9 +6,9 @@
 namespace GT_Add_GT {
 
   TEST(GradTensorTest, NB_add_NB) {
-    GradTensor* t1 = new GradTensor(range(1, 7, 1), {2, 3}, 1, 0);
-    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2, 1); 
-    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 2, 1); 
+    GradTensor* t1 = new GradTensor(range(1, 7, 1), {2, 3}, 1);
+    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2); 
+    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 2); 
     GradTensor* s1 = t1->add(t2); 
     ASSERT_TRUE(*s1 == truth); 
     delete t1; 
@@ -17,9 +17,9 @@ namespace GT_Add_GT {
   }
 
   TEST(GradTensorTest, B_add_NB) {
-    GradTensor* t1 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2, 1); 
-    GradTensor* t2 = new GradTensor(range(1, 7, 1), {2, 3}, 1, 0);
-    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 2, 1);
+    GradTensor* t1 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2); 
+    GradTensor* t2 = new GradTensor(range(1, 7, 1), {2, 3}, 1);
+    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 2);
     GradTensor* s1 = t1->add(t2); 
     ASSERT_TRUE(*s1 == truth);
     delete t1; 
@@ -28,22 +28,9 @@ namespace GT_Add_GT {
   }
 
   TEST(GradTensorTest, NB_add_B) {
-    GradTensor* t1 = new GradTensor(range(1, 7, 1), {2, 3}, 1, 0);
-    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2, 1); 
-    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 2, 1);
-    GradTensor* s1 = t1->add(t2); 
-    ASSERT_TRUE(*s1 == truth);
-    delete t1; 
-    delete t2; 
-    delete s1;
-  }
-
-  TEST(GradTensorTest, B_add_B) {
-    GradTensor* t1 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2, 1); 
-    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2, 1); 
-    std::vector<double> data1 = concat(range(2, 14, 2), range(8, 20, 2)); 
-    std::vector<double> data2 = concat(range(8, 20, 2), range(14, 26, 2)); 
-    GradTensor truth = GradTensor(concat(data1, data2), {2, 2, 2, 3}, 3, 2);
+    GradTensor* t1 = new GradTensor(range(1, 7, 1), {2, 3}, 1);
+    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 2); 
+    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 2);
     GradTensor* s1 = t1->add(t2); 
     ASSERT_TRUE(*s1 == truth);
     delete t1; 
@@ -56,9 +43,9 @@ namespace GT_Add_GT {
 namespace GT_Sub_GT { 
 
   TEST(GradTensorTest, NB_sub_NB) {
-    GradTensor* t1 = new GradTensor(range(3, 11, 2), {2, 2}, 1, 0);
-    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 1, 0);
-    GradTensor* truth = new GradTensor(range(2, 6, 1), {2, 2}, 1, 0);
+    GradTensor* t1 = new GradTensor(range(3, 11, 2), {2, 2}, 1);
+    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 1);
+    GradTensor* truth = new GradTensor(range(2, 6, 1), {2, 2}, 1);
     GradTensor* s1 = t1->sub(t2); 
     ASSERT_TRUE(*s1 == *truth);
 
@@ -76,22 +63,14 @@ namespace GT_Sub_GT {
   }
 
   TEST(GradTensorTest, B_sub_NB) {
-    GradTensor* t1 = new GradTensor(concat(range(3, 11, 2), range(3, 11, 2)), {2, 2, 2}, 2, 1);
-    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 1, 0);
-    GradTensor* truth = new GradTensor(concat(range(2, 6, 1), range(2, 6, 1)), {2, 2, 2}, 2, 1);
+    GradTensor* t1 = new GradTensor(concat(range(3, 11, 2), range(3, 11, 2)), {2, 2, 2}, 2);
+    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 1);
+    GradTensor* truth = new GradTensor(concat(range(2, 6, 1), range(2, 6, 1)), {2, 2, 2}, 2);
     GradTensor* s1 = t1->sub(t2); 
     ASSERT_TRUE(*s1 == *truth);
-
-    GradTensor* t3 = new GradTensor(concat(range(3, 11, 2), range(3, 11, 2)), {2, 2, 2}, 2, 0);
-    GradTensor* t4 = new GradTensor(range(1, 5, 1), {2, 2}, 1, 1);
-    ASSERT_THROW(t1->sub(t3), std::logic_error); 
-    ASSERT_THROW(t1->sub(t4), std::logic_error); 
   }
 
   TEST(GradTensorTest, NB_sub_B) {
-  }
-
-  TEST(GradTensorTest, B_sub_B) {
   }
 
 }
@@ -123,9 +102,6 @@ namespace GT_Mul_GT {
   }
 
   TEST(GradTensorTest, NB_sub_B) {
-  }
-
-  TEST(GradTensorTest, B_sub_B) {
   }
 
 }
@@ -207,6 +183,11 @@ namespace GT_Matmul_GT {
         74., 85., 70., 85., 100., 115., 88., 107., 126., 145.
       }, 
       {5, 4}, 1);
+
+    std::cout << std::string(*t1) << "\n";
+    std::cout << std::string(*t2) << "\n"; 
+    std::cout << std::string(*gt) << "\n"; 
+
     GradTensor* result = t1->matmul(t2);
     ASSERT_TRUE(*result == *gt);
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include "Tensor.h"
 
 int shape_to_length(std::vector<size_t> shape);
 
@@ -60,4 +61,22 @@ std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, 
 size_t prod(std::vector<size_t> input);
 std::vector<double> range(int l, int u, int s);
 std::vector<double> range(int u, int s = 1);
+
+namespace Integrity {
+
+  struct Shape {
+    std::vector<size_t> shape; 
+    std::vector<size_t> b_shape; 
+    std::vector<size_t> nb_shape; 
+    size_t bidx; 
+    size_t pidx; 
+  };
+
+  Shape compat(Tensor* t1, Tensor* t2);
+  Shape compat(GradTensor* t1, Tensor* t2);
+  Shape compat(Tensor* t1, GradTensor* t2);
+  Shape compat(GradTensor* t1, GradTensor* t2);
+  Shape matmul_compat(GradTensor* t1, GradTensor* t2); 
+  Shape matmul_compat(Tensor* t1, Tensor* t2); 
+}
 
