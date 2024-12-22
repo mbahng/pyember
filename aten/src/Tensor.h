@@ -20,7 +20,6 @@ class BaseTensor {
   public: 
     std::vector<double> storage_; 
     std::vector<size_t> shape_; 
-    std::size_t bidx_ = 0; 
 
     struct Slice {
       size_t start;
@@ -37,12 +36,8 @@ class BaseTensor {
     virtual std::string dtype() const { return "double"; }
     virtual ~BaseTensor() = default; 
 
-    const std::vector<size_t> b_indices() const;  
-    const std::vector<size_t> nb_indices() const;  
-  
     const std::vector<size_t>& shape() const { return shape_; }
     const std::vector<double>& data() const { return storage_; }  
-    const size_t bidx() const {return bidx_; }
 
     virtual bool operator==(BaseTensor& other) const; 
     virtual bool operator!=(BaseTensor& other) const;  
@@ -74,12 +69,12 @@ class GradTensor : public BaseTensor {
 
     // Constrcutors
     GradTensor(); 
-    GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pidx, size_t bidx = 0); 
-    GradTensor(std::vector<size_t> shape, size_t pidx, size_t bidx = 0); 
+    GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t pidx); 
+    GradTensor(std::vector<size_t> shape, size_t pidx); 
     std::string type() const override { return "GradTensor"; }
     size_t pidx() const { return pidx_; }  
     
-    static GradTensor* eye(size_t n, size_t pidx, size_t bidx = 0); 
+    static GradTensor* eye(size_t n, size_t pidx); 
 
     // utils 
     bool operator==(GradTensor& other) const; 
@@ -117,7 +112,7 @@ class GradTensor : public BaseTensor {
 
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
         auto base_result = BaseTensor::slice(slices);
-        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, pidx_, 1);
+        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, pidx_);
     }
     // Add to GradTensor class:
     GradTensor& transpose(const std::vector<size_t>& axes = {});
@@ -131,23 +126,23 @@ class Tensor : public BaseTensor {
     std::function<void()> backward;
 
     // constructors
-    Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true);
-    Tensor(std::vector<double> data, size_t bidx = 0, bool has_grad = true);
-    Tensor(std::vector<std::vector<double>> data, size_t bidx = 0, bool has_grad = true);
-    Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx = 0, bool has_grad = true); 
+    Tensor(std::vector<size_t> shape, bool has_grad = true);
+    Tensor(std::vector<double> data, std::vector<size_t> shape, bool has_grad = true);
+    Tensor(std::vector<double> data, bool has_grad = true);
+    Tensor(std::vector<std::vector<double>> data, bool has_grad = true);
+    Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad = true); 
 
     // Destructors 
     ~Tensor() { prev.clear(); }
 
     static Tensor* arange(int start, int stop, int step = 1, bool has_grad = true);
     static Tensor* linspace(double start, double stop, int numsteps, bool has_grad = true);
-    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool has_grad = true);
-    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, size_t bidx = 0, bool has_grad = true);
-    static Tensor* ones(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true);
-    static Tensor* zeros(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true); 
+    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, bool has_grad = true);
+    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, bool has_grad = true);
+    static Tensor* ones(std::vector<size_t> shape, bool has_grad = true);
+    static Tensor* zeros(std::vector<size_t> shape, bool has_grad = true); 
 
     std::string type() const override { return "Tensor"; }
-    virtual Tensor* reshape(std::vector<size_t> new_shape, size_t bidx, bool inplace = true, bool has_grad = true);
     virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
     Tensor* copy(bool has_grad = true) const; 
     Tensor* transpose(const std::vector<size_t>& axes = {}, bool inplace = false, bool has_grad = true);
@@ -187,7 +182,7 @@ class Tensor : public BaseTensor {
 
     Tensor* matmul(Tensor* other); 
 
-    Tensor* dot(Tensor* other);
+    /* Tensor* dot(Tensor* other); */
     Tensor* sum(); 
     Tensor* relu(); 
     Tensor* pow(double* x); 

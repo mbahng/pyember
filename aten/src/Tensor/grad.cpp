@@ -1,7 +1,10 @@
 #include "../Tensor.h" 
+#include "../utils.h" 
 #include <vector> 
 #include <cassert>
-#include "../utils.h"
+
+std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
+std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
 
 void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo) {
   if (visited.find(v) == visited.end()) {
@@ -14,15 +17,15 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 }
 
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
-  // all losses must be scalar 
-  if (prod(this->shape()) > 1) {
-    throw std::logic_error("You must call backprop on a scalar value.");
-  }
+  // Set the gradient of the final output (this tensor) to 1.0
+  std::vector<size_t> pairshape = concat(this->shape(), this->shape());
+  this->grad = new GradTensor(pairshape, this->shape().size()); 
 
-  // Set the gradient of the final output (this tensor) to 1.0 
-  this->grad = new GradTensor(
-      std::vector<double>{1.0},
-      std::vector<size_t>{1, 1}, 1, 0); 
+  // initialize grad[i, i] to 1s, where i may be a vector  
+  for (std::vector<size_t> i : generate_all_indices(this->shape_)) { 
+    std::vector<size_t> i_dup = concat(i, i); 
+    (this->grad)->at(i_dup) = 1.0; 
+  } 
 
   // Build the topological ordering
   std::vector<Tensor*> topo;
@@ -43,11 +46,7 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
     // go backwards again, accumulating gradients
     for (Tensor* now : topo) { 
       for (Tensor* p : now->prev) { 
-        std::cout << "====================\n";
-        std::cout << std::string(*now->grad) << "\n"; 
-        std::cout << std::string(*p->grad) << "\n"; 
         p->grad = (now->grad)->matmul(p->grad);
-        std::cout << "====================\n";
       }
     }
   }

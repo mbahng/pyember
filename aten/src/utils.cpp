@@ -1,6 +1,7 @@
 #include <vector>
 #include <cassert> 
 #include "utils.h"
+#include "Tensor.h"
 
 int shape_to_length(std::vector<size_t> shape) { 
   int len = 1; 
@@ -8,6 +9,14 @@ int shape_to_length(std::vector<size_t> shape) {
     len *= shape[i]; 
   }
   return len; 
+}
+
+size_t prod(std::vector<size_t> input) {
+  int product = 1; 
+  for (const auto& num : input) {
+    product *= num; 
+  }
+  return product; 
 }
 
 void array_matches_shape(
@@ -98,14 +107,6 @@ std::vector<std::vector<size_t>> split_indices(const std::vector<size_t> shape, 
   return result; 
 }
 
-size_t prod(std::vector<size_t> input) {
-  int product = 1; 
-  for (const auto& num : input) {
-    product *= num; 
-  }
-  return product; 
-}
-
 std::vector<double> range(int l, int u, int s) {
   std::vector<double> res; 
   for (int p = l; p < u; p += s) {
@@ -117,4 +118,253 @@ std::vector<double> range(int l, int u, int s) {
 std::vector<double> range(int u, int s) {
   return range(0, u, s);
 } 
+
+namespace Integrity {
+
+  Shape compat(Tensor* t1, Tensor* t2) {  
+    std::vector<size_t> s1 = t1->shape(); 
+    std::vector<size_t> s2 = t2->shape(); 
+    if (s1.size() == s2.size()) { 
+      if (s1 != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      return Shape{s1, {}, s1, 0};
+    }
+    else if (s1.size() > s2.size()) {
+      if (std::vector<size_t>(s1.end() - s2.size(), s1.end()) != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      } 
+      return Shape{
+        s1, 
+        std::vector<size_t>(s1.begin(), s1.end() - s2.size()), 
+        std::vector<size_t>(s2), 
+        s1.size() - s2.size()
+      };
+    }
+    else {
+      if (std::vector<size_t>(s2.end() - s1.size(), s2.end()) != s1) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      return Shape{
+        s2, 
+        std::vector<size_t>(s2.begin(), s2.end() - s1.size()), 
+        std::vector<size_t>(s1), 
+        s2.size() - s1.size()
+      };
+    }
+  } 
+
+  Shape compat(GradTensor* t1, GradTensor* t2) {
+    std::vector<size_t> s1 = t1->shape(); 
+    std::vector<size_t> s2 = t2->shape();  
+    size_t pidx1 = t1->pidx(); 
+    size_t pidx2 = t2->pidx(); 
+    if (s1.size() == s2.size()) { 
+      if (s1 != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      } 
+      else if (pidx1 != pidx2) {
+        throw std::logic_error("Pivots do not match. ");
+      }
+      return Shape{s1, {}, s1, 0, pidx1};
+    } 
+    else if (s1.size() > s2.size()) {
+      if (std::vector<size_t>(s1.end() - s2.size(), s1.end()) != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      else if (s1.size() - s2.size() != pidx1 - pidx2) {
+        throw std::logic_error("Pivots do not match. ");
+      }
+      return Shape{
+        s1, 
+        std::vector<size_t>(s1.begin(), s1.end() - s2.size()), 
+        std::vector<size_t>(s2), 
+        s1.size() - s2.size(), 
+        pidx1
+      };
+    }
+    else {
+      if (std::vector<size_t>(s2.end() - s1.size(), s2.end()) != s1) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      else if (s2.size() - s1.size() != pidx2 - pidx1) {
+        throw std::logic_error("Pivots do not match. ");
+      }
+      return Shape{
+        s2, 
+        std::vector<size_t>(s2.begin(), s2.end() - s1.size()), 
+        std::vector<size_t>(s1), 
+        s2.size() - s1.size(), 
+        pidx2
+      };
+    }
+  }
+
+  Shape compat(GradTensor* t1, Tensor* t2) {
+    std::vector<size_t> s1 = t1->shape(); 
+    std::vector<size_t> s2 = t2->shape();  
+    if (s1.size() == s2.size()) { 
+      if (s1 != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      } 
+      return Shape{s1, {}, s1, 0};
+    } 
+    else if (s1.size() > s2.size()) {
+      if (std::vector<size_t>(s1.end() - s2.size(), s1.end()) != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      return Shape{
+        s1, 
+        std::vector<size_t>(s1.begin(), s1.end() - s2.size()), 
+        std::vector<size_t>(s2), 
+        s1.size() - s2.size(), 
+      };
+    }
+    else {
+      if (std::vector<size_t>(s2.end() - s1.size(), s2.end()) != s1) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      return Shape{
+        s2, 
+        std::vector<size_t>(s2.begin(), s2.end() - s1.size()), 
+        std::vector<size_t>(s1), 
+        s2.size() - s1.size(), 
+      };
+    }
+  } 
+
+  Shape compat(Tensor* t1, GradTensor* t2) {
+    return compat(t2, t1); 
+  }
+
+  Shape matmul_compat(GradTensor* t1, GradTensor* t2) {
+    std::vector<size_t> s1 = t1->shape(); 
+    std::vector<size_t> s2 = t2->shape(); 
+    size_t pidx1 = t1->pidx(); 
+    size_t pidx2 = t2->pidx(); 
+    if (s1.size() == s2.size()) { 
+      std::vector<size_t> L1 = std::vector<size_t> (s1.begin(), s1.begin() + pidx1);
+      std::vector<size_t> R1 = std::vector<size_t> (s1.begin() + pidx1, s1.end()); 
+      std::vector<size_t> L2 = std::vector<size_t> (s2.begin(), s2.begin() + pidx2); 
+      std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + pidx2, s2.end());
+
+      if (R1 != L2) {
+        std::cout << std::string(*t1) << "\n"; 
+        std::cout << std::string(*t2) << "\n"; 
+        std::ostringstream msg;
+        msg << "Dimensions to be contracted are not equal: left (";  
+        for (size_t s : R1) { msg << " " << s; }
+        msg << " ), right ( ";
+        for (size_t s : L2) { msg << " " << s; }
+        msg << " )";
+        throw std::logic_error(msg.str());
+      }
+
+      std::vector<size_t> newshape = concat(L1, R2); 
+      return Shape{newshape, {}, newshape, 0, t1->pidx()};
+    }
+    else if (s1.size() > s2.size()) { 
+      size_t bidx = s1.size() - s2.size(); 
+      std::vector<size_t> B = std::vector<size_t>(s1.begin(), s1.begin() + bidx); 
+      std::vector<size_t> L1 = std::vector<size_t> (s1.begin() + bidx, s1.begin() + pidx1);
+      std::vector<size_t> R1 = std::vector<size_t> (s1.begin() + pidx1, s1.end()); 
+      std::vector<size_t> L2 = std::vector<size_t> (s2.begin(), s2.begin() + pidx2); 
+      std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + pidx2, s2.end()); 
+
+      if (std::vector<size_t>(s1.end() - s2.size(), s1.end()) != s2) {
+        throw std::logic_error("Shapes do not match. ");
+      } 
+      return Shape{
+        s1, 
+        std::vector<size_t>(s1.begin(), s1.end() - s2.size()), 
+        std::vector<size_t>(s2), 
+        s1.size() - s2.size()
+      };
+    }
+    else {
+      if (std::vector<size_t>(s2.end() - s1.size(), s2.end()) != s1) {
+        throw std::logic_error("Shapes do not match. ");
+      }
+      return Shape{
+        s2, 
+        std::vector<size_t>(s2.begin(), s2.end() - s1.size()), 
+        std::vector<size_t>(s1), 
+        s2.size() - s1.size()
+      };
+    }
+  }
+
+  Shape matmul_compat(Tensor* t1, Tensor* t2) {
+    std::vector<size_t> s1 = t1->shape(); 
+    std::vector<size_t> s2 = t2->shape(); 
+
+    if (s1.size() >= s2.size()) {
+      if (s2.size() != 2) {
+        std::string this_shape = ""; 
+        for (auto s : t1->shape()) { this_shape += " " + std::to_string(s); } 
+        std::string other_shape = ""; 
+        for (auto s : t2->shape()) { other_shape += " " + std::to_string(s); } 
+        throw std::logic_error("Only rank-2 tensors x rank-2 tensors are supported. \n"
+            "Attempting to multiply (" + this_shape + " ) and (" + other_shape + " )");
+      } 
+
+      if (s1[s1.size()-1] != s2[0]) {
+        std::string this_shape = ""; 
+        for (auto s : t1->shape()) { this_shape += " " + std::to_string(s); } 
+        std::string other_shape = ""; 
+        for (auto s : t2->shape()) { other_shape += " " + std::to_string(s); } 
+        throw std::logic_error("The dimension of the contracted rank does not match. \n"
+            "Attempting to multiply (" + this_shape + " ) and (" + other_shape + " )");
+      } 
+
+      std::vector<size_t> new_shape = concat(
+        std::vector<size_t>(s1.begin(), s1.end()-1), 
+        std::vector<size_t>(s2.end()-1, s2.end())
+      );
+
+      return Shape{
+        new_shape, 
+        std::vector<size_t>(s1.begin(), s1.end()-2), 
+        std::vector<size_t>(new_shape.end()-2, new_shape.end()), 
+        s1.size() - 2, 
+        s1.size() - 1
+      };
+    } 
+    else {
+      if (s1.size() != 2) {
+        std::string this_shape = ""; 
+        for (auto s : t1->shape()) { this_shape += " " + std::to_string(s); } 
+        std::string other_shape = ""; 
+        for (auto s : t2->shape()) { other_shape += " " + std::to_string(s); } 
+        throw std::logic_error("Only rank-2 tensors x rank-2 tensors are supported. \n"
+            "Attempting to multiply (" + this_shape + " ) and (" + other_shape + " )");
+      } 
+
+      if (s1[1] != s2[s2.size()-2]) {
+        std::string this_shape = ""; 
+        for (auto s : t1->shape()) { this_shape += " " + std::to_string(s); } 
+        std::string other_shape = ""; 
+        for (auto s : t2->shape()) { other_shape += " " + std::to_string(s); } 
+        throw std::logic_error("The dimension of the contracted rank does not match. \n"
+            "Attempting to multiply (" + this_shape + " ) and (" + other_shape + " )");
+      }
+
+      std::vector<size_t> new_shape = concat(
+        std::vector<size_t>(s2.begin(), s2.end() - 2), 
+        std::vector<size_t>{s1[0]}, 
+         std::vector<size_t>{s2[s2.size() - 1]}
+      );
+
+      return Shape{
+        new_shape, 
+        std::vector<size_t>(s2.begin(), s2.end() - 2),  
+        std::vector<size_t>(new_shape.end()-2, new_shape.end()), 
+        s2.size() - 2, 
+        s2.size() - 1
+      };
+    }
+    
+  }
+
+};
 

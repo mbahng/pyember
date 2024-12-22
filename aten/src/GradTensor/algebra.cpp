@@ -3,54 +3,49 @@
 #include "../Tensor.h" 
 #include "../utils.h" 
 
-GradTensor* GradTensor::add(GradTensor* other) {
-  if (this->nb_indices() != other->nb_indices()) {
-    throw std::logic_error("Shapes do not match across non-batch dimensions.");
-  }
-  else if (this->pidx() - this->bidx() != other->pidx() - other->bidx()) {
-    throw std::logic_error("Pivots do not match");
-  } 
-
-  // set up new shape 
-  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
-  size_t new_pidx = (this->pidx()) + (other->bidx()); 
-
-  int length = shape_to_length(new_shape); 
-  size_t nb_shift = prod(this->nb_indices());
-  size_t b2_shift = prod(other->b_indices());
-  std::vector<double> res_data(shape_to_length(new_shape), 0.0);  
-  for (int b1 = 0; b1 < prod(this->b_indices()); b1++) {
-    for (int b2 = 0; b2 < prod(other->b_indices()); b2++) { 
-      for (int i = 0; i < prod(this->nb_indices()); i++) { 
-        res_data[nb_shift * prod(other->b_indices()) * b1 + nb_shift * b2 + i] = this->data()[nb_shift * b1 + i] + other->data()[nb_shift * b2 + i];
+GradTensor* GradTensor::add(GradTensor* other) { 
+  Integrity::Shape r = Integrity::compat(this, other);  
+  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  size_t bs = prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < prod(r.b_shape); b++) { 
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] + other->storage_[i]; 
       }
     }
   }
-
-  return new GradTensor(res_data, new_shape, this->pidx() + other->bidx(), this->bidx() + other->bidx());   
+  else {
+    for (int b = 0; b < prod(r.b_shape); b++) {
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] + other->storage_[b * bs + i]; 
+      }
+    }
+  }
+  return res;
 }
 
 Tensor* GradTensor::add(Tensor* other) {
-  if (this->nb_indices() != other->nb_indices()) {
-    throw std::logic_error("Shapes do not match across non-batch dimensions.");
+  Integrity::Shape r = Integrity::compat(this, other);  
+  Tensor* res = new Tensor(r.shape);
+  size_t bs = prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < prod(r.b_shape); b++) { 
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] + other->storage_[i]; 
+      }
+    }
   }
-  // set up new shape 
-  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
-  size_t new_pidx = (this->pidx()) + (other->bidx()); 
-
-  int length = shape_to_length(new_shape); 
-  size_t nb_shift = prod(this->nb_indices());
-  size_t b2_shift = prod(other->b_indices());
-  std::vector<double> res_data(shape_to_length(new_shape), 0.0);  
-  for (int b1 = 0; b1 < prod(this->b_indices()); b1++) {
-    for (int b2 = 0; b2 < prod(other->b_indices()); b2++) { 
-      for (int i = 0; i < prod(this->nb_indices()); i++) { 
-        res_data[nb_shift * prod(other->b_indices()) * b1 + nb_shift * b2 + i] = this->data()[nb_shift * b1 + i] + other->data()[nb_shift * b2 + i];
+  else {
+    for (int b = 0; b < prod(r.b_shape); b++) {
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] + other->storage_[b * bs + i]; 
       }
     }
   }
 
-  return new Tensor(res_data, new_shape, this->bidx() + other->bidx());   
+  return res;
 }
 
 GradTensor* GradTensor::add(ScalarTensor* other) {
@@ -63,53 +58,48 @@ GradTensor* GradTensor::add(double* other) {
 }
 
 GradTensor* GradTensor::sub(GradTensor* other) {
-  if (this->nb_indices() != other->nb_indices()) {
-    throw std::logic_error("Shapes do not match across non-batch dimensions.");
-  }
-  else if (this->pidx() - this->bidx() != other->pidx() - other->bidx()) {
-    throw std::logic_error("Pivots do not match");
-  } 
-
-  // set up new shape 
-  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
-  size_t new_pidx = (this->pidx()) + (other->bidx()); 
-
-  int length = shape_to_length(new_shape); 
-  size_t nb_shift = prod(this->nb_indices());
-  size_t b2_shift = prod(other->b_indices());
-  std::vector<double> res_data(shape_to_length(new_shape), 0.0);  
-  for (int b1 = 0; b1 < prod(this->b_indices()); b1++) {
-    for (int b2 = 0; b2 < prod(other->b_indices()); b2++) { 
-      for (int i = 0; i < prod(this->nb_indices()); i++) { 
-        res_data[nb_shift * prod(other->b_indices()) * b1 + nb_shift * b2 + i] = this->data()[nb_shift * b1 + i] - other->data()[nb_shift * b2 + i];
+  Integrity::Shape r = Integrity::compat(this, other);  
+  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  size_t bs = prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < prod(r.b_shape); b++) { 
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
       }
     }
   }
-
-  return new GradTensor(res_data, new_shape, this->pidx() + other->bidx(), this->bidx() + other->bidx());   
+  else {
+    for (int b = 0; b < prod(r.b_shape); b++) {
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] - other->storage_[b * bs + i]; 
+      }
+    }
+  }
+  return res;
 }
 
 Tensor* GradTensor::sub(Tensor* other) {
-  if (this->nb_indices() != other->nb_indices()) {
-    throw std::logic_error("Shapes do not match across non-batch dimensions.");
+  Integrity::Shape r = Integrity::compat(this, other);  
+  Tensor* res = new Tensor(r.shape);
+  size_t bs = prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < prod(r.b_shape); b++) { 
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
+      }
+    }
   }
-  // set up new shape 
-  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
-  size_t new_pidx = (this->pidx()) + (other->bidx()); 
-
-  int length = shape_to_length(new_shape); 
-  size_t nb_shift = prod(this->nb_indices());
-  size_t b2_shift = prod(other->b_indices());
-  std::vector<double> res_data(shape_to_length(new_shape), 0.0);  
-  for (int b1 = 0; b1 < prod(this->b_indices()); b1++) {
-    for (int b2 = 0; b2 < prod(other->b_indices()); b2++) { 
-      for (int i = 0; i < prod(this->nb_indices()); i++) { 
-        res_data[nb_shift * prod(other->b_indices()) * b1 + nb_shift * b2 + i] = this->data()[nb_shift * b1 + i] - other->data()[nb_shift * b2 + i];
+  else {
+    for (int b = 0; b < prod(r.b_shape); b++) {
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] - other->storage_[b * bs + i]; 
       }
     }
   }
 
-  return new Tensor(res_data, new_shape, this->bidx() + other->bidx());   
+  return res;
 }
 
 GradTensor* GradTensor::sub(ScalarTensor* other) {
@@ -126,53 +116,48 @@ GradTensor* GradTensor::sub(double* other) {
 }
 
 GradTensor* GradTensor::mul(GradTensor* other) {
-  if (this->nb_indices() != other->nb_indices()) {
-    throw std::logic_error("Shapes do not match across non-batch dimensions.");
-  }
-  else if (this->pidx() - this->bidx() != other->pidx() - other->bidx()) {
-    throw std::logic_error("Pivots do not match");
-  } 
-
-  // set up new shape 
-  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
-  size_t new_pidx = (this->pidx()) + (other->bidx()); 
-
-  int length = shape_to_length(new_shape); 
-  size_t nb_shift = prod(this->nb_indices());
-  size_t b2_shift = prod(other->b_indices());
-  std::vector<double> res_data(shape_to_length(new_shape), 0.0);  
-  for (int b1 = 0; b1 < prod(this->b_indices()); b1++) {
-    for (int b2 = 0; b2 < prod(other->b_indices()); b2++) { 
-      for (int i = 0; i < prod(this->nb_indices()); i++) { 
-        res_data[nb_shift * prod(other->b_indices()) * b1 + nb_shift * b2 + i] = this->data()[nb_shift * b1 + i] * other->data()[nb_shift * b2 + i];
+  Integrity::Shape r = Integrity::compat(this, other);  
+  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  size_t bs = prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < prod(r.b_shape); b++) { 
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
       }
     }
   }
-
-  return new GradTensor(res_data, new_shape, this->pidx() + other->bidx(), this->bidx() + other->bidx());   
+  else {
+    for (int b = 0; b < prod(r.b_shape); b++) {
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] * other->storage_[b * bs + i]; 
+      }
+    }
+  }
+  return res;
 }
 
 Tensor* GradTensor::mul(Tensor* other) {
-  if (this->nb_indices() != other->nb_indices()) {
-    throw std::logic_error("Shapes do not match across non-batch dimensions.");
+  Integrity::Shape r = Integrity::compat(this, other);  
+  Tensor* res = new Tensor(r.shape);
+  size_t bs = prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < prod(r.b_shape); b++) { 
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
+      }
+    }
   }
-  // set up new shape 
-  std::vector<size_t> new_shape = concat(this->b_indices(), other->shape());  
-  size_t new_pidx = (this->pidx()) + (other->bidx()); 
-
-  int length = shape_to_length(new_shape); 
-  size_t nb_shift = prod(this->nb_indices());
-  size_t b2_shift = prod(other->b_indices());
-  std::vector<double> res_data(shape_to_length(new_shape), 0.0);  
-  for (int b1 = 0; b1 < prod(this->b_indices()); b1++) {
-    for (int b2 = 0; b2 < prod(other->b_indices()); b2++) { 
-      for (int i = 0; i < prod(this->nb_indices()); i++) { 
-        res_data[nb_shift * prod(other->b_indices()) * b1 + nb_shift * b2 + i] = this->data()[nb_shift * b1 + i] * other->data()[nb_shift * b2 + i];
+  else {
+    for (int b = 0; b < prod(r.b_shape); b++) {
+      for (int i = 0; i < prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] * other->storage_[b * bs + i]; 
       }
     }
   }
 
-  return new Tensor(res_data, new_shape, this->bidx() + other->bidx());   
+  return res;
 }
 
 GradTensor* GradTensor::mul(ScalarTensor* other) {
@@ -190,40 +175,47 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
   // about batching across multiple dimensions, since the only time you 
   // will do grad matmul is when doing tensor contractions. 
   // e.g. (2, 3, 4) x (4, 4, 3) will never happen. 
-  // other's batch indices will always cover this's indices.
-
-  std::vector<size_t> thisL = std::vector<size_t> (this->shape().begin() + this->bidx(), this->shape().begin() + this->pidx());
-  std::vector<size_t> thisR = std::vector<size_t> (this->shape().begin() + this->pidx(), this->shape().end());
-  std::vector<size_t> otherL = std::vector<size_t> (other->shape().begin() + other->bidx(), other->shape().begin() + other->pidx());
-  std::vector<size_t> otherR = std::vector<size_t> (other->shape().begin() + other->pidx(), other->shape().end()); 
-
-  // thisR and otherL are hyperdimesions to be contracted 
-  if (thisR != otherL) {
-
-    std::cout << std::string(*this) << "\n"; 
-    std::cout << std::string(*other) << "\n"; 
-    std::ostringstream msg;
-    msg << "Dimensions to be contracted are not equal: left (";  
-    for (size_t s : thisR) { msg << " " << s; }
-    msg << " ), right ( ";
-    for (size_t s : otherL) { msg << " " << s; }
-    msg << " )";
-    throw std::logic_error(msg.str());
-  }
+  // other's batch indices will always cover this's indices. 
   
-  GradTensor* out = new GradTensor(concat(this->b_indices(), thisL, otherR), this->pidx(), this->bidx()); 
+  // this is repetitive, should fix this to be faster
+  Integrity::Shape r = Integrity::matmul_compat(this, other); 
+  
+  GradTensor* res = new GradTensor(r.shape, r.pidx); 
 
-  for (std::vector<size_t> b : generate_all_indices(this->b_indices())) {
-    for (std::vector<size_t> m : generate_all_indices(thisL)) {
-      for (std::vector<size_t> k : generate_all_indices(otherR)) { 
-        double contraction = 0.0; 
-        for (std::vector<size_t> n : generate_all_indices(thisR)) {
-          contraction += this->at(concat(b, m, n)) * other->at(concat(b, n, k)); 
-        } 
-        out->at(concat(b, m, k)) = contraction; 
+  if (this->shape().size() >= other->shape().size()) {
+    // batch not needed here since we can account for b in i
+    std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin(), this->shape().begin() + this->pidx()); 
+    std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin(), other->shape().begin() + other->pidx());
+    std::vector<size_t> C3 = std::vector<size_t>(other->shape().begin() + other->pidx(), other->shape().end()); 
+
+    for (std::vector<size_t> i : generate_all_indices(C1)) {
+      for (std::vector<size_t> k : generate_all_indices(C3)) {
+        double contraction = 0.0;
+        for (std::vector<size_t> j : generate_all_indices(C2)) {  
+          contraction += this->at(concat(i, j)) * other->at(concat(j, k));
+        }
+        res->at(concat(i, k)) = contraction; 
+      }
+    }
+  }
+  else {
+    std::vector<size_t> B = std::vector<size_t>(other->shape().begin(), other->shape().begin() + r.bidx); 
+    std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin(), this->shape().begin() + this->pidx()); 
+    std::vector<size_t> C2 = std::vector<size_t>(this->shape().begin() + this->pidx(), this->shape().end());
+    std::vector<size_t> C3 = std::vector<size_t>(other->shape().begin() + other->pidx(), other->shape().end()); 
+
+    for (std::vector<size_t> b : generate_all_indices(B)) {
+      for (std::vector<size_t> i : generate_all_indices(C1)) {
+        for (std::vector<size_t> k : generate_all_indices(C3)) {
+          double contraction = 0.0;
+          for (std::vector<size_t> j : generate_all_indices(C2)) { 
+            contraction += this->at(concat(i, j)) * other->at(concat(b, j, k));
+          }
+          res->at(concat(b, i, k)) = contraction; 
+        }
       }
     }
   }
 
-  return out; 
+  return res; 
 }

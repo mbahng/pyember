@@ -5,33 +5,29 @@ void init_tensor_binding(py::module_ &m) {
   py::class_<Tensor, BaseTensor>(m, "Tensor")
 
     // Constructors
-    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true) {
-        return new Tensor(data, shape, bidx, has_grad);
+    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, bool has_grad = true) {
+        return new Tensor(data, shape, has_grad);
         }), 
         py::arg("data"), 
         py::arg("shape"), 
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
-    .def(py::init([](std::vector<double> data, size_t bidx = 0, bool has_grad = true) {
-        return new Tensor(data, bidx, has_grad);
+    .def(py::init([](std::vector<double> data, bool has_grad = true) {
+        return new Tensor(data, has_grad);
         }),
         py::arg("data"), 
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
-    .def(py::init([](std::vector<std::vector<double>> data, size_t bidx = 0, bool has_grad = true) {
-        return new Tensor(data, bidx, has_grad);
+    .def(py::init([](std::vector<std::vector<double>> data, bool has_grad = true) {
+        return new Tensor(data, has_grad);
         }),
         py::arg("data"), 
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
-    .def(py::init([](std::vector<std::vector<std::vector<double>>> data, size_t bidx = 0, bool has_grad = true) {
-        return new Tensor(data, bidx, has_grad);
+    .def(py::init([](std::vector<std::vector<std::vector<double>>> data, bool has_grad = true) {
+        return new Tensor(data, has_grad);
         }),
         py::arg("data"), 
-        py::arg("bidx"), 
         py::arg("has_grad") = true
       )
 
@@ -54,39 +50,35 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("has_grad") = true
       )
     .def_static("gaussian", 
-        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool has_grad = true) {
-            return Tensor::gaussian(shape, mean, stddev, bidx, has_grad);
+        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0, bool has_grad = true) {
+            return Tensor::gaussian(shape, mean, stddev, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("mean") = 0.0, 
         py::arg("stddev") = 1.0,
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
     .def_static("uniform", 
-        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0, size_t bidx = 0, bool has_grad = true) {
-            return Tensor::uniform(shape, min, max, bidx, has_grad);
+        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0, bool has_grad = true) {
+            return Tensor::uniform(shape, min, max, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("min") = 0.0, 
         py::arg("max") = 1.0,
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
     .def_static("ones", 
-        [](std::vector<size_t> shape = {1}, size_t bidx = 0, bool has_grad = true) {
-            return Tensor::ones(shape, bidx, has_grad);
+        [](std::vector<size_t> shape = {1}, bool has_grad = true) {
+            return Tensor::ones(shape, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1},
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
     .def_static("zeros", 
-        [](std::vector<size_t> shape = {1}, size_t bidx = 0, bool has_grad = true) {
-            return Tensor::zeros(shape, bidx, has_grad);
+        [](std::vector<size_t> shape = {1}, bool has_grad = true) {
+            return Tensor::zeros(shape, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1},
-        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
 
@@ -295,11 +287,11 @@ void init_tensor_binding(py::module_ &m) {
        }
      )
 
-    .def("dot", 
-       [](Tensor *a, Tensor*b) {
-         return a->dot(b);
-       }
-     )
+    /* .def("dot",  */
+    /*    [](Tensor *a, Tensor*b) { */
+    /*      return a->dot(b); */
+    /*    } */
+    /*  ) */
     .def("sum", 
        [](Tensor *a) {
          return a->sum();
