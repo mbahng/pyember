@@ -5,29 +5,33 @@ void init_tensor_binding(py::module_ &m) {
   py::class_<Tensor, BaseTensor>(m, "Tensor")
 
     // Constructors
-    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, bool has_grad = true) {
+    .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true) {
         return new Tensor(data, shape, has_grad);
         }), 
         py::arg("data"), 
         py::arg("shape"), 
+        py::arg("bidx"), 
         py::arg("has_grad") = true
       )
-    .def(py::init([](std::vector<double> data, bool has_grad = true) {
+    .def(py::init([](std::vector<double> data, size_t bidx = 0,bool has_grad = true) {
         return new Tensor(data, has_grad);
         }),
         py::arg("data"), 
+        py::arg("bidx"), 
         py::arg("has_grad") = true
       )
-    .def(py::init([](std::vector<std::vector<double>> data, bool has_grad = true) {
+    .def(py::init([](std::vector<std::vector<double>> data, size_t bidx = 0,bool has_grad = true) {
         return new Tensor(data, has_grad);
         }),
         py::arg("data"), 
+        py::arg("bidx"), 
         py::arg("has_grad") = true
       )
-    .def(py::init([](std::vector<std::vector<std::vector<double>>> data, bool has_grad = true) {
+    .def(py::init([](std::vector<std::vector<std::vector<double>>> data, size_t bidx = 0,bool has_grad = true) {
         return new Tensor(data, has_grad);
         }),
         py::arg("data"), 
+        py::arg("bidx"), 
         py::arg("has_grad") = true
       )
 
@@ -68,17 +72,19 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("has_grad") = true
       )
     .def_static("ones", 
-        [](std::vector<size_t> shape = {1}, bool has_grad = true) {
-            return Tensor::ones(shape, has_grad);
+        [](std::vector<size_t> shape = {1}, size_t bidx = 0, bool has_grad = true) {
+            return Tensor::ones(shape, bidx, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1},
+        py::arg("bidx") = 0,
         py::arg("has_grad") = true
       )
     .def_static("zeros", 
-        [](std::vector<size_t> shape = {1}, bool has_grad = true) {
-            return Tensor::zeros(shape, has_grad);
+        [](std::vector<size_t> shape = {1}, size_t bidx = 0, bool has_grad = true) {
+            return Tensor::zeros(shape, bidx, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1},
+        py::arg("bidx") = 0,  
         py::arg("has_grad") = true
       )
 

@@ -4,26 +4,29 @@
 #include "../Tensor.h" 
 #include "../utils.h"
 
-Tensor::Tensor(std::vector<size_t> shape, bool has_grad) {
+Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool has_grad) {
   this->storage_ = std::vector<double>(prod(shape), 0.0); 
   this->shape_ = shape; 
+  this->bidx_ = bidx; 
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, bool has_grad) {
+Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool has_grad) {
   this->storage_ = data; 
   this->shape_ = shape;  
+  this->bidx_ = bidx; 
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<double> data, bool has_grad) {
+Tensor::Tensor(std::vector<double> data, size_t bidx, bool has_grad) {
   this->storage_ = data; 
   std::vector<size_t> s = {data.size()};
   this->shape_ = s; 
+  this->bidx_ = bidx; 
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<double>> data, bool has_grad) {
+Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size()};
   array_matches_shape(data, shape); 
   this->shape_ = shape; 
@@ -32,10 +35,11 @@ Tensor::Tensor(std::vector<std::vector<double>> data, bool has_grad) {
     res.insert(res.end(), data[i].begin(), data[i].end()); 
   }
   this->storage_ = res;  
+  this->bidx_ = bidx; 
   this->has_grad = has_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad) {
+Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size(), data[0][0].size()};
   array_matches_shape(data, shape); 
   this->shape_ = shape; 
@@ -46,6 +50,7 @@ Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, bool has_grad
     }
   }
   this->storage_ = res;  
+  this->bidx_ = bidx; 
   this->has_grad = has_grad; 
 }
 
@@ -112,13 +117,13 @@ Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, bool 
   return new Tensor(result, shape, has_grad);
 }
 
-Tensor* Tensor::ones(std::vector<size_t> shape, bool has_grad) {
+Tensor* Tensor::ones(std::vector<size_t> shape, size_t bidx, bool has_grad) {
   std::vector<double> data(prod(shape), 1.0); 
-  return new Tensor(data, shape, has_grad); 
+  return new Tensor(data, shape, bidx, has_grad); 
 }
 
-Tensor* Tensor::zeros(std::vector<size_t> shape, bool has_grad) {
+Tensor* Tensor::zeros(std::vector<size_t> shape, size_t bidx, bool has_grad) {
   std::vector<double> data(prod(shape), 0.0); 
-  return new Tensor(data, shape, has_grad); 
+  return new Tensor(data, shape, bidx, has_grad); 
 }
 

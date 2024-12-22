@@ -5,8 +5,8 @@ class LinearRegression(Regression):
 
   def __init__(self, input_dim: int):
     super().__init__() 
-    self.W = ember.Tensor.gaussian([input_dim], 0, 1)
-    self.b = ember.Tensor.gaussian([1], 0, 1)
+    self.W = ember.Tensor.ones([input_dim])
+    self.b = ember.Tensor.ones([1])
 
   def forward(self, X: ember.Tensor): # B x D 
     self.z1 = X.dot(self.W) # B x D, D => B x 1

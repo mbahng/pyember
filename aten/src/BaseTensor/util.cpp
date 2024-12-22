@@ -67,7 +67,7 @@ BaseTensor::operator std::string() const {
   for (int i = 0; i < shape_.size() - 1; i++) {
     oss << shape_[i] << ", ";
   }
-  oss << shape_[shape_.size()-1] << "), dtype = " << this->dtype(); 
+  oss << shape_[shape_.size()-1] << "), dtype = " << this->dtype() << ", bidx = " << this->bidx_; 
   return oss.str();
 }
 
@@ -182,4 +182,14 @@ bool BaseTensor::operator==(BaseTensor& other) const {
 
 bool BaseTensor::operator!=(BaseTensor& other) const {
   return !(*this == other);
+}
+
+const std::vector<size_t>& BaseTensor::shape() const {
+  return shape_; 
+}
+const std::vector<size_t> BaseTensor::bshape() const {
+  return std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
+}
+const std::vector<size_t> BaseTensor::nbshape() const {
+  return std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
 }

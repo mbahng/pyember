@@ -237,59 +237,38 @@ namespace Integrity {
     return compat(t2, t1); 
   }
 
-  Shape matmul_compat(GradTensor* t1, GradTensor* t2) {
-    std::vector<size_t> s1 = t1->shape(); 
-    std::vector<size_t> s2 = t2->shape(); 
+  Shape matmul_compat(GradTensor* t1, GradTensor* t2) { 
+
+    if (t1->bidx_ > 0 && t2->bidx_ > 0) { 
+      if (t1->bshape() != t2->bshape()) {
+        throw std::logic_error("You are multiplying two batches. This is not allowed."); 
+      }
+    }
+
+    std::vector<size_t> b1 = t1->bidx_ > 0 ? t1->bshape() : t2->bshape(); 
+
+    std::vector<size_t> s1 = t1->nbshape(); 
+    std::vector<size_t> s2 = t2->nbshape();  
     size_t pidx1 = t1->pidx(); 
     size_t pidx2 = t2->pidx(); 
-    if (s1.size() == s2.size()) { 
-      std::vector<size_t> L1 = std::vector<size_t> (s1.begin(), s1.begin() + pidx1);
-      std::vector<size_t> R1 = std::vector<size_t> (s1.begin() + pidx1, s1.end()); 
-      std::vector<size_t> L2 = std::vector<size_t> (s2.begin(), s2.begin() + pidx2); 
-      std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + pidx2, s2.end());
 
-      if (R1 != L2) {
-        std::ostringstream msg;
-        msg << "Dimensions to be contracted are not equal: left (";  
-        for (size_t s : R1) { msg << " " << s; }
-        msg << " ), right ( ";
-        for (size_t s : L2) { msg << " " << s; }
-        msg << " )";
-        throw std::logic_error(msg.str());
-      }
+    std::vector<size_t> L1 = std::vector<size_t> (s1.begin(), s1.begin() + pidx1 - t1->bidx_);
+    std::vector<size_t> R1 = std::vector<size_t> (s1.begin() + pidx1 - t1->bidx_, s1.end()); 
+    std::vector<size_t> L2 = std::vector<size_t> (s2.begin(), s2.begin() + pidx2 - t2->bidx_); 
+    std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + pidx2 - t2->bidx_, s2.end());
 
-      std::vector<size_t> newshape = concat(L1, R2); 
-      return Shape{newshape, {}, newshape, 0, t1->pidx()};
+    if (R1 != L2) {
+      std::ostringstream msg;
+      msg << "Dimensions to be contracted are not equal: left (";  
+      for (size_t s : R1) { msg << " " << s; }
+      msg << " ), right ( ";
+      for (size_t s : L2) { msg << " " << s; }
+      msg << " )";
+      throw std::logic_error(msg.str());
     }
-    else if (s1.size() > s2.size()) { 
-      size_t bidx = s1.size() - s2.size(); 
-      std::vector<size_t> B = std::vector<size_t>(s1.begin(), s1.begin() + bidx); 
-      std::vector<size_t> L1 = std::vector<size_t> (s1.begin() + bidx, s1.begin() + pidx1);
-      std::vector<size_t> R1 = std::vector<size_t> (s1.begin() + pidx1, s1.end()); 
-      std::vector<size_t> L2 = std::vector<size_t> (s2.begin(), s2.begin() + pidx2); 
-      std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + pidx2, s2.end()); 
 
-      if (std::vector<size_t>(s1.end() - s2.size(), s1.end()) != s2) {
-        throw std::logic_error("Shapes do not match. ");
-      } 
-      return Shape{
-        s1, 
-        std::vector<size_t>(s1.begin(), s1.end() - s2.size()), 
-        std::vector<size_t>(s2), 
-        s1.size() - s2.size()
-      };
-    }
-    else {
-      if (std::vector<size_t>(s2.end() - s1.size(), s2.end()) != s1) {
-        throw std::logic_error("Shapes do not match. ");
-      }
-      return Shape{
-        s2, 
-        std::vector<size_t>(s2.begin(), s2.end() - s1.size()), 
-        std::vector<size_t>(s1), 
-        s2.size() - s1.size()
-      };
-    }
+    std::vector<size_t> newshape = concat(b1, L1, R2); 
+    return Shape{newshape, b1, {}, b1.size(), b1.size() + L1.size()};
   }
 
   Shape matmul_compat(Tensor* t1, Tensor* t2) {

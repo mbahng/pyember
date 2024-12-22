@@ -2,19 +2,5 @@
 #include <vector> 
 
 int main() {
-  GradTensor* t1 = new GradTensor(
-      {1., 2., 3., 4., 5., 6., 7., 8., 9., 10.}, 
-      {5, 2}, 1); 
-  GradTensor* t2 = new GradTensor(
-      {2., 3., 4., 5., 7., 8., 9., 10}, 
-      {2, 4}, 1); 
-  GradTensor* gt = new GradTensor(
-    {
-      16., 19., 22., 25., 34., 41., 48., 55., 52., 63., 
-      74., 85., 70., 85., 100., 115., 88., 107., 126., 145.
-    }, 
-    {5, 4}, 1);
-
-  GradTensor* result = t1->matmul(t2);
   return 0;
 }

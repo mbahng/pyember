@@ -80,7 +80,7 @@ TEST(STsubT, Vector) {
   ScalarTensor* c = new ScalarTensor(3.); 
   Tensor* A = Tensor::arange(0, 4, 1);
   Tensor* A2 = c->sub(A); 
-  Tensor* truth = new Tensor({3., 2., 1., 0.}, {4}, true);
+  Tensor* truth = new Tensor({3., 2., 1., 0.}, {4}, 0, true);
   ASSERT_TRUE(*A2 == *truth);
 
   delete c;
@@ -214,7 +214,7 @@ TEST(STaddGT, Tensor) {
 TEST(STsubGT, Scalar) {
   ScalarTensor* c = new ScalarTensor(3.); 
   ScalarTensor* A = new ScalarTensor(2.); 
-  Tensor* B = new Tensor({2.}, {1}, true);  
+  Tensor* B = new Tensor({2.}, {1}, 0, true);  
   Tensor* A2 = c->sub(A); 
   Tensor* B2 = c->sub(B); 
   Tensor* truth = new ScalarTensor(1.); 
@@ -233,7 +233,7 @@ TEST(STsubGT, Vector) {
   ScalarTensor* c = new ScalarTensor(3.); 
   Tensor* A = Tensor::arange(0, 4, 1);
   Tensor* A2 = c->sub(A); 
-  Tensor* truth = new Tensor({3., 2., 1., 0.}, {4}, true);
+  Tensor* truth = new Tensor({3., 2., 1., 0.}, {4}, 0, true);
   ASSERT_TRUE(*A2 == *truth);
 
   delete c;

@@ -15,8 +15,8 @@ Tensor* ScalarTensor::add(Tensor* other) {
     = concat(out->shape(), other->shape()); 
 
 
-  this->grad = new GradTensor(this_grad_shape, out->shape().size());
-  other->grad = new GradTensor(other_grad_shape, out->shape().size());
+  this->grad = new GradTensor(this_grad_shape, other->bidx_, out->shape().size());
+  other->grad = new GradTensor(other_grad_shape, other->bidx_, out->shape().size());
   Tensor* this_ptr = this; 
   Tensor* other_ptr = other;
 
@@ -51,8 +51,8 @@ GradTensor* ScalarTensor::add(GradTensor* other) {
 
 ScalarTensor* ScalarTensor::add(ScalarTensor* other) {
   ScalarTensor* out = new ScalarTensor(this->item() + other->item()); 
-  this->grad = new GradTensor({1, 1}, 1);
-  other->grad = new GradTensor({1, 1}, 1); 
+  this->grad = new GradTensor({1, 1}, 0, 1);
+  other->grad = new GradTensor({1, 1}, 0, 1); 
 
   ScalarTensor* this_ptr = this;  
   ScalarTensor* other_ptr = other;  
@@ -84,8 +84,8 @@ Tensor* ScalarTensor::sub(Tensor* other) {
     = concat(out->shape(), other->shape()); 
 
 
-  this->grad = new GradTensor(this_grad_shape, out->shape().size());
-  other->grad = new GradTensor(other_grad_shape, out->shape().size());
+  this->grad = new GradTensor(this_grad_shape, other->bidx_, out->shape().size());
+  other->grad = new GradTensor(other_grad_shape, other->bidx_, out->shape().size());
   Tensor* this_ptr = this; 
   Tensor* other_ptr = other;
 
@@ -120,8 +120,8 @@ GradTensor* ScalarTensor::sub(GradTensor* other) {
 
 ScalarTensor* ScalarTensor::sub(ScalarTensor* other) {
   ScalarTensor* out = new ScalarTensor(this->item() - other->item()); 
-  this->grad = new GradTensor({1, 1}, 1);
-  other->grad = new GradTensor({1, 1}, 1); 
+  this->grad = new GradTensor({1, 1}, 0, 1);
+  other->grad = new GradTensor({1, 1}, 0, 1); 
 
   ScalarTensor* this_ptr = this;  
   ScalarTensor* other_ptr = other;  
@@ -153,8 +153,8 @@ Tensor* ScalarTensor::mul(Tensor* other) {
     = concat(out->shape(), other->shape()); 
 
 
-  this->grad = new GradTensor(this_grad_shape, out->shape().size());
-  other->grad = new GradTensor(other_grad_shape, out->shape().size());
+  this->grad = new GradTensor(this_grad_shape, other->bidx_, out->shape().size());
+  other->grad = new GradTensor(other_grad_shape, other->bidx_, out->shape().size());
   Tensor* this_ptr = this; 
   Tensor* other_ptr = other;
 
@@ -189,8 +189,8 @@ GradTensor* ScalarTensor::mul(GradTensor* other) {
 
 ScalarTensor* ScalarTensor::mul(ScalarTensor* other) {
   ScalarTensor* out = new ScalarTensor(this->item() * other->item()); 
-  this->grad = new GradTensor({1, 1}, 1);
-  other->grad = new GradTensor({1, 1}, 1); 
+  this->grad = new GradTensor({1, 1}, 0, 1);
+  other->grad = new GradTensor({1, 1}, 0, 1); 
 
   ScalarTensor* this_ptr = this;  
   ScalarTensor* other_ptr = other;  

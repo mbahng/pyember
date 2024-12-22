@@ -25,7 +25,8 @@ class Dataloader():
     return self 
 
   def __next__(self): 
-    if self.idx >= self.n_batches:
+    if self.idx >= self.n_batches: 
+      self.idx = 0
       raise StopIteration 
 
     start = self.batch_size * self.idx 

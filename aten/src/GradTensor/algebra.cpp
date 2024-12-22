@@ -5,7 +5,7 @@
 
 GradTensor* GradTensor::add(GradTensor* other) { 
   Integrity::Shape r = Integrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
   size_t bs = prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
@@ -59,7 +59,7 @@ GradTensor* GradTensor::add(double* other) {
 
 GradTensor* GradTensor::sub(GradTensor* other) {
   Integrity::Shape r = Integrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
   size_t bs = prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
@@ -117,7 +117,7 @@ GradTensor* GradTensor::sub(double* other) {
 
 GradTensor* GradTensor::mul(GradTensor* other) {
   Integrity::Shape r = Integrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
   size_t bs = prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
@@ -180,21 +180,43 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
   // this is repetitive, should fix this to be faster
   Integrity::Shape r = Integrity::matmul_compat(this, other); 
   
-  GradTensor* res = new GradTensor(r.shape, r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, r.b_shape.size(), r.pidx);  
 
-  if (this->shape().size() >= other->shape().size()) {
+  if (this->shape().size() == other->shape().size()) {
     // batch not needed here since we can account for b in i
-    std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin(), this->shape().begin() + this->pidx()); 
-    std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin(), other->shape().begin() + other->pidx());
+    std::vector<size_t> B = std::vector<size_t>(this->shape().begin(), this->shape().begin() + r.bidx); 
+    std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin() + r.bidx, this->shape().begin() + this->pidx()); 
+    std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin() + r.bidx, other->shape().begin() + other->pidx());
     std::vector<size_t> C3 = std::vector<size_t>(other->shape().begin() + other->pidx(), other->shape().end()); 
 
-    for (std::vector<size_t> i : generate_all_indices(C1)) {
-      for (std::vector<size_t> k : generate_all_indices(C3)) {
-        double contraction = 0.0;
-        for (std::vector<size_t> j : generate_all_indices(C2)) {  
-          contraction += this->at(concat(i, j)) * other->at(concat(j, k));
+    for (std::vector<size_t> b : generate_all_indices(r.b_shape)) {
+      for (std::vector<size_t> i : generate_all_indices(C1)) {
+        for (std::vector<size_t> k : generate_all_indices(C3)) { 
+          double contraction = 0.0;
+          for (std::vector<size_t> j : generate_all_indices(C2)) {  
+            contraction += this->at(concat(b, i, j)) * other->at(concat(b, j, k)); 
+          }
+          res->at(concat(b, i, k)) = contraction; 
         }
-        res->at(concat(i, k)) = contraction; 
+      }
+    }
+  }
+  else if (this->shape().size() > other->shape().size()) {
+    // batch not needed here since we can account for b in i
+    std::vector<size_t> B = std::vector<size_t>(this->shape().begin(), this->shape().begin() + r.bidx); 
+    std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin() + r.bidx, this->shape().begin() + this->pidx()); 
+    std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin() + r.bidx, other->shape().begin() + other->pidx());
+    std::vector<size_t> C3 = std::vector<size_t>(other->shape().begin() + other->pidx(), other->shape().end()); 
+
+    for (std::vector<size_t> b : generate_all_indices(r.b_shape)) {
+      for (std::vector<size_t> i : generate_all_indices(C1)) {
+        for (std::vector<size_t> k : generate_all_indices(C3)) {
+          double contraction = 0.0;
+          for (std::vector<size_t> j : generate_all_indices(C2)) {  
+            contraction += this->at(concat(b, i, j)) * other->at(concat(j, k)); 
+          }
+          res->at(concat(b, i, k)) = contraction; 
+        }
       }
     }
   }
@@ -204,7 +226,7 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
     std::vector<size_t> C2 = std::vector<size_t>(this->shape().begin() + this->pidx(), this->shape().end());
     std::vector<size_t> C3 = std::vector<size_t>(other->shape().begin() + other->pidx(), other->shape().end()); 
 
-    for (std::vector<size_t> b : generate_all_indices(B)) {
+    for (std::vector<size_t> b : generate_all_indices(r.b_shape)) {
       for (std::vector<size_t> i : generate_all_indices(C1)) {
         for (std::vector<size_t> k : generate_all_indices(C3)) {
           double contraction = 0.0;
