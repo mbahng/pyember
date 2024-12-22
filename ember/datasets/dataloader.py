@@ -5,9 +5,9 @@ import random
 class Dataloader(): 
 
   def __init__(self, dataset: Dataset, batch_size = 1, shuffle = True): 
-    self.n_batches = (len(dataset) % batch_size)
     self.batch_size = batch_size 
-    assert(batch_size < len(dataset) and  self.n_batches == 0)
+    self.n_batches = len(dataset) // batch_size
+    assert(batch_size < len(dataset))
     self.dataset = dataset 
     self.shuffle = shuffle
     self.idx = 0 
@@ -26,11 +26,18 @@ class Dataloader():
     return self 
 
   def __next__(self): 
-    if self.idx > len(self.dataset): 
+    if self.idx >= self.n_batches:
       raise StopIteration 
 
-    batch_X = self.dataset.X[self.idx:self.idx + self.batch_size]
-    batch_Y = self.dataset.Y[self.idx:self.idx + self.batch_size]
+    start = self.batch_size * self.idx 
+    end = self.batch_size * (self.idx + 1)
+
+    batch_X = self.dataset.X[start:end]
+    batch_Y = self.dataset.Y[start:end] 
+    batch_X.bidx = 1 
+    batch_Y.bidx = 1 
+    batch_X.has_grad = False
+    batch_Y.has_grad = False
     self.idx += 1 
 
     return batch_X, batch_Y
