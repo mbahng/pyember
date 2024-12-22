@@ -21,7 +21,7 @@ bool GradTensor::operator!=(GradTensor& other) const {
     return !(*this == other);
 }
 GradTensor* GradTensor::copy() const {
-  return new GradTensor(this->storage_, this->shape_, this->pidx());
+  return new GradTensor(this->storage_, this->shape_, this->bidx_, this->pidx());
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
@@ -34,7 +34,7 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
   }
   else { 
     // usually pidx will become meaningless when you reshape it. 
-    GradTensor* out = new GradTensor(storage_, new_shape, pidx_);
+    GradTensor* out = new GradTensor(storage_, new_shape, bidx_, pidx_);
     return out; 
   }
 }

@@ -6,17 +6,23 @@ model = ember.models.LinearRegression(5)
 mse = ember.objectives.MSELoss()
 a = 1e-4
 
-for epoch in range(1000):
-  loss = ember.ScalarTensor(0) 
+for epoch in range(1000): 
+  loss = None
   for x, y in dl: 
-    y_ = model.forward(x) 
-    y_.backprop(True)
+    x.bidx = 1 
+    y.bidx = 1
+    x.has_grad = False
+    y.has_grad = False
+    y_ = model.forward(x)  
     loss = mse(y, y_)
-    print(loss)
-    exit()
-    model.W = model.W - a * model.W.grad.reshape(model.W.shape, inplace=False)
-    model.b = model.b - a * model.b.grad.reshape(model.b.shape, inplace=False)
+    loss.backprop(False)
+
+    dW = model.W.grad.batchsum().reshape([5], inplace=True) 
+    db = model.b.grad.batchsum().reshape([1], inplace=True)
+
+    model.W -= 1e-5 * dW
+    model.b -= 1e-5 * db
 
   if epoch % 25 == 0: 
-    print(f"LOSS = {loss[0].item()}")
+    print(loss)
 

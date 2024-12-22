@@ -17,6 +17,9 @@ void init_basetensor_binding(py::module_ &m) {
     .def_property("shape",
       [](const BaseTensor &t) -> const std::vector<size_t>& { return t.shape_; },
       [](BaseTensor &t, const std::vector<size_t> &value) { t.shape_ = value; })
+    .def_property("bidx",
+      [](const BaseTensor &t) -> const size_t { return t.bidx_ ; },
+      [](BaseTensor &t, const size_t &value) { t.bidx_ = value; }) 
 
     .def("__repr__", &BaseTensor::operator std::string, py::is_operator()) 
     .def("__str__", &BaseTensor::operator std::string, py::is_operator())

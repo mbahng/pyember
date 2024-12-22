@@ -12,7 +12,7 @@ namespace T_Add_T {
     Tensor* truth_sum = Tensor::arange(0, 10, 2);
     ASSERT_TRUE(*s1 == *truth_sum); 
     s1->backprop(true);
-    GradTensor* truth = GradTensor::eye(5, 1);
+    GradTensor* truth = GradTensor::eye(5, 0, 1);
     ASSERT_TRUE(*(t1->grad) == *truth); 
     ASSERT_TRUE(*(t2->grad) == *truth); 
     delete t1;
@@ -35,8 +35,8 @@ namespace T_Sub_T {
     ASSERT_TRUE(*s1 == *truth_sum); 
     
     s1->backprop(true);
-    GradTensor* truth1 = GradTensor::eye(5, 1);
-    GradTensor* truth2 = GradTensor::eye(5, 1); 
+    GradTensor* truth1 = GradTensor::eye(5, 0, 1);
+    GradTensor* truth2 = GradTensor::eye(5, 0, 1); 
     for (int i = 0; i < truth2->storage_.size(); i++) {
       truth2->storage_[i] *= -1;
     }

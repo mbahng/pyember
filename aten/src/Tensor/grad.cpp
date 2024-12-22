@@ -18,8 +18,12 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   // Set the gradient of the final output (this tensor) to 1.0
-  std::vector<size_t> pairshape = concat(this->shape(), this->shape());
-  this->grad = new GradTensor(pairshape, this->shape().size()); 
+  std::vector<size_t> pairshape = concat(this->bshape(), this->nbshape(), this->nbshape());
+  this->grad = new GradTensor(pairshape, this->bidx_, this->shape().size()); 
+
+  if (!(this->has_grad)) {
+    throw std::logic_error("This tensor has has_grad=False.");
+  }
 
   // initialize grad[i, i] to 1s, where i may be a vector  
   for (std::vector<size_t> i : generate_all_indices(this->shape_)) { 
