@@ -3,19 +3,17 @@
 #include <iostream>
 #include "Tensor.h"
 
-int shape_to_length(std::vector<size_t> shape);
-
 void array_matches_shape(std::vector<double> data, std::vector<size_t> shape);
 
 void array_matches_shape(
   std::vector<std::vector<double>> data, 
   std::vector<size_t> shape
-  );
+);
 
 void array_matches_shape(
   std::vector<std::vector<std::vector<double>>> data, 
   std::vector<size_t> shape
-  );
+);
 
 std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
 
