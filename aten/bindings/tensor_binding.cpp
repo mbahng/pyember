@@ -6,32 +6,32 @@ void init_tensor_binding(py::module_ &m) {
 
     // Constructors
     .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true) {
-        return new Tensor(data, shape, has_grad);
+        return new Tensor(data, shape, bidx, has_grad);
         }), 
         py::arg("data"), 
         py::arg("shape"), 
-        py::arg("bidx"), 
+        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
     .def(py::init([](std::vector<double> data, size_t bidx = 0,bool has_grad = true) {
-        return new Tensor(data, has_grad);
+        return new Tensor(data, bidx, has_grad);
         }),
         py::arg("data"), 
-        py::arg("bidx"), 
+        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
     .def(py::init([](std::vector<std::vector<double>> data, size_t bidx = 0,bool has_grad = true) {
-        return new Tensor(data, has_grad);
+        return new Tensor(data, bidx, has_grad);
         }),
         py::arg("data"), 
-        py::arg("bidx"), 
+        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
     .def(py::init([](std::vector<std::vector<std::vector<double>>> data, size_t bidx = 0,bool has_grad = true) {
-        return new Tensor(data, has_grad);
+        return new Tensor(data, bidx, has_grad);
         }),
         py::arg("data"), 
-        py::arg("bidx"), 
+        py::arg("bidx") = 0, 
         py::arg("has_grad") = true
       )
 
@@ -54,21 +54,23 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("has_grad") = true
       )
     .def_static("gaussian", 
-        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0, bool has_grad = true) {
-            return Tensor::gaussian(shape, mean, stddev, has_grad);
+        [](std::vector<size_t> shape = {1}, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool has_grad = true) {
+            return Tensor::gaussian(shape, mean, stddev, bidx, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("mean") = 0.0, 
         py::arg("stddev") = 1.0,
+        py::arg("bidx") = 0,
         py::arg("has_grad") = true
       )
     .def_static("uniform", 
-        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0, bool has_grad = true) {
-            return Tensor::uniform(shape, min, max, has_grad);
+        [](std::vector<size_t> shape = {1}, double min = 0.0, double max = 1.0, size_t bidx = 0, bool has_grad = true) {
+            return Tensor::uniform(shape, min, max, bidx, has_grad);
         }, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("min") = 0.0, 
         py::arg("max") = 1.0,
+        py::arg("bidx") = 0,
         py::arg("has_grad") = true
       )
     .def_static("ones", 

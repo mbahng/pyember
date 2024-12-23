@@ -9,23 +9,25 @@ a = 1e-4
 for epoch in range(1000): 
   loss = None
   for x, y in dl: 
-    x.bidx = 1 
-    y.bidx = 1
-    print(x) 
-    print(y)
-    x.has_grad = False
-    y.has_grad = False
     y_ = model.forward(x)  
     loss = mse(y, y_)
-    loss.backprop(False)
+    loss.backprop()
 
     dW = model.W.grad.batchsum().reshape([5], inplace=True) 
     db = model.b.grad.batchsum().reshape([1], inplace=True)
-
+    
     model.W -= 1e-5 * dW
     model.b -= 1e-5 * db
-    break 
 
-  break
+  if epoch % 25 == 0: 
+    print(loss)
 
+# for name, tensor in model.intermediate.items(): 
+#   print(f"{name} --- ") 
+#   tensor.grad.meta()
+#   print(tensor.grad.bshape, tensor.grad.nbshape)
+# for name, tensor in mse.intermediate.items(): 
+#   print(f"{name} --- ")
+#   tensor.grad.meta()
+#   print(tensor.grad.bshape, tensor.grad.nbshape)
 

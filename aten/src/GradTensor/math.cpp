@@ -1,8 +1,6 @@
 #include "../Tensor.h"
 #include <vector>
 #include <cassert>
-#include <cmath>
-#include <algorithm> 
 #include "../utils.h"
 
 GradTensor* GradTensor::batchsum() {

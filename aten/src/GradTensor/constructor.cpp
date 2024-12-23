@@ -7,6 +7,8 @@ GradTensor::GradTensor() {
   this->storage_ = std::vector<double>{}; 
   this->shape_ = std::vector<size_t>{}; 
   this->bidx_ = 0; 
+  this->bshape_ = std::vector<size_t>{}; 
+  this->nbshape_ = std::vector<size_t>{}; 
   this->pidx_ = 0;
 }
 
@@ -17,6 +19,8 @@ GradTensor::GradTensor(std::vector<double> data, std::vector<size_t> shape, size
   this->storage_ = data; 
   this->shape_ = shape;  
   this->bidx_ = bidx; 
+  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx);
+  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx, shape_.end());
   this->pidx_ = pidx;
 }
 
@@ -24,6 +28,8 @@ GradTensor::GradTensor(std::vector<size_t> shape, size_t bidx, size_t pidx) {
   this->storage_ = std::vector<double>(shape_to_length(shape), 0.0); 
   this->shape_ = shape;  
   this->bidx_ = bidx; 
+  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx);
+  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx, shape_.end());
   this->pidx_ = pidx;
 }
 

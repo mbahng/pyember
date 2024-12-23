@@ -176,10 +176,9 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
   // will do grad matmul is when doing tensor contractions. 
   // e.g. (2, 3, 4) x (4, 4, 3) will never happen. 
   // other's batch indices will always cover this's indices. 
-  
+ 
   // this is repetitive, should fix this to be faster
   Integrity::Shape r = Integrity::matmul_compat(this, other); 
-  
   GradTensor* res = new GradTensor(r.shape, r.b_shape.size(), r.pidx);  
 
   if (this->shape().size() == other->shape().size()) {

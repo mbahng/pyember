@@ -6,6 +6,75 @@
 #include <functional>
 #include <cxxabi.h>
 
+const std::vector<double>& BaseTensor::data() const {
+  return storage_; 
+}
+
+const std::vector<double>& BaseTensor::array() const {
+  return storage_; 
+}
+
+const std::vector<double>& BaseTensor::vector() const {
+  return storage_; 
+}
+
+const std::vector<size_t>& BaseTensor::shape() const {
+  return shape_; 
+}
+
+const std::vector<size_t> BaseTensor::bshape() const {
+  return bshape_;
+}
+
+const std::vector<size_t> BaseTensor::nbshape() const {
+  return nbshape_;
+}
+
+const size_t& BaseTensor::bidx() const {
+  return bidx_;
+}
+
+std::string BaseTensor::type() const { 
+  return "BaseTensor"; 
+}
+
+std::string BaseTensor::dtype() const { 
+  return "double"; 
+}
+
+void BaseTensor::meta() const {
+  std::ostringstream oss; 
+
+  oss << "Shape = ( "; 
+  for (auto p : this->shape()) {
+    oss << p << " ";
+  }
+  oss << "), bidx = "; 
+  oss << this-> bidx(); 
+
+  std::cout << oss.str() << "\n";
+}
+
+bool BaseTensor::operator==(BaseTensor& other) const {
+  // First, compare shapes
+  if (this->shape_ != other.shape_) {
+    return false;
+  }
+
+  // Compare each element, considering floating-point precision
+  const double epsilon = std::numeric_limits<double>::epsilon();
+  for (size_t i = 0; i < this->data().size(); ++i) {
+    if (std::abs(this->data()[i] - other.data()[i]) > epsilon) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool BaseTensor::operator!=(BaseTensor& other) const {
+  return !(*this == other);
+}
+
 BaseTensor::operator std::string() const {  
   // recursive call on each row. 
   std::ostringstream oss;
@@ -162,34 +231,4 @@ void BaseTensor::copy_slice_data(
     current_indices[current_dim] = i;
     copy_slice_data(slices, current_indices, current_dim + 1, result_storage);
   }
-}
-
-bool BaseTensor::operator==(BaseTensor& other) const {
-  // First, compare shapes
-  if (this->shape_ != other.shape_) {
-    return false;
-  }
-
-  // Compare each element, considering floating-point precision
-  const double epsilon = std::numeric_limits<double>::epsilon();
-  for (size_t i = 0; i < this->data().size(); ++i) {
-    if (std::abs(this->data()[i] - other.data()[i]) > epsilon) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool BaseTensor::operator!=(BaseTensor& other) const {
-  return !(*this == other);
-}
-
-const std::vector<size_t>& BaseTensor::shape() const {
-  return shape_; 
-}
-const std::vector<size_t> BaseTensor::bshape() const {
-  return std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
-}
-const std::vector<size_t> BaseTensor::nbshape() const {
-  return std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
 }
