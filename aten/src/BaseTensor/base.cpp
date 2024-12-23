@@ -199,7 +199,18 @@ void BaseTensor::validate_indices(const std::vector<size_t>& indices) const {
 
   for (size_t i = 0; i < indices.size(); ++i) {
     if (indices[i] >= shape_[i]) {
-      throw std::out_of_range("Index out of bounds.");
+      std::ostringstream oss; 
+      oss << "Out of Bounds: Attempting to index ( "; 
+      for (size_t i : indices) {
+        oss << i << " "; 
+      } 
+      oss << ") from tensor of shape ("; 
+      for (size_t i : shape_) {
+        oss << i << " ";
+      }
+      oss << ").";
+
+      throw std::invalid_argument(oss.str());
     }
   }
 }
