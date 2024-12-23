@@ -16,12 +16,13 @@ class ScalarTensor;
 
 class BaseTensor {
   // Abstract class for all Tensor objects. 
-  // Constructor should not be made here 
   public: 
     std::vector<double> storage_; 
     std::vector<size_t> shape_;  
-    size_t bidx_ = 0; 
-
+    size_t bidx_;  
+    std::vector<size_t> bshape_; 
+    std::vector<size_t> nbshape_; 
+  
     struct Slice {
       size_t start;
       size_t stop;
@@ -33,27 +34,29 @@ class BaseTensor {
       : start(start_), stop(stop_), step(step_) {}
     };
 
-    virtual std::string type() const { return "BaseTensor"; } 
-    virtual std::string dtype() const { return "double"; }
-    virtual ~BaseTensor() = default; 
+    const std::vector<double>& data() const; 
+    const std::vector<double>& array() const; 
+    const std::vector<double>& vector() const; 
 
     const std::vector<size_t>& shape() const;
     const std::vector<size_t> bshape() const; 
-    const std::vector<size_t> nbshape() const;
+    const std::vector<size_t> nbshape() const; 
+    const size_t& bidx() const; 
 
-    const std::vector<double>& data() const { return storage_; }  
+    virtual std::string type() const;
+    virtual std::string dtype() const;
+
+    void meta() const; 
+
+    virtual ~BaseTensor() = default; 
 
     virtual bool operator==(BaseTensor& other) const; 
     virtual bool operator!=(BaseTensor& other) const;  
     virtual operator std::string() const; 
-
-    // Tensor Math Operations cannot be virtualized 
-    
-    // Index access
+ 
+    // Index and slicing
     virtual double at(const std::vector<size_t>& indices) const;
     virtual double& at(const std::vector<size_t>& indices);
-
-    // Slicing
     virtual std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const;
 
   protected:
@@ -143,8 +146,8 @@ class Tensor : public BaseTensor {
 
     static Tensor* arange(int start, int stop, int step = 1, bool has_grad = true);
     static Tensor* linspace(double start, double stop, int numsteps, bool has_grad = true);
-    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, bool has_grad = true);
-    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, bool has_grad = true);
+    static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool has_grad = true);
+    static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, size_t bidx = 0, bool has_grad = true);
     static Tensor* ones(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true);
     static Tensor* zeros(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true); 
 

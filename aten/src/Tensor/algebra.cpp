@@ -111,7 +111,7 @@ Tensor* Tensor::sub(Tensor* other) {
   Tensor* this_ptr = this; 
 
   res->backward = [this_ptr, other, res, r] {  
-    std::vector<size_t> newshape = concat(this_ptr->bshape(), this_ptr->nbshape(), this_ptr->nbshape());
+    std::vector<size_t> newshape = concat(this_ptr->bshape(), this_ptr->nbshape(), this_ptr->nbshape()); 
     size_t pidx = r.b_shape.size() + r.nb_shape.size(); 
     if (this_ptr->has_grad) {
       this_ptr->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 

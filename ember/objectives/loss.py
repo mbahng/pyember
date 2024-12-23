@@ -3,7 +3,8 @@ import warnings
 
 class Loss(): 
     def __init__(self): 
-        self.loss = None
+        self.loss = None 
+        self.intermediate = dict()
 
     def __call__(self, y_truth: Tensor, y_pred: Tensor) -> Tensor:  
       return Tensor([0.0]) 
@@ -26,8 +27,16 @@ class MSELoss(Loss):
       self.y_truth = y_truth
       self.y_pred = y_pred 
 
-      self.diff = self.y_truth - self.y_pred  
+      self.diff = self.y_truth - self.y_pred 
+      self.intermediate["diff"] = self.diff
+
       self.sq_diff = self.diff ** 2  
+      self.intermediate["sq_diff"] = self.sq_diff
+
       self.sum_sq_diff = self.sq_diff.sum()  
+      self.intermediate["sum_sq_diff"] = self.sum_sq_diff
+
       self.loss = self.sum_sq_diff 
+      self.intermediate["loss"] = self.sum_sq_diff
+
       return self.loss

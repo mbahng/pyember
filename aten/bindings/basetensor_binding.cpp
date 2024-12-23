@@ -12,14 +12,47 @@ void init_basetensor_binding(py::module_ &m) {
 
   py::class_<BaseTensor>(m, "BaseTensor")
     .def_property("storage",
-      [](const BaseTensor &t) -> const std::vector<double>& { return t.storage_; },
-      [](BaseTensor &t, const std::vector<double> &value) { t.storage_ = value; })
+        [](const BaseTensor &t) -> const std::vector<double>& { 
+          return t.storage_; 
+        },
+        [](BaseTensor &t, const std::vector<double> &value) { 
+          t.storage_ = value; 
+        }
+      )
     .def_property("shape",
-      [](const BaseTensor &t) -> const std::vector<size_t>& { return t.shape_; },
-      [](BaseTensor &t, const std::vector<size_t> &value) { t.shape_ = value; })
+        [](const BaseTensor &t) -> const std::vector<size_t>& { 
+          return t.shape_; 
+        },
+        [](BaseTensor &t, const std::vector<size_t> &value) { 
+        t.shape_ = value; 
+        }
+      )
+    .def_property("bshape",
+        [](const BaseTensor &t) -> const std::vector<size_t>& { 
+          return t.bshape_; 
+        },
+        [](BaseTensor &t, const std::vector<size_t> &value) { 
+          t.bshape_ = value; 
+        }
+      )
+    .def_property("nbshape",
+        [](const BaseTensor &t) -> const std::vector<size_t>& { 
+          return t.nbshape_; 
+        },
+        [](BaseTensor &t, const std::vector<size_t> &value) {
+          t.nbshape_ = value; 
+        }
+      )
     .def_property("bidx",
-      [](const BaseTensor &t) -> const size_t { return t.bidx_ ; },
-      [](BaseTensor &t, const size_t &value) { t.bidx_ = value; }) 
+        [](const BaseTensor &t) -> const size_t { 
+          return t.bidx_ ; 
+        },
+        [](BaseTensor &t, const size_t &value) { 
+          t.bidx_ = value;  
+          t.bshape_ = std::vector<size_t>(t.shape_.begin(), t.shape_.begin() + t.bidx_);
+          t.nbshape_ = std::vector<size_t>(t.shape_.begin() + t.bidx_, t.shape_.end());
+        }
+      )
 
     .def("__repr__", &BaseTensor::operator std::string, py::is_operator()) 
     .def("__str__", &BaseTensor::operator std::string, py::is_operator())
@@ -32,6 +65,11 @@ void init_basetensor_binding(py::module_ &m) {
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at))
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at, py::const_))
 
+    .def("meta", 
+        [](BaseTensor *a) {
+          a->meta(); 
+        }
+      )
     .def("__len__", 
         [](Tensor *a) {
           return (a->data()).size();

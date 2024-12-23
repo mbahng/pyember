@@ -1,14 +1,14 @@
 #include "../Tensor.h"
-#include "../utils.h"
 
 Tensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string(); 
+  std::string hg = this->has_grad ? "True" : "False";
   if (result.back() != '\n') {
-    result += '\n'; 
+    result += ", has_grad = " + hg + '\n'; 
   }
   else {
     result.pop_back();
-    result += '\n'; 
+    result += ", has_grad = " + hg + '\n'; 
   }
   return result; 
 }
