@@ -25,7 +25,7 @@ GradTensor* GradTensor::copy() const {
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
-  if (prod(new_shape) != prod(this->shape_)) {
+  if (CIntegrity::prod(new_shape) != CIntegrity::prod(this->shape_)) {
     throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
   }
   if (inplace) {

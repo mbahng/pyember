@@ -5,7 +5,7 @@
 #include "../utils.h"
 
 Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  this->storage_ = std::vector<double>(prod(shape), 0.0); 
+  this->storage_ = std::vector<double>(CIntegrity::prod(shape), 0.0); 
   this->shape_ = shape; 
   this->bidx_ = bidx; 
   this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
@@ -34,7 +34,7 @@ Tensor::Tensor(std::vector<double> data, size_t bidx, bool has_grad) {
 
 Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size()};
-  array_matches_shape(data, shape); 
+  CIntegrity::array_matches_shape(data, shape); 
   this->shape_ = shape; 
   std::vector<double> res = {}; 
   for (int i = 0; i < shape[0]; i++) {
@@ -48,8 +48,8 @@ Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad
 }
 
 Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool has_grad) {
-  std::vector<size_t> shape = {data.size(), data[0].size(), data[0][0].size()};
-  array_matches_shape(data, shape); 
+  std::vector<size_t> shape = {data.size(), data[0].size(), data[0][0].size()}; 
+  CIntegrity::array_matches_shape(data, shape); 
   this->shape_ = shape; 
   std::vector<double> res = {}; 
   for (int i = 0; i < shape[0]; i++) {
@@ -128,10 +128,10 @@ Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, size_
 }
 
 Tensor* Tensor::ones(std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  return new Tensor(std::vector<double> (prod(shape), 1.0), shape, bidx, has_grad); 
+  return new Tensor(std::vector<double> (CIntegrity::prod(shape), 1.0), shape, bidx, has_grad); 
 }
 
 Tensor* Tensor::zeros(std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  return new Tensor(std::vector<double>(prod(shape), 0.0), shape, bidx, has_grad); 
+  return new Tensor(std::vector<double>(CIntegrity::prod(shape), 0.0), shape, bidx, has_grad); 
 }
 

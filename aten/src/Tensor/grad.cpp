@@ -3,9 +3,6 @@
 #include <vector> 
 #include <cassert>
 
-std::vector<std::vector<size_t>> generate_all_indices(const std::vector<size_t>& shape);
-std::vector<size_t> duplicate_indices(const std::vector<size_t> shape);
-
 void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo) {
   if (visited.find(v) == visited.end()) {
     visited.insert(v);
@@ -18,7 +15,7 @@ void Tensor::build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tenso
 
 std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   // Set the gradient of the final output (this tensor) to 1.0
-  std::vector<size_t> pairshape = concat(this->bshape(), this->nbshape(), this->nbshape());
+  std::vector<size_t> pairshape = Index::concat(this->bshape(), this->nbshape(), this->nbshape());
   this->grad = new GradTensor(pairshape, this->bidx_, this->shape().size()); 
 
   if (!(this->has_grad)) {
@@ -26,8 +23,8 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   }
 
   // initialize grad[i, i] to 1s, where i may be a vector  
-  for (std::vector<size_t> i : generate_all_indices(this->shape_)) { 
-    std::vector<size_t> i_dup = concat(i, i); 
+  for (std::vector<size_t> i : Index::generate_all_indices(this->shape_)) { 
+    std::vector<size_t> i_dup = Index::concat(i, i); 
     (this->grad)->at(i_dup) = 1.0; 
   } 
 

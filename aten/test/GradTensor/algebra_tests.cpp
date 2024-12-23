@@ -6,9 +6,9 @@
 namespace GT_Add_GT {
 
   TEST(GradTensorTest, NB_add_NB) {
-    GradTensor* t1 = new GradTensor(range(1, 7, 1), {2, 3}, 0, 1);
-    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 0, 2); 
-    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 0, 2); 
+    GradTensor* t1 = new GradTensor(CIntegrity::range(1, 7, 1), {2, 3}, 0, 1);
+    GradTensor* t2 = new GradTensor(CIntegrity::range(1, 13, 1), {2, 2, 3}, 0, 2); 
+    GradTensor truth = GradTensor(Index::concat(CIntegrity::range(2, 14, 2), CIntegrity::range(8, 20, 2)), {2, 2, 3}, 0, 2); 
     GradTensor* s1 = t1->add(t2); 
     ASSERT_TRUE(*s1 == truth); 
     delete t1; 
@@ -17,9 +17,9 @@ namespace GT_Add_GT {
   }
 
   TEST(GradTensorTest, B_add_NB) {
-    GradTensor* t1 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 1, 2); 
-    GradTensor* t2 = new GradTensor(range(1, 7, 1), {2, 3}, 0, 1);
-    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 0, 2);
+    GradTensor* t1 = new GradTensor(CIntegrity::range(1, 13, 1), {2, 2, 3}, 1, 2); 
+    GradTensor* t2 = new GradTensor(CIntegrity::range(1, 7, 1), {2, 3}, 0, 1);
+    GradTensor truth = GradTensor(Index::concat(CIntegrity::range(2, 14, 2), CIntegrity::range(8, 20, 2)), {2, 2, 3}, 0, 2);
     GradTensor* s1 = t1->add(t2); 
     ASSERT_TRUE(*s1 == truth);
     delete t1; 
@@ -28,9 +28,9 @@ namespace GT_Add_GT {
   }
 
   TEST(GradTensorTest, NB_add_B) {
-    GradTensor* t1 = new GradTensor(range(1, 7, 1), {2, 3}, 0, 1);
-    GradTensor* t2 = new GradTensor(range(1, 13, 1), {2, 2, 3}, 1, 2); 
-    GradTensor truth = GradTensor(concat(range(2, 14, 2), range(8, 20, 2)), {2, 2, 3}, 0, 2);
+    GradTensor* t1 = new GradTensor(CIntegrity::range(1, 7, 1), {2, 3}, 0, 1);
+    GradTensor* t2 = new GradTensor(CIntegrity::range(1, 13, 1), {2, 2, 3}, 1, 2); 
+    GradTensor truth = GradTensor(Index::concat(CIntegrity::range(2, 14, 2), CIntegrity::range(8, 20, 2)), {2, 2, 3}, 0, 2);
     GradTensor* s1 = t1->add(t2); 
     ASSERT_TRUE(*s1 == truth);
     delete t1; 
@@ -43,9 +43,9 @@ namespace GT_Add_GT {
 namespace GT_Sub_GT { 
 
   TEST(GradTensorTest, NB_sub_NB) {
-    GradTensor* t1 = new GradTensor(range(3, 11, 2), {2, 2}, 0, 1);
-    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 0, 1);
-    GradTensor* truth = new GradTensor(range(2, 6, 1), {2, 2}, 0, 1);
+    GradTensor* t1 = new GradTensor(CIntegrity::range(3, 11, 2), {2, 2}, 0, 1);
+    GradTensor* t2 = new GradTensor(CIntegrity::range(1, 5, 1), {2, 2}, 0, 1);
+    GradTensor* truth = new GradTensor(CIntegrity::range(2, 6, 1), {2, 2}, 0, 1);
     GradTensor* s1 = t1->sub(t2); 
     ASSERT_TRUE(*s1 == *truth);
 
@@ -63,9 +63,9 @@ namespace GT_Sub_GT {
   }
 
   TEST(GradTensorTest, B_sub_NB) {
-    GradTensor* t1 = new GradTensor(concat(range(3, 11, 2), range(3, 11, 2)), {2, 2, 2}, 1, 2);
-    GradTensor* t2 = new GradTensor(range(1, 5, 1), {2, 2}, 0, 1);
-    GradTensor* truth = new GradTensor(concat(range(2, 6, 1), range(2, 6, 1)), {2, 2, 2}, 1, 2);
+    GradTensor* t1 = new GradTensor(Index::concat(CIntegrity::range(3, 11, 2), CIntegrity::range(3, 11, 2)), {2, 2, 2}, 1, 2);
+    GradTensor* t2 = new GradTensor(CIntegrity::range(1, 5, 1), {2, 2}, 0, 1);
+    GradTensor* truth = new GradTensor(Index::concat(CIntegrity::range(2, 6, 1), CIntegrity::range(2, 6, 1)), {2, 2, 2}, 1, 2);
     GradTensor* s1 = t1->sub(t2); 
     ASSERT_TRUE(*s1 == *truth);
   }
