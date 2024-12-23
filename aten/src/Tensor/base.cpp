@@ -14,7 +14,16 @@ Tensor::operator std::string() const {
 }
 
 Tensor* Tensor::copy(bool has_grad) const {
-  return new Tensor(this->storage_, this->shape_, has_grad);
+  return new Tensor(this->storage_, this->shape_, this->bidx_); 
+}
+
+std::string Tensor::meta() const {
+  std::string result = BaseTensor::meta(); 
+  result.pop_back();  
+  std::string hg = has_grad ? "True" : "False";
+  result += ", has_grad = " + hg + '\n';  
+
+  return result;
 }
 
 Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool has_grad) { 

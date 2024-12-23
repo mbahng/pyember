@@ -3,6 +3,9 @@ from .. import Tensor
 class Dataset(): 
 
   def __init__(self, X: Tensor, Y: Tensor) -> None: 
+    if (X.has_grad or Y.has_grad): 
+      raise Exception("X or Y has gradients and will be backpropagated. Did you mean to do this?")
+
     self.index = 0
     self.X = X 
     self.Y = Y 

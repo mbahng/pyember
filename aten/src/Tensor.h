@@ -46,7 +46,7 @@ class BaseTensor {
     virtual std::string type() const;
     virtual std::string dtype() const;
 
-    std::string meta() const; 
+    virtual std::string meta() const; 
 
     virtual ~BaseTensor() = default; 
 
@@ -88,6 +88,7 @@ class GradTensor : public BaseTensor {
     bool operator!=(GradTensor& other) const;  
     GradTensor* copy() const; 
     operator std::string() const override; 
+    std::string meta() const override; 
 
     // default should be false since we don't want original gradient shapes being corrupted
     GradTensor* reshape(std::vector<size_t> new_shape, bool inplace = false); 
@@ -121,7 +122,7 @@ class GradTensor : public BaseTensor {
 
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
         auto base_result = BaseTensor::slice(slices);
-        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, 0, pidx_);
+        return std::make_unique<GradTensor>(base_result->storage_, base_result->shape_, bidx_, pidx_);
     }
     // Add to GradTensor class:
     GradTensor& transpose(const std::vector<size_t>& axes = {});
@@ -154,6 +155,8 @@ class Tensor : public BaseTensor {
     std::string type() const override { return "Tensor"; }
     virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
     Tensor* copy(bool has_grad = true) const; 
+    std::string meta() const override; 
+
     Tensor* transpose(const std::vector<size_t>& axes = {}, bool inplace = false, bool has_grad = true);
     operator std::string() const override; 
 
@@ -167,7 +170,7 @@ class Tensor : public BaseTensor {
 
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
         auto base_result = BaseTensor::slice(slices);
-        return std::make_unique<Tensor>(base_result->storage_, base_result->shape_);
+        return std::make_unique<Tensor>(base_result->storage_, base_result->shape_, bidx_, has_grad);
     }
 
     // backprop functions 
