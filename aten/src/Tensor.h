@@ -46,7 +46,7 @@ class BaseTensor {
     virtual std::string type() const;
     virtual std::string dtype() const;
 
-    void meta() const; 
+    std::string meta() const; 
 
     virtual ~BaseTensor() = default; 
 

@@ -67,7 +67,7 @@ void init_basetensor_binding(py::module_ &m) {
 
     .def("meta", 
         [](BaseTensor *a) {
-          a->meta(); 
+          return a->meta(); 
         }
       )
     .def("__len__", 

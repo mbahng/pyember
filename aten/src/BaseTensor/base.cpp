@@ -42,7 +42,7 @@ std::string BaseTensor::dtype() const {
   return "double"; 
 }
 
-void BaseTensor::meta() const {
+std::string BaseTensor::meta() const {
   std::ostringstream oss; 
 
   oss << "Shape = ( "; 
@@ -50,9 +50,9 @@ void BaseTensor::meta() const {
     oss << p << " ";
   }
   oss << "), bidx = "; 
-  oss << this-> bidx(); 
-
-  std::cout << oss.str() << "\n";
+  oss << this-> bidx() << "\n"; 
+  
+  return oss.str(); 
 }
 
 bool BaseTensor::operator==(BaseTensor& other) const {
