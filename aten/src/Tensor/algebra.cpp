@@ -257,7 +257,7 @@ Tensor* Tensor::matmul(Tensor* other) {
   if (this->has_grad || other->has_grad) { res->has_grad = true; }
   else { res->has_grad = false; }
 
-  if (this->shape().size() >= other->shape().size()) {
+  if (this->shape().size() >= other->shape().size()) { 
     // batch not needed here since we can account for b in i
     std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin(), this->shape().begin() + r.pidx); 
     std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin(), other->shape().begin() + 1);
@@ -345,7 +345,8 @@ Tensor* Tensor::matmul(Tensor* other) {
     }
 
     if (other->has_grad) {
-      if (this_ptr->shape().size() >= other->shape().size()) {
+
+      if (this_ptr->shape().size() >= other->shape().size()) { 
         other->grad = new GradTensor(
           Index::concat(r.shape, other->shape()),
           std::max(this_ptr->bidx_, other->bidx_), 
@@ -354,8 +355,8 @@ Tensor* Tensor::matmul(Tensor* other) {
         for (std::vector<size_t> b : Index::generate_all_indices(r.b_shape)) {
           for (std::vector<size_t> i : Index::generate_all_indices(M)) {
             for (std::vector<size_t> j : Index::generate_all_indices(P)) {
-              for (std::vector<size_t> k : Index::generate_all_indices(N)) {
-                (this_ptr->grad)->at(Index::concat(b, i, j, i, k)) = this_ptr->at(Index::concat(b, k, j));
+              for (std::vector<size_t> k : Index::generate_all_indices(N)) { 
+                (other->grad)->at(Index::concat(b, i, j, k, j)) = this_ptr->at(Index::concat(b, i, k));
               }
             }
           }
@@ -374,7 +375,7 @@ Tensor* Tensor::matmul(Tensor* other) {
           for (std::vector<size_t> i : Index::generate_all_indices(M)) {
             for (std::vector<size_t> j : Index::generate_all_indices(P)) {
               for (std::vector<size_t> k : Index::generate_all_indices(N)) {
-                (this_ptr->grad)->at(Index::concat(b, i, j, i, k)) = this_ptr->at(Index::concat(k, j));
+                (other->grad)->at(Index::concat(b, i, j, k, j)) = this_ptr->at(Index::concat(i, k));
               }
             }
           }

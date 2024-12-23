@@ -11,6 +11,7 @@ for epoch in range(500):
   for x, y in dl: 
     y_ = model.forward(x) 
     loss = mse(y, y_)
+    loss.backprop(True) 
 
     for name, tensor in model.intermediate.items(): 
       print(f"{name} --- ") 
@@ -20,9 +21,7 @@ for epoch in range(500):
       print(f"{name} --- ")
       print(tensor.meta())
       print(tensor.bshape, tensor.nbshape)
-
-    print(loss)
-    loss.backprop(True) 
+    
 
     break 
   break

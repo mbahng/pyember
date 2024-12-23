@@ -280,6 +280,20 @@ namespace OIntegrity {
 };
 
 namespace Debug {
+  void print(const Tensor* t) {
+    std::cout << std::string(*t);
+  }
+
+  void print(const Tensor t) {
+    std::cout << std::string(t);
+  }
+
+  void print(const GradTensor* t) {
+    std::cout << std::string(*t);
+  }
+  void print(const GradTensor t) {
+    std::cout << std::string(t);
+  }
 
 }
 

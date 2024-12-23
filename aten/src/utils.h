@@ -56,6 +56,11 @@ namespace Debug {
 
   template void print<double>(const std::vector<double>&); 
   template void print<size_t>(const std::vector<size_t>&); 
+
+  void print(const Tensor* t);
+  void print(const Tensor t);
+  void print(const GradTensor* t);
+  void print(const GradTensor t);
 }
 
 namespace Index {
