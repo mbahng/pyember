@@ -4,15 +4,15 @@
 
 Tensor* ScalarTensor::add(Tensor* other) {
   Tensor* out = other->copy();
-  size_t length = prod(other->shape_);
+  size_t length = CIntegrity::prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] += this->item();
   }
 
   std::vector<size_t> this_grad_shape
-    = concat(out->shape(), this->shape()); 
+    = Index::concat(out->shape(), this->shape()); 
   std::vector<size_t> other_grad_shape
-    = concat(out->shape(), other->shape()); 
+    = Index::concat(out->shape(), other->shape()); 
 
 
   this->grad = new GradTensor(this_grad_shape, other->bidx_, out->shape().size());
@@ -23,11 +23,11 @@ Tensor* ScalarTensor::add(Tensor* other) {
   out->prev = {this_ptr, other_ptr};
 
   out->backward = [this, other_ptr] { 
-    for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
+    for (std::vector<size_t> l_idx : Index::generate_all_indices(other_ptr->shape())) {
       // update gradient of scalar 
-      (this->grad)->at(concat(l_idx, {0})) = 1.0; 
-      for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape())) {
-        std::vector<size_t> idx = concat(l_idx, r_idx);
+      (this->grad)->at(Index::concat(l_idx, {0})) = 1.0; 
+      for (std::vector<size_t> r_idx : Index::generate_all_indices(other_ptr->shape())) {
+        std::vector<size_t> idx = Index::concat(l_idx, r_idx);
         if (l_idx == r_idx) {
           (other_ptr->grad)->at(idx) = 1.0;
         }
@@ -42,7 +42,7 @@ Tensor* ScalarTensor::add(Tensor* other) {
 
 GradTensor* ScalarTensor::add(GradTensor* other) {
   GradTensor* out = other->copy();
-  size_t length = prod(other->shape_);
+  size_t length = CIntegrity::prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] += this->item();
   }
@@ -73,15 +73,15 @@ ScalarTensor* ScalarTensor::add(double* other) {
 
 Tensor* ScalarTensor::sub(Tensor* other) {
   Tensor* out = other->copy();
-  size_t length = prod(other->shape_);
+  size_t length = CIntegrity::prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] = this->item() - out->storage_[i];
   }
 
   std::vector<size_t> this_grad_shape
-    = concat(out->shape(), this->shape()); 
+    = Index::concat(out->shape(), this->shape()); 
   std::vector<size_t> other_grad_shape
-    = concat(out->shape(), other->shape()); 
+    = Index::concat(out->shape(), other->shape()); 
 
 
   this->grad = new GradTensor(this_grad_shape, other->bidx_, out->shape().size());
@@ -92,11 +92,11 @@ Tensor* ScalarTensor::sub(Tensor* other) {
   out->prev = {this_ptr, other_ptr};
 
   out->backward = [this, other_ptr] { 
-    for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
+    for (std::vector<size_t> l_idx : Index::generate_all_indices(other_ptr->shape())) {
       // update gradient of scalar 
-      (this->grad)->at(concat(l_idx, {0})) = 1.0; 
-      for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape())) {
-        std::vector<size_t> idx = concat(l_idx, r_idx);
+      (this->grad)->at(Index::concat(l_idx, {0})) = 1.0; 
+      for (std::vector<size_t> r_idx : Index::generate_all_indices(other_ptr->shape())) {
+        std::vector<size_t> idx = Index::concat(l_idx, r_idx);
         if (l_idx == r_idx) {
           (other_ptr->grad)->at(idx) = -1.0;
         }
@@ -111,7 +111,7 @@ Tensor* ScalarTensor::sub(Tensor* other) {
 
 GradTensor* ScalarTensor::sub(GradTensor* other) {
   GradTensor* out = other->copy();
-  size_t length = prod(other->shape_);
+  size_t length = CIntegrity::prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] = this->item() - other->storage_[i]; 
   }
@@ -142,15 +142,15 @@ ScalarTensor* ScalarTensor::sub(double* other) {
 
 Tensor* ScalarTensor::mul(Tensor* other) {
   Tensor* out = other->copy();
-  size_t length = prod(other->shape_);
+  size_t length = CIntegrity::prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] *= this->item();
   }
 
   std::vector<size_t> this_grad_shape
-    = concat(out->shape(), this->shape()); 
+    = Index::concat(out->shape(), this->shape()); 
   std::vector<size_t> other_grad_shape
-    = concat(out->shape(), other->shape()); 
+    = Index::concat(out->shape(), other->shape()); 
 
 
   this->grad = new GradTensor(this_grad_shape, other->bidx_, out->shape().size());
@@ -161,11 +161,11 @@ Tensor* ScalarTensor::mul(Tensor* other) {
   out->prev = {this_ptr, other_ptr};
 
   out->backward = [this, other_ptr] { 
-    for (std::vector<size_t> l_idx : generate_all_indices(other_ptr->shape())) {
+    for (std::vector<size_t> l_idx : Index::generate_all_indices(other_ptr->shape())) {
       // update gradient of scalar 
-      (this->grad)->at(concat(l_idx, {0})) = other_ptr->at(l_idx); 
-      for (std::vector<size_t> r_idx : generate_all_indices(other_ptr->shape())) {
-        std::vector<size_t> idx = concat(l_idx, r_idx);
+      (this->grad)->at(Index::concat(l_idx, {0})) = other_ptr->at(l_idx); 
+      for (std::vector<size_t> r_idx : Index::generate_all_indices(other_ptr->shape())) {
+        std::vector<size_t> idx = Index::concat(l_idx, r_idx);
         if (l_idx == r_idx) {
           (other_ptr->grad)->at(idx) = this->item();
         }
@@ -180,7 +180,7 @@ Tensor* ScalarTensor::mul(Tensor* other) {
 
 GradTensor* ScalarTensor::mul(GradTensor* other) {
   GradTensor* out = other->copy();
-  size_t length = prod(other->shape_);
+  size_t length = CIntegrity::prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] *= this->item();
   }
