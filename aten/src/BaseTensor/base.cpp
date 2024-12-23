@@ -162,7 +162,7 @@ std::unique_ptr<BaseTensor> BaseTensor::slice(const std::vector<Slice>& slices) 
   
   auto result = std::make_unique<BaseTensor>();
   result->shape_ = std::move(new_shape);
-  result->storage_ = std::move(new_storage);
+  result->storage_ = std::move(new_storage); 
   return result;
 }
 
@@ -183,7 +183,18 @@ size_t BaseTensor::get_flat_index(const std::vector<size_t>& indices) const {
 
 void BaseTensor::validate_indices(const std::vector<size_t>& indices) const {
   if (indices.size() != shape_.size()) {
-    throw std::invalid_argument("Number of indices doesn't match tensor dimensions");
+    std::ostringstream oss; 
+    oss << "Attempting to index ( "; 
+    for (size_t i : indices) {
+      oss << i << " "; 
+    } 
+    oss << ") from tensor of shape ("; 
+    for (size_t i : shape_) {
+      oss << i << " ";
+    }
+    oss << ").";
+
+    throw std::invalid_argument(oss.str());
   }
 
   for (size_t i = 0; i < indices.size(); ++i) {

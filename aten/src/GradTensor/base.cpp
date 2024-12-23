@@ -24,6 +24,14 @@ GradTensor* GradTensor::copy() const {
   return new GradTensor(this->storage_, this->shape_, this->bidx_, this->pidx());
 }
 
+std::string GradTensor::meta() const {
+  std::string result = BaseTensor::meta(); 
+  result.pop_back();  
+  std::stringstream oss; 
+  oss << ", pidx = " << this->pidx() << "\n";
+  return result + oss.str();
+}
+
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
   if (CIntegrity::prod(new_shape) != CIntegrity::prod(this->shape_)) {
     throw std::invalid_argument("New shape must have the same total number of elements as the current shape");

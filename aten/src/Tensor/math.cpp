@@ -164,16 +164,17 @@ Tensor* Tensor::relu() {
 
   out->backward = [this_ptr] { 
     if (this_ptr->has_grad) {
-      std::vector<size_t> newshape = Index::concat(this_ptr->shape(), this_ptr->shape());
-      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx_, (this_ptr->shape()).size());  
-      for (std::vector<size_t> l_idx : Index::generate_all_indices(this_ptr->shape())) {
-        for (std::vector<size_t> r_idx : Index::generate_all_indices(this_ptr->shape())) {
-          std::vector<size_t> idx = Index::concat(l_idx, r_idx); 
-          if ((l_idx == r_idx) && (this_ptr->at(l_idx) >= 0.0)) {
-            (this_ptr->grad)->at(idx) = 1.0; 
-          }
-          else {
-            (this_ptr->grad)->at(idx) = 0.0; 
+      std::vector<size_t> newshape = Index::concat(
+        this_ptr->bshape(), 
+        this_ptr->nbshape(), 
+        this_ptr->nbshape()
+      );
+      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx(), (this_ptr->shape()).size());  
+
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          if (this_ptr->at(Index::concat(b, i)) >= 0.0) {
+            (this_ptr->grad)->at(Index::concat(b, i, i)) = 1.0; 
           }
         }
       }
