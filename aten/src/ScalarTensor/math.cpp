@@ -4,7 +4,7 @@
 
 Tensor* ScalarTensor::add(Tensor* other) {
   Tensor* out = other->copy();
-  size_t length = shape_to_length(other->shape_);
+  size_t length = prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] += this->item();
   }
@@ -42,7 +42,7 @@ Tensor* ScalarTensor::add(Tensor* other) {
 
 GradTensor* ScalarTensor::add(GradTensor* other) {
   GradTensor* out = other->copy();
-  size_t length = shape_to_length(other->shape_);
+  size_t length = prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] += this->item();
   }
@@ -73,7 +73,7 @@ ScalarTensor* ScalarTensor::add(double* other) {
 
 Tensor* ScalarTensor::sub(Tensor* other) {
   Tensor* out = other->copy();
-  size_t length = shape_to_length(other->shape_);
+  size_t length = prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] = this->item() - out->storage_[i];
   }
@@ -111,7 +111,7 @@ Tensor* ScalarTensor::sub(Tensor* other) {
 
 GradTensor* ScalarTensor::sub(GradTensor* other) {
   GradTensor* out = other->copy();
-  size_t length = shape_to_length(other->shape_);
+  size_t length = prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] = this->item() - other->storage_[i]; 
   }
@@ -142,7 +142,7 @@ ScalarTensor* ScalarTensor::sub(double* other) {
 
 Tensor* ScalarTensor::mul(Tensor* other) {
   Tensor* out = other->copy();
-  size_t length = shape_to_length(other->shape_);
+  size_t length = prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] *= this->item();
   }
@@ -180,7 +180,7 @@ Tensor* ScalarTensor::mul(Tensor* other) {
 
 GradTensor* ScalarTensor::mul(GradTensor* other) {
   GradTensor* out = other->copy();
-  size_t length = shape_to_length(other->shape_);
+  size_t length = prod(other->shape_);
   for (size_t i = 0; i < length; i++) {
     out->storage_[i] *= this->item();
   }

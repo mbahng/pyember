@@ -88,7 +88,7 @@ Tensor* Tensor::dot(Tensor* other) {
 
 Tensor* Tensor::sum() { 
   double out_data = 0.0;
-  size_t length = shape_to_length(this->shape());
+  size_t length = prod(this->shape());
   for (int i = 0; i < length; ++i) {
     out_data += this->data()[i]; 
   }

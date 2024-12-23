@@ -61,7 +61,7 @@ Tensor* Tensor::add(GradTensor* other) {
   if (this->shape() != other->shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  int length = shape_to_length(this->shape());
+  int length = prod(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
     res_data[i] = this->data()[i] + other->data()[i];
@@ -138,7 +138,7 @@ Tensor* Tensor::sub(GradTensor* other) {
   if (this->shape() != other->shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  int length = shape_to_length(this->shape());
+  int length = prod(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
     res_data[i] = this->data()[i] - other->data()[i];
@@ -233,7 +233,7 @@ Tensor* Tensor::mul(GradTensor* other) {
   if (this->shape() != other->shape()) {
     throw std::logic_error("Shapes do not match");
   }
-  int length = shape_to_length(this->shape());
+  int length = prod(this->shape());
   std::vector<double> res_data(length, 0.0);  
   for (int i = 0; i < length; i++) {
     res_data[i] = this->data()[i] * other->data()[i];

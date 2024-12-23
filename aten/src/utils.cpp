@@ -3,14 +3,6 @@
 #include "utils.h"
 #include "Tensor.h"
 
-int shape_to_length(std::vector<size_t> shape) { 
-  int len = 1; 
-  for (int i = 0; i < shape.size(); ++i) {
-    len *= shape[i]; 
-  }
-  return len; 
-}
-
 size_t prod(std::vector<size_t> input) {
   int product = 1; 
   for (const auto& num : input) {
