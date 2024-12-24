@@ -1,4 +1,3 @@
-import ember
 from .model import Model
 
 class Regression(Model): 

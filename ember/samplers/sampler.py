@@ -1,5 +1,3 @@
-from .. import Tensor
-
 class Sampler(): 
     
     def __init__(self): 
