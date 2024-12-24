@@ -1,7 +1,6 @@
-from ember import Tensor, ScalarTensor
+from ember import Tensor
 from .regression import Regression
 from .model import track_access
-from typing import Union
 
 class MultiLayerPerceptron(Regression): 
 
