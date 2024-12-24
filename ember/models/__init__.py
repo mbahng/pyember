@@ -7,8 +7,13 @@ from .mlp import (
   MultiLayerPerceptron
 )
 
+from .model import (
+  track_access
+)
+
 __all__ = [
   "LinearRegression", 
   "BayesianLinearRegression",
-  "MultiLayerPerceptron"
+  "MultiLayerPerceptron", 
+  "track_access"
 ]

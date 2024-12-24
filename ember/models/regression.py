@@ -5,4 +5,6 @@ class Regression(Model):
 
   def __init__(self): 
     super().__init__()
-    self.params = {}
+
+  def set_parameters(self): 
+    super().set_parameters()
