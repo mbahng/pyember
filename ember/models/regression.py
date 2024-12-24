@@ -7,4 +7,7 @@ class Regression(Model):
     super().__init__()
 
   def set_parameters(self): 
-    super().set_parameters()
+    super().set_parameters() 
+
+  # do I need to define other methods? 
+  # seems like already inherited 

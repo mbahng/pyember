@@ -80,7 +80,7 @@ b = ember.Tensor([3, 5])
 c = b * h
 
 d = ember.Tensor([10, 1])
-e = c.dot(d)        # re-implementing this, temporarily unavailable
+e = c.dot(d)
 
 f = ember.Tensor([-2])
 
@@ -114,23 +114,20 @@ To perform linear regression, use the `LinearRegression` model.
 ```
 import ember 
 
-ds = ember.datasets.LinearDataset(N=20, D=4)
-model = ember.models.LinearRegression(5) 
+ds = ember.datasets.LinearDataset(N=20, D=14)
+dl = ember.datasets.Dataloader(ds, batch_size=2)
+model = ember.models.LinearRegression(15) 
 mse = ember.objectives.MSELoss()
-a = 1e-4
 
-for epoch in range(1000):
-  loss = ember.ScalarTensor(0) 
-  for j in range(20): 
-    x, y = ds.X[j], ds.Y[j].reshape([1, 1], inplace=False, has_grad=False)
-    y_ = model.forward(x) 
+for epoch in range(500): 
+  loss = None
+  for x, y in dl: 
+    y_ = model.forward(x)  
     loss = mse(y, y_)
-    loss.backprop(False)  
-    model.W = model.W - a * model.W.grad.reshape(model.W.shape, inplace=False)
-    model.b = model.b - a * model.b.grad.reshape(model.b.shape, inplace=False)
+    loss.backprop()
+    model.step(1e-5) 
 
-  if epoch % 25 == 0: 
-    print(f"LOSS = {loss[0].item()}")
+  print(loss)
 ```
 
 ### Multilayer Perceptrons 
@@ -140,25 +137,19 @@ To instantiate a MLP, just call it from models. In here we make a 2-layer MLP wi
 import ember 
 
 ds = ember.datasets.LinearDataset(N=20, D=14)
+dl = ember.datasets.Dataloader(ds, batch_size=2)
 model = ember.models.MultiLayerPerceptron(15, 10) 
 mse = ember.objectives.MSELoss()
-a = 1e-4
 
 for epoch in range(500):  
-  loss = ember.ScalarTensor(0)
-  for j in range(20): 
-    x, y = ds.X[j], ds.Y[j].reshape([1, 1], inplace=False, has_grad=False)
+  loss = None
+  for x, y in dl: 
     y_ = model.forward(x) 
     loss = mse(y, y_)
-    loss.backprop(False) 
+    loss.backprop() 
+    model.step(1e-5)
 
-    model.W1 = model.W1 - a * model.W1.grad.reshape(model.W1.shape, inplace=False)
-    model.b1 = model.b1 - a * model.b1.grad.reshape(model.b1.shape, inplace=False)
-    model.W2 = model.W2 - a * model.W2.grad.reshape(model.W2.shape, inplace=False)
-    model.b2 = model.b2 - a * model.b2.grad.reshape(model.b2.shape, inplace=False)
-
-  if epoch % 25 == 0: 
-    print(f"LOSS = {loss[0].item()}")
+  print(loss)
 ```
 Its outputs over 1 minute. 
 ```
