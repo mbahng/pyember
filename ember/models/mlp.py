@@ -24,11 +24,4 @@ class MultiLayerPerceptron(Regression):
     super().forward(X)
     return self.b2a
 
-  def step(self, a: Union[ScalarTensor, float, int]) -> None: 
-    self.W1 -= a * self.W1.grad.batchsum().reshape(self.W1.shape) 
-    self.b1 -= a * self.b1.grad.batchsum().reshape(self.b1.shape) 
-    self.W2 -= a * self.W2.grad.batchsum().reshape(self.W2.shape) 
-    self.b2 -= a * self.b2.grad.batchsum().reshape(self.b2.shape) 
-
-
 

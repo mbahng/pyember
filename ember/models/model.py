@@ -1,6 +1,5 @@
-from ember import Tensor, ScalarTensor
+from ember import Tensor
 from abc import ABC, abstractmethod
-from typing import Union
 
 def track_access(original_method):
   """Decorator for keeping track of variables accessed in order."""
@@ -27,18 +26,16 @@ def track_access(original_method):
 class Model(ABC): 
 
   def __init__(self): 
+    self._parameters = {}
     self._intermediate = dict() 
     self._forward_called = False
-    self._nonparams = set()
+    self._nonparams = set() 
     self._nonparams = set(vars(self)) 
 
   def set_parameters(self): 
-    _parameters = dict()
-    for k, v in vars(self).items(): 
+    for k in vars(self):
       if k not in self._nonparams: 
-        _parameters[k] = v 
-    self._parameters = _parameters 
-    self._nonparams.add("_parameters")
+        self._parameters[k] = vars(self)[k]
 
   def parameters(self): 
     return self._parameters
@@ -51,9 +48,4 @@ class Model(ABC):
 
   @abstractmethod
   def forward(self, X: Tensor) -> Tensor: 
-    self.forward_called = True
-
-  @abstractmethod
-  def step(self, a: Union[ScalarTensor, float, int]) -> None: 
-    """Abstract method. Must be implemented"""
-
+    self._forward_called = True

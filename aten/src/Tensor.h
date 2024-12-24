@@ -182,16 +182,19 @@ class Tensor : public BaseTensor {
     Tensor* add(GradTensor* other); 
     Tensor* add(ScalarTensor* other); 
     Tensor* add(double* other); 
+    Tensor* iadd(GradTensor* other); 
 
     Tensor* sub(Tensor* other); 
     Tensor* sub(GradTensor* other); 
     Tensor* sub(ScalarTensor* other); 
     Tensor* sub(double* other); 
+    Tensor* isub(GradTensor* other); 
 
     Tensor* mul(Tensor* other); 
     Tensor* mul(GradTensor* other); 
     Tensor* mul(ScalarTensor* other); 
     Tensor* mul(double* other); 
+    Tensor* imul(GradTensor* other); 
 
     Tensor* matmul(Tensor* other); 
 
