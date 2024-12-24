@@ -70,6 +70,21 @@ Tensor* Tensor::add(GradTensor* other) {
   return new Tensor(res_data, this->shape());   
 }
 
+Tensor* Tensor::iadd(GradTensor* other) {
+  if (this->bidx() < other->bidx()) {
+    throw std::logic_error("You cannot iadd a tensor with a larger batch shape to this.");
+  }
+  size_t bs = CIntegrity::prod(this->bshape()); // batch size 
+
+  for (int b = 0; b < CIntegrity::prod(this->bshape()); b++) { 
+    for (int i = 0; i < CIntegrity::prod(this->nbshape()); i++) { 
+      this->storage_[b * bs + i] = this->storage_[b * bs + i] + other->storage_[i]; 
+    }
+  }
+
+  return this; 
+}
+
 Tensor* Tensor::add(ScalarTensor* other) {
   return other->add(this); 
 }
@@ -144,6 +159,21 @@ Tensor* Tensor::sub(GradTensor* other) {
     res_data[i] = this->data()[i] - other->data()[i];
   }
   return new Tensor(res_data, this->shape());   
+}
+
+Tensor* Tensor::isub(GradTensor* other) {
+  if (this->bidx() < other->bidx()) {
+    throw std::logic_error("You cannot iadd a tensor with a larger batch shape to this.");
+  }
+  size_t bs = CIntegrity::prod(this->bshape()); // batch size 
+
+  for (int b = 0; b < CIntegrity::prod(this->bshape()); b++) { 
+    for (int i = 0; i < CIntegrity::prod(this->nbshape()); i++) { 
+      this->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
+    }
+  }
+
+  return this; 
 }
 
 Tensor* Tensor::sub(ScalarTensor* other) {
@@ -239,6 +269,21 @@ Tensor* Tensor::mul(GradTensor* other) {
     res_data[i] = this->data()[i] * other->data()[i];
   }
   return new Tensor(res_data, this->shape());   
+}
+
+Tensor* Tensor::imul(GradTensor* other) {
+  if (this->bidx() < other->bidx()) {
+    throw std::logic_error("You cannot iadd a tensor with a larger batch shape to this.");
+  }
+  size_t bs = CIntegrity::prod(this->bshape()); // batch size 
+
+  for (int b = 0; b < CIntegrity::prod(this->bshape()); b++) { 
+    for (int i = 0; i < CIntegrity::prod(this->nbshape()); i++) { 
+      this->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
+    }
+  }
+
+  return this; 
 }
 
 Tensor* Tensor::mul(ScalarTensor* other) {

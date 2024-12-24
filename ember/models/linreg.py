@@ -19,10 +19,6 @@ class LinearRegression(Regression):
     super().forward(X)
     return self.z
 
-  def step(self, a: Union[ScalarTensor, float, int]) -> None: 
-    self.W -= a * self.W.grad.batchsum().reshape(self.W.shape)
-    self.b -= a * self.b.grad.batchsum().reshape(self.b.shape)
-
 class BayesianLinearRegression(Regression): 
 
   def __init__(self, input_dim: int):

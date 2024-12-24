@@ -190,6 +190,11 @@ void init_tensor_binding(py::module_ &m) {
           return b->add(a);
         }
       )
+    .def("__iadd__", 
+        [](Tensor *a, GradTensor *b) {
+          return a->iadd(b);
+        }
+      )
     .def("__add__", 
         [](Tensor *a, double *b) {
           return a->add(b);
@@ -229,6 +234,11 @@ void init_tensor_binding(py::module_ &m) {
     .def("__rsub__", 
         [](Tensor *a, GradTensor *b) {
           return b->sub(a);
+        }
+      )
+    .def("__isub__", 
+        [](Tensor *a, GradTensor *b) {
+          return a->isub(b);
         }
       )
     .def("__sub__", 
@@ -271,6 +281,11 @@ void init_tensor_binding(py::module_ &m) {
     .def("__rmul__", 
         [](Tensor *a, GradTensor *b) {
           return b->mul(a);
+        }
+      )
+    .def("__imul__", 
+        [](Tensor *a, GradTensor *b) {
+          return a->imul(b);
         }
       )
     .def("__mul__", 
