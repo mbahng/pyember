@@ -1,9 +1,9 @@
 import ember
-from ember import GradTensor
+from pprint import pprint 
 
-A = GradTensor([1, 2, 3, 4] * 2, [2, 2, 2], 2) 
-B = GradTensor([1, 2, 3, 4], [2, 2], 1) 
+x = {"a" : 1, "b" : 2} 
 
-C = A @ B 
-
-print(C)
+y = {}
+print(bool(y))
+print(x)
+print(set(x))
