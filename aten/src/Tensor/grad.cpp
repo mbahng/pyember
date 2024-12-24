@@ -18,7 +18,7 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
   std::vector<size_t> pairshape = Index::concat(this->bshape(), this->nbshape(), this->nbshape());
   this->grad = new GradTensor(pairshape, this->bidx_, this->shape().size()); 
 
-  if (!(this->has_grad)) {
+  if (!(this->has_grad())) {
     throw std::logic_error("This tensor has has_grad=False.");
   }
 
@@ -38,7 +38,7 @@ std::vector<Tensor*> Tensor::backprop(bool intermediate) {
 
   // Backpropagate through the computation graph
   for (Tensor* v : topo) {
-    if (v->has_grad && v->backward) { 
+    if (v->has_grad() && v->backward) { 
       v->backward();
     }
   }

@@ -45,12 +45,15 @@ std::string BaseTensor::dtype() const {
 std::string BaseTensor::meta() const {
   std::ostringstream oss; 
 
-  oss << "Shape = ( "; 
-  for (auto p : this->shape()) {
+  oss << "shape = ( "; 
+  for (auto p : this->bshape()) {
     oss << p << " ";
   }
-  oss << "), bidx = "; 
-  oss << this-> bidx() << "\n"; 
+  oss << "| "; 
+  for (auto p : this->nbshape()) {
+    oss << p << " ";
+  } 
+  oss << ")\n"; 
   
   return oss.str(); 
 }

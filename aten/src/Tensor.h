@@ -130,7 +130,7 @@ class GradTensor : public BaseTensor {
 
 class Tensor : public BaseTensor { 
   public: 
-    bool has_grad = true; 
+    bool has_grad_ = true; 
     GradTensor* grad = nullptr; 
     std::vector<Tensor*> prev = std::vector<Tensor*>();
     std::function<void()> backward;
@@ -153,6 +153,7 @@ class Tensor : public BaseTensor {
     static Tensor* zeros(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true); 
 
     std::string type() const override { return "Tensor"; }
+    const bool& has_grad() const; 
     virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
     Tensor* copy(bool has_grad = true) const; 
     std::string meta() const override; 
@@ -170,7 +171,7 @@ class Tensor : public BaseTensor {
 
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
         auto base_result = BaseTensor::slice(slices);
-        return std::make_unique<Tensor>(base_result->storage_, base_result->shape_, bidx_, has_grad);
+        return std::make_unique<Tensor>(base_result->vector(), base_result->shape(), bidx(), has_grad());
     }
 
     // backprop functions 
