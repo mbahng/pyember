@@ -1,8 +1,12 @@
 #include "../Tensor.h"
 
+const bool& Tensor::has_grad() const {
+  return has_grad_;
+} 
+
 Tensor::operator std::string() const {
   std::string result = BaseTensor::operator std::string(); 
-  std::string hg = this->has_grad ? "True" : "False";
+  std::string hg = this->has_grad() ? "True" : "False";
   if (result.back() != '\n') {
     result += ", has_grad = " + hg + '\n'; 
   }
@@ -20,7 +24,7 @@ Tensor* Tensor::copy(bool has_grad) const {
 std::string Tensor::meta() const {
   std::string result = BaseTensor::meta(); 
   result.pop_back();  
-  std::string hg = has_grad ? "True" : "False";
+  std::string hg = has_grad() ? "True" : "False";
   result += ", has_grad = " + hg + '\n';  
 
   return result;

@@ -5,7 +5,11 @@
 
 Tensor* Tensor::add(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  Tensor* res = new Tensor(r.shape, std::max(this->bidx_, other->bidx_), true); 
+  Tensor* res = new Tensor(
+    r.shape, 
+    std::max(this->bidx(), other->bidx()), 
+    this->has_grad() || other->has_grad()
+  ); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
@@ -23,20 +27,16 @@ Tensor* Tensor::add(Tensor* other) {
     }
   }
 
-  // set has_grad of output 
-  if (this->has_grad || other->has_grad) { res->has_grad = true; }
-  else { res->has_grad = false; }
-
   res->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad) { res->prev.push_back(this); }
-  if (other->has_grad) { res->prev.push_back(other); }
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (other->has_grad()) { res->prev.push_back(other); }
 
   Tensor* this_ptr = this; 
 
   res->backward = [this_ptr, other, res, r] { 
     std::vector<size_t> newshape = Index::concat(r.b_shape, r.nb_shape, r.nb_shape);
     size_t pidx = r.b_shape.size() + r.nb_shape.size(); 
-    if (this_ptr->has_grad) {
+    if (this_ptr->has_grad()) {
       this_ptr->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 
       for (std::vector<size_t> b : Index::generate_all_indices(r.b_shape)) {
         for (std::vector<size_t> i : Index::generate_all_indices(r.nb_shape)) {
@@ -44,7 +44,7 @@ Tensor* Tensor::add(Tensor* other) {
         }
       }
     }
-    if (other->has_grad) {
+    if (other->has_grad()) {
       other->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 
       for (std::vector<size_t> b : Index::generate_all_indices(r.b_shape)) {
         for (std::vector<size_t> i : Index::generate_all_indices(r.nb_shape)) {
@@ -82,7 +82,11 @@ Tensor* Tensor::add(double* other) {
 
 Tensor* Tensor::sub(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  Tensor* res = new Tensor(r.shape, std::max(this->bidx_, other->bidx_), true); 
+  Tensor* res = new Tensor(
+    r.shape, 
+    std::max(this->bidx_, other->bidx_), 
+    this->has_grad() || other->has_grad()
+  ); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
@@ -100,20 +104,16 @@ Tensor* Tensor::sub(Tensor* other) {
     }
   }
 
-  // set has_grad of output 
-  if (this->has_grad || other->has_grad) { res->has_grad = true; }
-  else { res->has_grad = false; }
-
   res->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad) { res->prev.push_back(this); }
-  if (other->has_grad) { res->prev.push_back(other); }
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (other->has_grad()) { res->prev.push_back(other); }
 
   Tensor* this_ptr = this; 
 
   res->backward = [this_ptr, other, res, r] {  
     std::vector<size_t> newshape = Index::concat(this_ptr->bshape(), this_ptr->nbshape(), this_ptr->nbshape()); 
     size_t pidx = r.b_shape.size() + r.nb_shape.size(); 
-    if (this_ptr->has_grad) {
+    if (this_ptr->has_grad()) {
       this_ptr->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 
       for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
         for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
@@ -121,7 +121,7 @@ Tensor* Tensor::sub(Tensor* other) {
         }
       }
     }
-    if (other->has_grad) {
+    if (other->has_grad()) {
       other->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 
       for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
         for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
@@ -157,7 +157,11 @@ Tensor* Tensor::sub(double* other) {
 
 Tensor* Tensor::mul(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  Tensor* res = new Tensor(r.shape, std::max(this->bidx_, other->bidx_), true); 
+  Tensor* res = new Tensor(
+    r.shape, 
+    std::max(this->bidx_, other->bidx_), 
+    this->has_grad() || other->has_grad()
+  ); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
@@ -175,20 +179,16 @@ Tensor* Tensor::mul(Tensor* other) {
     }
   }
 
-  // set has_grad of output 
-  if (this->has_grad || other->has_grad) { res->has_grad = true; }
-  else { res->has_grad = false; }
-
   res->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad) { res->prev.push_back(this); }
-  if (other->has_grad) { res->prev.push_back(other); }
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (other->has_grad()) { res->prev.push_back(other); }
 
   Tensor* this_ptr = this; 
 
   res->backward = [this_ptr, other, res, r] { 
     std::vector<size_t> newshape = Index::concat(r.b_shape, r.nb_shape, r.nb_shape);
     size_t pidx = r.b_shape.size() + r.nb_shape.size(); 
-    if (this_ptr->has_grad) {
+    if (this_ptr->has_grad()) {
       this_ptr->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 
 
       if (this_ptr->shape().size() >= other->shape().size()) {
@@ -206,7 +206,7 @@ Tensor* Tensor::mul(Tensor* other) {
         }
       }
     }
-    if (other->has_grad) {
+    if (other->has_grad()) {
       other->grad = new GradTensor(newshape, std::max(this_ptr->bidx_, other->bidx_), pidx); 
 
       if (this_ptr->shape().size() >= other->shape().size()) {
@@ -252,10 +252,11 @@ Tensor* Tensor::mul(double* other) {
 
 Tensor* Tensor::matmul(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::matmul_compat(this, other); 
-  Tensor* res = new Tensor(r.shape);
-
-  if (this->has_grad || other->has_grad) { res->has_grad = true; }
-  else { res->has_grad = false; }
+  Tensor* res = new Tensor(
+    r.shape,
+    std::max(this->bidx(), other->bidx()), 
+    this->has_grad() || other->has_grad()
+  );
 
   if (this->shape().size() >= other->shape().size()) { 
     // batch not needed here since we can account for b in i
@@ -293,8 +294,8 @@ Tensor* Tensor::matmul(Tensor* other) {
   }
 
   res->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad) { res->prev.push_back(this); }
-  if (other->has_grad) { res->prev.push_back(other); } 
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (other->has_grad()) { res->prev.push_back(other); }
 
   Tensor* this_ptr = this; 
 
@@ -305,7 +306,7 @@ Tensor* Tensor::matmul(Tensor* other) {
     std::vector<size_t> P = {other->shape()[other->shape().size()-1]}; 
 
 
-    if (this_ptr->has_grad) {
+    if (this_ptr->has_grad()) {
       if (this_ptr->shape().size() >= other->shape().size()) {
         this_ptr->grad = new GradTensor(
           Index::concat(
@@ -344,7 +345,7 @@ Tensor* Tensor::matmul(Tensor* other) {
       }
     }
 
-    if (other->has_grad) {
+    if (other->has_grad()) {
 
       if (this_ptr->shape().size() >= other->shape().size()) { 
         other->grad = new GradTensor(

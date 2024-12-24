@@ -10,7 +10,7 @@ Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool has_grad) {
   this->bidx_ = bidx; 
   this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
   this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad = has_grad; 
+  this->has_grad_ = has_grad; 
 }
 
 Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool has_grad) {
@@ -19,7 +19,7 @@ Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx,
   this->bidx_ = bidx; 
   this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
   this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad = has_grad; 
+  this->has_grad_ = has_grad; 
 }
 
 Tensor::Tensor(std::vector<double> data, size_t bidx, bool has_grad) {
@@ -29,7 +29,7 @@ Tensor::Tensor(std::vector<double> data, size_t bidx, bool has_grad) {
   this->bidx_ = bidx; 
   this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
   this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad = has_grad; 
+  this->has_grad_ = has_grad; 
 }
 
 Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad) {
@@ -44,7 +44,7 @@ Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad
   this->bidx_ = bidx; 
   this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
   this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad = has_grad; 
+  this->has_grad_ = has_grad; 
 }
 
 Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool has_grad) {
@@ -61,7 +61,7 @@ Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, 
   this->bidx_ = bidx; 
   this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
   this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad = has_grad; 
+  this->has_grad_ = has_grad; 
 }
 
 Tensor* Tensor::arange(int start, int stop, int step, bool has_grad) {

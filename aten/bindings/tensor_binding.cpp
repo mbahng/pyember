@@ -113,8 +113,8 @@ void init_tensor_binding(py::module_ &m) {
       [](Tensor &t, const std::vector<Tensor*> &p) { t.prev = p; }) 
 
     .def_property("has_grad",
-      [](const Tensor &t) -> const bool { return t.has_grad; },
-      [](Tensor &t, bool has_grad) { t.has_grad = has_grad; }) 
+      [](const Tensor &t) -> const bool { return t.has_grad(); },
+      [](Tensor &t, bool has_grad) { t.has_grad_ = has_grad; }) 
 
     // Backpropagation Functions 
       .def("backward", 
