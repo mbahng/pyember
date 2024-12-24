@@ -13,8 +13,4 @@ for epoch in range(1):
     loss.backprop() 
     model.step(1e-5)
 
-  print(model.intermediate().keys())
-  print(model.parameters().keys())
-
-
-
+  print(loss)
