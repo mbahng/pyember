@@ -5,13 +5,13 @@ dl = ember.datasets.Dataloader(ds, batch_size=2)
 model = ember.models.LinearRegression(15) 
 mse = ember.objectives.MSELoss()
 
-for epoch in range(1): 
+for epoch in range(10): 
   loss = None
   for x, y in dl: 
     y_ = model.forward(x)  
     loss = mse(y, y_)
     loss.backprop()
-    model.step(1e-5) 
+    model.step(1e-4) 
 
   print(loss)
 

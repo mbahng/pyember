@@ -9,7 +9,7 @@ class LinearRegression(Regression):
     super().__init__() 
     self.W = Tensor.ones([input_dim])
     self.b = Tensor.ones([1])
-    super().set_parameters()
+    self.set_parameters()
 
   @track_access
   def forward(self, X: Tensor) -> Tensor: 

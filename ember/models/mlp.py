@@ -11,7 +11,7 @@ class MultiLayerPerceptron(Regression):
     self.b1 = Tensor.gaussian([hidden_dim], 0, 1) 
     self.W2 = Tensor.gaussian([hidden_dim], 0, 1)
     self.b2 = Tensor.gaussian([1], 0, 1) 
-    super().set_parameters()
+    self.set_parameters()
 
   @track_access
   def forward(self, X: Tensor): 

@@ -1,7 +1,9 @@
 from ember import Tensor, ScalarTensor
+from abc import ABC, abstractmethod
 from typing import Union
 
 def track_access(original_method):
+  """Decorator for keeping track of variables accessed in order."""
   def wrapper(self, X):
     self._intermediate = {"X" : X}
     
@@ -22,7 +24,7 @@ def track_access(original_method):
     return result
   return wrapper
 
-class Model(): 
+class Model(ABC): 
 
   def __init__(self): 
     self._intermediate = dict() 
@@ -42,14 +44,16 @@ class Model():
     return self._parameters
 
   def intermediate(self): 
-    if not self.forward_called: 
+    if not self._forward_called: 
       raise Exception("Call forward to load intermediate values.")
 
     return self._intermediate
 
+  @abstractmethod
   def forward(self, X: Tensor) -> Tensor: 
     self.forward_called = True
 
+  @abstractmethod
   def step(self, a: Union[ScalarTensor, float, int]) -> None: 
-    pass
+    """Abstract method. Must be implemented"""
 
