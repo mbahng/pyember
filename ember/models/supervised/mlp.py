@@ -1,6 +1,6 @@
 from ember import Tensor
-from .regression import Regression
-from .model import track_access
+from ember.models.supervised import Regression
+from ember.models import track_access
 
 class MultiLayerPerceptron(Regression): 
 
@@ -22,5 +22,6 @@ class MultiLayerPerceptron(Regression):
 
     super().forward(X)
     return self.b2a
+
 
 
