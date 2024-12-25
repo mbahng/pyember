@@ -128,6 +128,31 @@ for epoch in range(500):
     model.step(1e-5) 
 
   print(loss)
+``` 
+
+### K Nearest Neighbors 
+
+To do a simple K Nearest Neighbors regressor, use the following model. The forward method scans over the whole dataset, so we must input it to the model during instantiation. Note that we do not need a dataloader or a backpropagation method since we aren't iteratively updating gradients, though we want to show the loss. 
+
+```
+import ember
+from ember.models import KNearestRegressor
+from ember.datasets import LinearDataset
+
+ds = LinearDataset(N=20, D=3)
+model = KNearestRegressor(dataset=ds, K=1)
+mse = ember.objectives.MSELoss() 
+
+for k in range(1, 21): # hyperparameter tuning
+  model.K = k
+  print(f"{k} ===") 
+  loss = 0
+  for i in range(len(ds)): 
+    x, y = ds[i] 
+    y_ = model.forward(x) 
+    loss = loss + mse(y, y_) 
+
+  print(loss)
 ```
 
 ### Multilayer Perceptrons 
