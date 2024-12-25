@@ -19,7 +19,7 @@ class Dataset():
   def __len__(self): 
     return self.limit 
 
-  def __getitem__(self, i):  
+  def __getitem__(self, i: int):  
     if i < self.limit: 
       return self.X[i,:], self.Y[i,:] 
     else: 

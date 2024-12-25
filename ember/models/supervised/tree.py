@@ -9,8 +9,9 @@ class RegressionTree(Regression):
     self.set_parameters()
 
   @track_access
-  def forward(self, X: Tensor): 
+  def forward(self, X: Tensor) -> Tensor: 
     super().forward(X)
+    raise NotImplementedError()
 
 class ClassificationTree(Classification): 
 
@@ -19,6 +20,7 @@ class ClassificationTree(Classification):
     self.set_parameters()
 
   @track_access
-  def forward(self, X: Tensor): 
+  def forward(self, X: Tensor) -> Tensor: 
     super().forward(X)
+    raise NotImplementedError()
 

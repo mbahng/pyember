@@ -9,6 +9,7 @@ class KMeans(Clustering):
     self.set_parameters()
 
   @track_access
-  def forward(self, X: Tensor): 
+  def forward(self, X: Tensor) -> Tensor: 
     super().forward(X)
+    raise NotImplementedError()
 
