@@ -13,14 +13,14 @@ class TestGradTensorPivot(unittest.TestCase):
     x7 = GradTensor([1, 1, 2, 2], 3)
     x8 = GradTensor([2, 1, 2, 1], 2)
 
-    self.assertEqual(x1.pivot, 1)
-    self.assertEqual(x2.pivot, 2)
-    self.assertEqual(x3.pivot, 3)
-    self.assertEqual(x4.pivot, 2)
-    self.assertEqual(x5.pivot, 1)
-    self.assertEqual(x6.pivot, 2)
-    self.assertEqual(x7.pivot, 3)
-    self.assertEqual(x8.pivot, 2)
+    self.assertEqual(x1.pidx, 1)
+    self.assertEqual(x2.pidx, 2)
+    self.assertEqual(x3.pidx, 3)
+    self.assertEqual(x4.pidx, 2)
+    self.assertEqual(x5.pidx, 1)
+    self.assertEqual(x6.pidx, 2)
+    self.assertEqual(x7.pidx, 3)
+    self.assertEqual(x8.pidx, 2)
 
 class TestGradTensorEquality(unittest.TestCase): 
 
@@ -137,17 +137,17 @@ class TestGradTensorTranspose(unittest.TestCase):
 class TestProperGradTensorIO(unittest.TestCase):
    def testScalar(self):
        x = GradTensor([1], [1], 0)
-       gt = "GradTensor\n  +1.000\nshape = (1), dtype = double, pivot = 0\n"
+       gt = "GradTensor\n  +1.000\nshape = (1), dtype = double, pidx = 0\n"
        self.assertEqual(str(x), gt)
 
    def test_1N_Vector(self):
        x = GradTensor([1, 2, 3], [1, 3], 0)
-       gt = "GradTensor\n  +1.000  +2.000  +3.000\n\nshape = (1, 3), dtype = double, pivot = 0\n"
+       gt = "GradTensor\n  +1.000  +2.000  +3.000\n\nshape = (1, 3), dtype = double, pidx = 0\n"
        self.assertEqual(str(x), gt)
 
    def test_N1_Vector(self): 
        x = GradTensor([1, 2, 3], [3, 1], 1)
-       gt = "GradTensor\n  +1.000\n  +2.000\n  +3.000\n\nshape = (3, 1), dtype = double, pivot = 1\n"
+       gt = "GradTensor\n  +1.000\n  +2.000\n  +3.000\n\nshape = (3, 1), dtype = double, pidx = 1\n"
        self.assertEqual(str(x), gt)
 
    def test_NM_Tensor(self):
@@ -156,7 +156,7 @@ class TestProperGradTensorIO(unittest.TestCase):
            "GradTensor\n"
            "  +1.000  +2.000\n"
            "  +3.000  +4.000\n\n"
-           "shape = (2, 2), dtype = double, pivot = 0\n"
+           "shape = (2, 2), dtype = double, pidx = 0\n"
        )
        self.assertEqual(str(x), gt)
 
@@ -167,7 +167,7 @@ class TestProperGradTensorIO(unittest.TestCase):
            "  +1.000  +2.000\n"
            "  +3.000  +4.000\n"
            "]\n\n"
-           "shape = (1, 2, 2), dtype = double, pivot = 0\n"
+           "shape = (1, 2, 2), dtype = double, pidx = 0\n"
        )
        self.assertEqual(str(x), gt)
 
@@ -180,7 +180,7 @@ class TestProperGradTensorIO(unittest.TestCase):
            "[\n"
            "  +3.000  +4.000\n"
            "]\n\n"
-           "shape = (2, 1, 2), dtype = double, pivot = 2\n"
+           "shape = (2, 1, 2), dtype = double, pidx = 2\n"
        )
        self.assertEqual(str(x), gt)
 
@@ -195,7 +195,7 @@ class TestProperGradTensorIO(unittest.TestCase):
            "  +3.000\n"
            "  +4.000\n"
            "]\n\n"
-           "shape = (2, 2, 1), dtype = double, pivot = 1\n"
+           "shape = (2, 2, 1), dtype = double, pidx = 1\n"
        )
        self.assertEqual(str(x), gt)
 
