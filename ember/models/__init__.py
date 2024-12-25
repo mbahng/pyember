@@ -9,10 +9,10 @@ def track_access(original_method):
     original_getattribute = self.__class__.__getattribute__
     
     def __getattribute__(self, name):
-        value = original_getattribute(self, name)
-        if isinstance(value, Tensor):  # Only track Tensor objects
-            self._intermediate[name] = value
-        return value
+      value = original_getattribute(self, name)
+      if isinstance(value, Tensor):  # Only track Tensor objects
+        self._intermediate[name] = value
+      return value
         
     self.__class__.__getattribute__ = __getattribute__
     
@@ -51,33 +51,39 @@ class Model(ABC):
     self._forward_called = True
 
 # abstract classes for when user wants to define custom models
-from supervised import (
+from .supervised import (
   Regression, 
   Classification
 )
-from unsupervised import (
+from .unsupervised import (
   Clustering
 )
 
-from supervised.linear_regression import (
+from .supervised.linear_regression import (
   LinearRegression, 
   BayesianLinearRegression
 ) 
 
-from supervised.logistic_regression import (
+from .supervised.logistic_regression import (
   LogisticRegression, 
   SoftmaxRegression
 )
 
-from supervised.mlp import (
+from .supervised.mlp import (
   MultiLayerPerceptron    
 )
 
-from supervised.tree import (
+from .supervised.tree import (
   RegressionTree
 ) 
 
-from unsupervised.k_means import (
+from .supervised.nearest_neighbor import (
+  KNearestRegressor, 
+  KNearestClassifier, 
+  ApproximateKNearestRegressor
+)
+
+from .unsupervised.k_means import (
   KMeans
 )
 
@@ -93,5 +99,9 @@ __all__ = [
   "SoftmaxRegression", 
   "MultiLayerPerceptron", 
   "RegressionTree", 
+  "KNearestRegressor", 
+  "KNearestClassifier", 
+  "ApproximateKNearestRegressor",
+
   "KMeans"
 ]

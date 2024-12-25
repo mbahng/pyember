@@ -86,18 +86,54 @@ class Tensor(BaseTensor):
   has_grad: bool
   
   @overload
-  def __init__(self, data: List[float], shape: List[int]) -> None: ...
+  def __init__(
+    self, 
+    data: List[float], 
+    shape: List[int], 
+    bidx: int = 0, 
+    has_grad: bool = True
+  ) -> None: ...
+  
   @overload
-  def __init__(self, data: List[float]) -> None: ...
+  def __init__(
+    self, 
+    data: List[float], 
+    bidx: int = 0, 
+    has_grad: bool = True
+  ) -> None: ...
+
   @overload
-  def __init__(self, data: List[List[float]]) -> None: ...
+  def __init__(
+    self, 
+    data: List[List[float]], 
+    bidx: int = 0, 
+    has_grad: bool = True
+  ) -> None: ...
+
   @overload
-  def __init__(self, data: List[List[List[float]]]) -> None: ...
+  def __init__(
+    self, 
+    data: List[List[List[float]]],
+    bidx: int = 0, 
+    has_grad: bool = True
+  ) -> None: ...
   
   @staticmethod
-  def arange(start: int, stop: int, step: int = 1) -> 'Tensor': ...
+  def arange(
+    start: int, 
+    stop: int, 
+    step: int = 1,
+    has_grad: bool = True
+  ) -> 'Tensor': ...
+
   @staticmethod
-  def linspace(start: float, stop: float, numsteps: int) -> 'Tensor': ...
+  def linspace(
+    start: float, 
+    stop: float, 
+    numsteps: int, 
+    has_grad: bool = True
+  ) -> 'Tensor': ...
+
   @staticmethod
   def gaussian(
     shape: List[int], 
@@ -106,6 +142,7 @@ class Tensor(BaseTensor):
     bidx: int = 0, 
     has_grad: bool = True
   ) -> 'Tensor': ...
+
   @staticmethod
   def uniform(
     shape: List[int], 
@@ -114,10 +151,20 @@ class Tensor(BaseTensor):
     bidx: int = 0, 
     has_grad: bool = True
   ) -> 'Tensor': ...
+
   @staticmethod
-  def ones(shape: List[int]) -> 'Tensor': ...
+  def ones(
+    shape: List[int],
+    bidx: int = 0, 
+    has_grad: bool = True
+  ) -> 'Tensor': ...
+
   @staticmethod
-  def zeros(shape: List[int]) -> 'Tensor': ...
+  def zeros(
+    shape: List[int],
+    bidx: int = 0, 
+    has_grad: bool = True
+  ) -> 'Tensor': ...
   
   def reshape(self, new_shape: List[int]) -> 'Tensor': ...
 
