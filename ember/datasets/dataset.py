@@ -9,6 +9,9 @@ class Dataset():
     self.index = 0
     self.X = X 
     self.Y = Y 
+    self.D = X.shape[1:] 
+    self.X.bidx = 1
+    self.Y.bidx = 1
 
     assert self.X.shape[0] == self.Y.shape[0], \
       f"Length of input ({self.X.shape[0]}) does not \
@@ -21,7 +24,10 @@ class Dataset():
 
   def __getitem__(self, i: int):  
     if i < self.limit: 
-      return self.X[i,:], self.Y[i,:] 
+      return (
+        self.X[i,:].reshape(self.X[i,:].nbshape), 
+        self.Y[i,:].reshape(self.Y[i,:].nbshape)
+      )
     else: 
       raise Exception("Indices are out of bound. ")
 
@@ -30,10 +36,15 @@ class Dataset():
 
   def __next__(self): 
     if self.index >= self.limit: 
-      raise StopIteration
-    tmp = (self.X[self.index], self.Y[self.index]) 
+      self.index = 0
+      raise StopIteration 
+    # take off the batch index, should have a squeeze method 
+    pair = (
+      self.X[self.index,:].reshape(self.X[self.index,:].nbshape),
+      self.Y[self.index,:].reshape(self.Y[self.index,:].nbshape)
+    )
     self.index += 1 # self.index is an int so passed by value 
-    return tmp
+    return pair
 
 class LinearDataset(Dataset): 
 
