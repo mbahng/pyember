@@ -3,11 +3,46 @@
 #include "../Tensor.h" 
 #include "../utils.h" 
 
+// Scalar Operations
+GradTensor* GradTensor::add(double other) {
+  GradTensor* res = this->copy(); 
+  for (int bi = 0; bi < (this->storage_).size(); ++bi) {
+    res->storage_[bi] += other;
+  }
+  return res;
+}
+
+GradTensor* GradTensor::sub(double other) {
+  GradTensor* res = this->copy(); 
+  for (int bi = 0; bi < (this->storage_).size(); ++bi) {
+    res->storage_[bi] -= other;
+  }
+  return res;
+}
+
+GradTensor* GradTensor::mul(double other) {
+  GradTensor* res = this->copy(); 
+  for (int bi = 0; bi < (this->storage_).size(); ++bi) {
+    res->storage_[bi] *= other;
+  }
+  return res;
+}
+
+// GradTensor o GradTensor Operations 
+// Used for when we want to modify gradients 
+// This supports adding with Scalar GradTensors for broadcasting 
 GradTensor* GradTensor::add(GradTensor* other) { 
+  if (this->is_scalar()) {
+    return other->add(this->item());
+  }
+  else if (other->is_scalar()) {
+    return this->add(other->item());
+  }
+
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
-  
+
   if (this->shape().size() >= other->shape().size()) {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
@@ -25,6 +60,67 @@ GradTensor* GradTensor::add(GradTensor* other) {
   return res;
 }
 
+GradTensor* GradTensor::sub(GradTensor* other) {
+  if (this->is_scalar()) {
+    return other->sub(this->item());
+  }
+  else if (other->is_scalar()) {
+    return this->sub(other->item());
+  }
+  OIntegrity::Shape r = OIntegrity::compat(this, other);  
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
+  size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
+      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
+      }
+    }
+  }
+  else {
+    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
+      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] - other->storage_[b * bs + i]; 
+      }
+    }
+  }
+  return res;
+}
+
+GradTensor* GradTensor::mul(GradTensor* other) {
+  if (this->is_scalar()) {
+    return other->mul(this->item());
+  }
+  else if (other->is_scalar()) {
+    return this->mul(other->item());
+  }
+
+  OIntegrity::Shape r = OIntegrity::compat(this, other);  
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
+  size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
+  
+  if (this->shape().size() >= other->shape().size()) {
+    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
+      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
+      }
+    }
+  }
+  else {
+    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
+      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
+        res->storage_[b * bs + i] = this->storage_[i] * other->storage_[b * bs + i]; 
+      }
+    }
+  }
+  return res;
+}
+
+// GradTensor + Tensor Operations 
+// This should be strictest and should not support Scalar broadcasting 
+// It does support regular broadcasting for when we want to take a batch of 
+// gradients and add it to a tensor
 Tensor* GradTensor::add(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(r.shape);
@@ -45,37 +141,6 @@ Tensor* GradTensor::add(Tensor* other) {
     }
   }
 
-  return res;
-}
-
-GradTensor* GradTensor::add(ScalarTensor* other) {
-  return other->add(this); 
-}
-
-GradTensor* GradTensor::add(double* other) {
-  ScalarTensor* scalar = new ScalarTensor(*other);
-  return scalar->add(this); 
-}
-
-GradTensor* GradTensor::sub(GradTensor* other) {
-  OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
-  size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
-  
-  if (this->shape().size() >= other->shape().size()) {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
-      }
-    }
-  }
-  else {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] - other->storage_[b * bs + i]; 
-      }
-    }
-  }
   return res;
 }
 
@@ -102,41 +167,6 @@ Tensor* GradTensor::sub(Tensor* other) {
   return res;
 }
 
-GradTensor* GradTensor::sub(ScalarTensor* other) {
-  GradTensor* out = this->copy(); 
-  for (int i = 0; i < this->storage_.size(); i++) {
-    out->storage_[i] -= other->item();
-  }
-  return out; 
-}
-
-GradTensor* GradTensor::sub(double* other) {
-  ScalarTensor* scalar = new ScalarTensor(*other);
-  return this->sub(scalar); 
-}
-
-GradTensor* GradTensor::mul(GradTensor* other) {
-  OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
-  size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
-  
-  if (this->shape().size() >= other->shape().size()) {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
-      }
-    }
-  }
-  else {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] * other->storage_[b * bs + i]; 
-      }
-    }
-  }
-  return res;
-}
-
 Tensor* GradTensor::mul(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(r.shape);
@@ -160,23 +190,13 @@ Tensor* GradTensor::mul(Tensor* other) {
   return res;
 }
 
-GradTensor* GradTensor::mul(ScalarTensor* other) {
-  return other->mul(this); 
-}
-
-GradTensor* GradTensor::mul(double* other) {
-  ScalarTensor* scalar = new ScalarTensor(*other);
-  return scalar->mul(this); 
-}
-
+// Tensor Contraction of this * other for Chain Rule 
+// unlike matrix multiplication of regular Tensors, we don't need to worry 
+// about batching across multiple dimensions, since the only time you 
+// will do grad matmul is when doing tensor contractions. 
+// e.g. (2, 3, 4) x (4, 4, 3) will never happen. 
+// other's batch indices will always cover this's indices. 
 GradTensor* GradTensor::matmul(GradTensor* other) {   
-  // tensor contraction this * other 
-  // unlike matrix multiplication of regular Tensors, we don't need to worry 
-  // about batching across multiple dimensions, since the only time you 
-  // will do grad matmul is when doing tensor contractions. 
-  // e.g. (2, 3, 4) x (4, 4, 3) will never happen. 
-  // other's batch indices will always cover this's indices. 
-
   // this is repetitive, should fix this to be faster
   OIntegrity::Shape r = OIntegrity::matmul_compat(this, other); 
   GradTensor* res = new GradTensor(r.shape, r.b_shape.size(), r.pidx); 

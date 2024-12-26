@@ -12,6 +12,15 @@ GradTensor::GradTensor() {
   this->pidx_ = 0;
 }
 
+GradTensor::GradTensor(double scalar) {
+  this->storage_ = std::vector<double>{scalar}; 
+  this->shape_ = std::vector<size_t>{}; 
+  this->bidx_ = 0; 
+  this->bshape_ = std::vector<size_t>{}; 
+  this->nbshape_ = std::vector<size_t>{}; 
+  this->pidx_ = 0;
+}
+
 GradTensor::GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, size_t pidx) { 
   if (data.size() != CIntegrity::prod(shape)) {
     throw std::logic_error("The size of data and the shape do not match.");

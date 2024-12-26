@@ -26,10 +26,6 @@ set(TENSOR_SOURCES
   src/Tensor/grad.cpp
   src/Tensor/math.cpp
   src/Tensor/algebra.cpp
-
-  src/ScalarTensor/constructor.cpp
-  src/ScalarTensor/base.cpp
-  src/ScalarTensor/math.cpp
 )
 set(TENSOR_TESTS 
   test/GradTensor/constructors_tests.cpp
@@ -40,10 +36,6 @@ set(TENSOR_TESTS
   test/Tensor/algebra_tests.cpp
   test/Tensor/grad_tests.cpp
   test/Tensor/math_tests.cpp
-
-  test/ScalarTensor/constructors_tests.cpp
-  test/ScalarTensor/math_tests.cpp
-  test/ScalarTensor/util_tests.cpp
 )
 
 # Create the main library

@@ -114,6 +114,14 @@ Tensor* Tensor::sum() {
   return out; 
 }
 
+Tensor* Tensor::sum(size_t dim) {
+
+} 
+
+Tensor* Tensor::sum(std::vector<size_t> dims) {
+
+} 
+
 Tensor* Tensor::pow(double* x) { 
   Tensor* out = this->copy(); 
 

@@ -18,6 +18,7 @@ Tensor::operator std::string() const {
 }
 
 Tensor* Tensor::copy(bool has_grad) const {
+  // does not copy gradients
   return new Tensor(this->storage_, this->shape_, this->bidx_); 
 }
 

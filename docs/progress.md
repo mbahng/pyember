@@ -49,24 +49,18 @@
   |                                                                      | `__radd__(Tensor)`                         | ✅     | 🪧        | ✅           |        |
   | `GradTensor add(GradTensor&)`                                        | `__add__(GradTensor)`                      | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__radd__(GradTensor)`                     | ✅     | 🪧        | ✅           |        |
-  | `GradTensor add(ScalarTensor&)`                                      | `__add__(ScalarTensor)`                    | ✅     | ✅        | ✅           | ✅     |
-  |                                                                      | `__radd__(ScalarTensor)`                   | ✅     | 🪧        | ✅           |        |
   | `GradTensor add(double&)`                                            | `__add__(float)`                           | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__radd__(float)`                          | ✅     | 🪧        | ✅           |        |
   | `Tensor sub(Tensor&)`                                                | `__sub__(Tensor)`                          | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__rsub__(Tensor)`                         | ✅     | 🪧        | ✅           |        |
   | `GradTensor sub(GradTensor&)`                                        | `__sub__(GradTensor)`                      | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__rsub__(GradTensor)`                     | ✅     | 🪧        | ✅           |        |
-  | `GradTensor sub(ScalarTensor&)`                                      | `__sub__(ScalarTensor)`                    | ✅     | ✅        | ✅           | ✅     |
-  |                                                                      | `__rsub__(ScalarTensor)`                   | ✅     | 🪧        | ✅           |        |
   | `GradTensor sub(double&)`                                            | `__sub__(float)`                           | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__rsub__(float)`                          | ✅     | 🪧        | ✅           |        |
   | `Tensor mul(Tensor&)`                                                | `__mul__(Tensor)`                          | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__rmul__(Tensor)`                         | ✅     | 🪧        | ✅           |        |
   | `GradTensor mul(GradTensor&)`                                        | `__mul__(GradTensor)`                      | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__rmul__(GradTensor)`                     | ✅     | 🪧        | ✅           |        |
-  | `GradTensor mul(ScalarTensor&)`                                      | `__mul__(ScalarTensor)`                    | ✅     | ✅        | ✅           | ✅     |
-  |                                                                      | `__rmul__(ScalarTensor)`                   | ✅     | 🪧        | ✅           |        |
   | `GradTensor mul(double&)`                                            | `__mul__(float)`                           | ✅     | ✅        | ✅           | ✅     |
   |                                                                      | `__rmul__(float)`                          | ✅     | 🪧        | ✅           |        |
   | `GradTensor matmul(GradTensor&)`                                     | `__matmul__(GradTensor)`                   | ✅     | ✅        | ✅           | ✅     |
@@ -104,31 +98,22 @@
   |                                                                         | `__radd__(Tensor)`                            | ✅     | 🪧        | ✅           |        |
   | `Tensor add(GradTensor&)`                                               | `__add__(GradTensor)`                         | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__radd__(GradTensor)`                        | ✅     | 🪧        | ✅           |        |
-  | `Tensor add(ScalarTensor&)`                                             | `__add__(ScalarTensor)`                       | ✅     | ❌        | ✅           | ✅     |
-  |                                                                         | `__radd__(ScalarTensor)`                      | ✅     | 🪧        | ✅           |        |
   | `Tensor add(double&)`                                                   | `__add__(float)`                              | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__radd__(float)`                             | ✅     | 🪧        | ✅           |        |
   | `Tensor sub(Tensor&)`                                                   | `__sub__(Tensor)`                             | ✅     | ✅        | ✅           | ✅     |
   |                                                                         | `__rsub__(Tensor)`                            | ✅     | 🪧        | ✅           |        |
   | `Tensor sub(GradTensor&)`                                               | `__sub__(GradTensor)`                         | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__rsub__(GradTensor)`                        | ✅     | 🪧        | ✅           |        |
-  | `Tensor sub(ScalarTensor&)`                                             | `__sub__(ScalarTensor)`                       | ✅     | ❌        | ✅           | ✅     |
-  |                                                                         | `__rsub__(ScalarTensor)`                      | ✅     | 🪧        | ✅           |        |
   | `Tensor sub(double&)`                                                   | `__sub__(float)`                              | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__rsub__(float)`                             | ✅     | 🪧        | ✅           |        |
   | `Tensor mul(Tensor&)`                                                   | `__mul__(Tensor)`                             | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__rmul__(Tensor)`                            | ✅     | 🪧        | ✅           |        |
   | `Tensor mul(GradTensor&)`                                               | `__mul__(GradTensor)`                         | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__rmul__(GradTensor)`                        | ✅     | 🪧        | ✅           |        |
-  | `Tensor mul(ScalarTensor&)`                                             | `__mul__(ScalarTensor)`                       | ✅     | ❌        | ✅           | ✅     |
-  |                                                                         | `__rmul__(ScalarTensor)`                      | ✅     | 🪧        | ✅           |        |
   | `Tensor mul(double&)`                                                   | `__mul__(float)`                              | ✅     | ❌        | ✅           | ✅     |
   |                                                                         | `__rmul__(float)`                             | ✅     | 🪧        | ✅           |        |
-  | `Tensor exp(ScalarTensor&)`                                             | `__pow__(ScalarTensor)`                       | ❌     | ❌        | ❌           | ❌     |
-  | `Tensor exp(ScalarTensor&)`                                             | `exp(ScalarTensor)`                           | ❌     | ❌        | ❌           | ❌     |
   | `Tensor exp(double&)`                                                   | `__pow__(float)`                              | ❌     | ❌        | ❌           | ❌     |
   | `Tensor exp(double&)`                                                   | `exp(float)`                                  | ❌     | ❌        | ❌           | ❌     |
-  | `Tensor log(ScalarTensor&)`                                             | `log(ScalarTensor)`                           | ❌     | ❌        | ❌           | ❌     |
   | `Tensor log(double&)`                                                   | `log(float)`                                  | ❌     | ❌        | ❌           | ❌     |
   | `Tensor matmul(Tensor&)`                                                | `matmul(Tensor)`                              | ✅     | ❌        | ❌           | ✅     |
   | `Tensor matmul(Tensor&)`                                                | `__matmul__(Tensor)`                          | ✅     | ❌        | ✅           | ✅     |
@@ -146,48 +131,6 @@
   | `Tensor sum()`                                                          | `sum()`                                       | ❌     | ❌        | ❌           | ❌     |
   | `Tensor mean()`                                                         | `mean()`                                      | ❌     | ❌        | ❌           | ❌     |
   | `Tensor norm()`                                                         | `norm()`                                      | ❌     | ❌        | ❌           | ❌     |
-
-  ## ScalarTensor
-
-| C++ Method                                                                | PyBind Method                 | Status | C++ Tests | Python Tests | Docs |
-|---------------------------------------------------------------------------|-------------------------------|--------|-----------|--------------|------|
-| `std::string type() const`                                                | `type()`                      | ✅     | ❌        | ❌           | ❌   |
-| `std::string dtype() const`                                               | `dtype()`                     | ✅     | ❌        | ❌           | ❌   |
-| `bool operator==(ScalarTensor&)`                                          | `__eq__()`                    | ✅     | ❌        | ❌           | ❌   |
-| `bool operator!=(ScalarTensor&)`                                          | `__ne__()`                    | ✅     | ❌        | ❌           | ❌   |
-| `double at(const std::vector<size_t>&) const`                             | `__getitem__()`               |        |           |              |      |
-| `double at(const std::vector<size_t>&)`                                   | `__setitem__()`               |        |           |              |      |
-| `std::unique_ptr<ScalarTensor> slice(const std::vector<Slice>&) const`    | `__getitem__()`               |        |           |              |      |
-| `operator std::string const`                                              | `BaseTensor.__str__()`        | ✅     | 🪧        | 🪧           | ✅   |
-| `operator std::string const`                                              | `__repr__()`                  | ✅     | 🪧        | 🪧           | ✅   |
-| `double item() const`                                                     |                              | ✅     |           |              |      |
-| `ScalarTensor copy() const`                                               |                              | ✅     |           |              |      |
-| `GradTensor neg()`                                                        | `__neg__()`                   | ❌     | ❌        | ❌           | ❌   |
-| `Tensor add(Tensor&)`                                                     | `__add__(Tensor)`             | ✅     | ✅        |              |      |
-|                                                                           | `__radd__(Tensor)`            | ✅     |           |              |      |
-| `GradTensor add(GradTensor&)`                                             | `__add__(GradTensor)`         | ✅     | ✅        |              |      |
-|                                                                           | `__radd__(GradTensor)`        | ✅     |           |              |      |
-| `ScalarTensor add(ScalarTensor&)`                                         | `__add__(ScalarTensor)`       | ✅     | ✅        |              |      |
-|                                                                           | `__radd__(ScalarTensor)`      | ✅     |           |              |      |
-| `ScalarTensor add(double&)`                                               | `__add__(float)`              | ❌     | ❌        | ❌           | ❌   |
-|                                                                           | `__radd__(float)`             | ✅     |           |              |      |
-| `Tensor sub(Tensor&)`                                                     | `__sub__(Tensor)`             | ✅     | ✅        |              |      |
-|                                                                           | `__rsub__(Tensor)`            | ✅     | ❌        | ❌           | ❌   |
-| `GradTensor sub(GradTensor&)`                                             | `__sub__(GradTensor)`         | ✅     | ✅        |              |      |
-|                                                                           | `__rsub__(GradTensor)`        | ✅     | ❌        | ❌           | ❌   |
-| `ScalarTensor sub(ScalarTensor&)`                                         | `__sub__(ScalarTensor)`       | ✅     | ✅        |              |      |
-|                                                                           | `__rsub__(ScalarTensor)`      | ✅     | ❌        | ❌           | ❌   |
-| `ScalarTensor sub(double&)`                                               | `__sub__(float)`              | ❌     | ❌        | ❌           | ❌   |
-|                                                                           | `__rsub__(float)`             | ✅     | ❌        | ❌           | ❌   |
-| `Tensor mul(Tensor&)`                                                     | `__mul__(Tensor)`             | ✅     | ✅        |              |      |
-|                                                                           | `__rmul__(Tensor)`            | ✅     | ❌        | ❌           | ❌   |
-| `GradTensor mul(GradTensor&)`                                             | `__mul__(GradTensor)`         | ✅     | ✅        |              |      |
-|                                                                           | `__rmul__(GradTensor)`        | ✅     | ❌        | ❌           | ❌   |
-| `ScalarTensor mul(ScalarTensor&)`                                         | `__mul__(ScalarTensor)`       | ✅     | ✅        |              |      |
-|                                                                           | `__rmul__(ScalarTensor)`      | ✅     | ❌        | ❌           | ❌   |
-| `ScalarTensor mul(double&)`                                               | `__mul__(float)`              | ❌     | ❌        | ❌           | ❌   |
-|                                                                           | `__rmul__(float)`             | ✅     | ❌        | ❌           | ❌   |
-
 
   ## Models 
 

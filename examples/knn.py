@@ -9,12 +9,12 @@ mse = ember.objectives.MSELoss()
 # hyperparameter tuning
 for k in range(1, 21):
   model.K = k
-  print(f"{k} ===") 
-  loss = 0
+  loss = ember.Tensor(0)
   for i in range(len(ds)): 
     x, y = ds[i] 
     y_ = model.forward(x) 
     loss = loss + mse(y, y_) 
 
-  print(loss)
+  print(f"{k} : {float(loss)}")  # type: ignore
+
 

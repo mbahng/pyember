@@ -1,4 +1,5 @@
 #include "common.hpp"
+#include "../src/Tensor.h"
 
 void init_basetensor_binding(py::module_ &m) {
   py::class_<BaseTensor::Slice>(m, "Slice")
@@ -45,7 +46,7 @@ void init_basetensor_binding(py::module_ &m) {
       )
     .def_property("bidx",
         [](const BaseTensor &t) -> const size_t { 
-          return t.bidx_ ; 
+          return t.bidx_; 
         },
         [](BaseTensor &t, const size_t &value) { 
           t.bidx_ = value;  
@@ -64,7 +65,21 @@ void init_basetensor_binding(py::module_ &m) {
     .def("size", &BaseTensor::shape, py::is_operator())
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at))
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at, py::const_))
+    
+    .def("item", &BaseTensor::item)
+    .def("__float__", &BaseTensor::item)  // We can reuse item() for float conversion
+    .def("__int__", [](BaseTensor &t) -> int64_t {
+        return static_cast<int64_t>(t.item());
+    })
+    .def("__index__", [](BaseTensor &t) -> int64_t {
+        return static_cast<int64_t>(t.item());
+    })
 
+    .def("is_scalar", 
+        [](BaseTensor *a) {
+          return a->is_scalar(); 
+        }
+      )
     .def("meta", 
         [](BaseTensor *a) {
           return a->meta(); 
@@ -105,10 +120,6 @@ void init_basetensor_binding(py::module_ &m) {
         }
 
         auto out = t.slice(slices); 
-        if ((out->data()).size() == 1) {
-          return py::cast(ScalarTensor(out->data()));
-        }
-        
         // All indices are now converted to slices
         // Can't do py::cast(out) directly for some reason
         return py::cast(t.slice(slices)); 
@@ -122,9 +133,6 @@ void init_basetensor_binding(py::module_ &m) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
-        if ((out->data()).size() == 1) {
-          return py::cast(ScalarTensor(out->data()));
-        }
         return py::cast(t.slice(slices)); 
       } else if (py::isinstance<py::slice>(index)) {
         // Single slice
@@ -140,9 +148,6 @@ void init_basetensor_binding(py::module_ &m) {
           slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
-        if ((out->data()).size() == 1) {
-          return py::cast(ScalarTensor(out->data()));
-        }
         return py::cast(t.slice(slices)); 
       }
       throw py::type_error("Invalid index type");

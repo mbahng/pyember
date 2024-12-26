@@ -3,6 +3,140 @@
 #include "../Tensor.h"
 #include "../utils.h"
 
+Tensor* Tensor::add(double other) {
+  // initialize scalar tensor so we can work with gradients
+  Tensor* scalar = new Tensor(other);
+  Tensor* res = this->copy(); 
+
+  for (int bi = 0; bi < this->storage_.size(); ++bi) {
+    res->storage_[bi] += other;
+  } 
+
+  res->prev = std::vector<Tensor*> {}; 
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (scalar->has_grad()) { res->prev.push_back(scalar); }
+  Tensor* this_ptr = this; 
+
+  res->backward = [this_ptr, scalar, res] {
+    if (this_ptr->has_grad()) {
+      this_ptr-> grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), this_ptr->nbshape(), this_ptr->nbshape()), 
+        this_ptr->bidx(), 
+        this_ptr->shape().size()
+      );
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          (this_ptr->grad)->at(Index::concat(b, i, i)) = 1.0; 
+        }
+      }
+    }
+    if (scalar->has_grad()) {
+      scalar-> grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), this_ptr->nbshape(), std::vector<size_t>{1}),
+        this_ptr->bidx(), 
+        this_ptr->shape().size()
+      );
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          (this_ptr->grad)->at(Index::concat(b, i, std::vector<size_t>{0})) = 1.0; 
+        }
+      }
+    }
+  };
+
+  return res; 
+}
+
+Tensor* Tensor::sub(double other) {
+  // initialize scalar tensor so we can work with gradients
+  Tensor* scalar = new Tensor(other);
+  Tensor* res = this->copy(); 
+
+  for (int bi = 0; bi < this->storage_.size(); ++bi) {
+    res->storage_[bi] -= other;
+  } 
+
+  res->prev = std::vector<Tensor*> {}; 
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (scalar->has_grad()) { res->prev.push_back(scalar); }
+  Tensor* this_ptr = this; 
+
+  res->backward = [this_ptr, scalar, res] {
+    if (this_ptr->has_grad()) {
+      this_ptr-> grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), this_ptr->nbshape(), this_ptr->nbshape()), 
+        this_ptr->bidx(), 
+        this_ptr->shape().size()
+      );
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          (this_ptr->grad)->at(Index::concat(b, i, i)) = 1.0; 
+        }
+      }
+    }
+    if (scalar->has_grad()) {
+      scalar-> grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), this_ptr->nbshape(), std::vector<size_t>{1}),
+        this_ptr->bidx(), 
+        this_ptr->shape().size()
+      );
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          (this_ptr->grad)->at(Index::concat(b, i, std::vector<size_t>{0})) = -1.0; 
+        }
+      }
+    }
+  };
+
+  return res; 
+}
+
+Tensor* Tensor::mul(double other) {
+  // initialize scalar tensor so we can work with gradients
+  Tensor* scalar = new Tensor(other);
+  Tensor* res = this->copy(); 
+
+  for (int bi = 0; bi < this->storage_.size(); ++bi) {
+    res->storage_[bi] *= other;
+  } 
+
+  res->prev = std::vector<Tensor*> {}; 
+  if (this->has_grad()) { res->prev.push_back(this); }
+  if (scalar->has_grad()) { res->prev.push_back(scalar); }
+  Tensor* this_ptr = this; 
+
+  res->backward = [this_ptr, scalar, res] {
+    if (this_ptr->has_grad()) {
+      this_ptr-> grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), this_ptr->nbshape(), this_ptr->nbshape()), 
+        this_ptr->bidx(), 
+        this_ptr->shape().size()
+      );
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          (this_ptr->grad)->at(Index::concat(b, i, i)) = scalar->item(); 
+        }
+      }
+    }
+    if (scalar->has_grad()) {
+      scalar-> grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), this_ptr->nbshape(), std::vector<size_t>{1}),
+        this_ptr->bidx(), 
+        this_ptr->shape().size()
+      );
+      for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
+          (this_ptr->grad)->at(
+            Index::concat(b, i, std::vector<size_t>{0})
+          ) = this_ptr->at(Index::concat(b, i));
+        }
+      }
+    }
+  };
+
+  return res; 
+}
+
 Tensor* Tensor::add(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(
@@ -85,16 +219,6 @@ Tensor* Tensor::iadd(GradTensor* other) {
   return this; 
 }
 
-Tensor* Tensor::add(ScalarTensor* other) {
-  return other->add(this); 
-}
-
-Tensor* Tensor::add(double* other) {
-  // Must store scalar on heap since we don't want it destroyed in comp graph
-  ScalarTensor* scalar = new ScalarTensor(*other);
-  return scalar->add(this); 
-}
-
 Tensor* Tensor::sub(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(
@@ -174,15 +298,6 @@ Tensor* Tensor::isub(GradTensor* other) {
   }
 
   return this; 
-}
-
-Tensor* Tensor::sub(ScalarTensor* other) {
-  return other->sub(this); 
-}
-
-Tensor* Tensor::sub(double* other) { 
-  ScalarTensor* scalar = new ScalarTensor(*other);
-  return scalar->sub(this); 
 }
 
 Tensor* Tensor::mul(Tensor* other) {
@@ -284,15 +399,6 @@ Tensor* Tensor::imul(GradTensor* other) {
   }
 
   return this; 
-}
-
-Tensor* Tensor::mul(ScalarTensor* other) {
-  return other->mul(this); 
-}
-
-Tensor* Tensor::mul(double* other) {
-  ScalarTensor* scalar = new ScalarTensor(*other);
-  return scalar->mul(this); 
 }
 
 Tensor* Tensor::matmul(Tensor* other) {
