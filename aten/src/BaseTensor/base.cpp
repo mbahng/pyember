@@ -31,6 +31,10 @@ const std::vector<size_t> BaseTensor::nbshape() const {
   return nbshape_;
 }
 
+const size_t BaseTensor::hdim() const {
+  return shape().size();
+}
+
 const size_t& BaseTensor::bidx() const {
   return bidx_;
 }
