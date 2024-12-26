@@ -44,7 +44,12 @@ class Dataset():
       self.Y[self.index,:].reshape(self.Y[self.index,:].nbshape)
     )
     self.index += 1 # self.index is an int so passed by value 
-    return pair
+    return pair 
+
+  def items(self): 
+    return [
+      (x, y) for x, y in self
+    ]
 
 class LinearDataset(Dataset): 
 
