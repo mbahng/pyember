@@ -1,4 +1,5 @@
 #include "common.hpp"
+#include "../src/Tensor.h"
 
 void init_gradtensor_binding(py::module_ &m) {
   py::class_<GradTensor, BaseTensor>(m, "GradTensor")
@@ -50,17 +51,7 @@ void init_gradtensor_binding(py::module_ &m) {
     .def("__neg__", 
         [](GradTensor *a) {
           double c = -1.;
-          return a->mul(&c);
-        }
-      )
-    .def("__add__", 
-        [](GradTensor *a, ScalarTensor *b) {
-          return a->add(b);
-        }
-      )
-    .def("__radd__", 
-        [](GradTensor *a, ScalarTensor *b) {
-          return b->add(a);
+          return a->mul(c);
         }
       )
     .def("__add__", 
@@ -84,26 +75,16 @@ void init_gradtensor_binding(py::module_ &m) {
         }
       )
     .def("__add__", 
-        [](GradTensor *a, double *b) {
+        [](GradTensor *a, double b) {
           return a->add(b);
         }
       )
     .def("__radd__", 
-        [](GradTensor *a, double *b) {
+        [](GradTensor *a, double b) {
           return a->add(b);
         }
       )
     .def("__sub__", 
-        [](GradTensor *a, ScalarTensor *b) {
-          return a->sub(b);
-        }
-      )
-    .def("__rsub__", 
-        [](GradTensor *a, ScalarTensor *b) {
-          return b->sub(a);
-        }
-      )
-    .def("__sub__", 
         [](GradTensor *a, Tensor *b) {
           return a->sub(b);
         }
@@ -124,24 +105,8 @@ void init_gradtensor_binding(py::module_ &m) {
         }
       )
     .def("__sub__", 
-        [](GradTensor *a, double *b) {
+        [](GradTensor *a, double b) {
           return a->sub(b);
-        }
-      )
-    .def("__rsub__", 
-        [](GradTensor *a, double *b) {
-          ScalarTensor* scalar = new ScalarTensor(*b); // should prob fix this
-          return scalar->sub(a);
-        }
-      )
-    .def("__mul__", 
-        [](GradTensor *a, ScalarTensor *b) {
-          return a->mul(b);
-        }
-      )
-    .def("__rmul__", 
-        [](GradTensor *a, ScalarTensor *b) {
-          return b->mul(a);
         }
       )
     .def("__mul__", 
@@ -165,12 +130,12 @@ void init_gradtensor_binding(py::module_ &m) {
         }
       )
     .def("__mul__", 
-        [](GradTensor *a, double *b) {
+        [](GradTensor *a, double b) {
           return a->mul(b);
         }
       )
     .def("__rmul__", 
-        [](GradTensor *a, double *b) {
+        [](GradTensor *a, double b) {
           return a->mul(b);
         }
       )

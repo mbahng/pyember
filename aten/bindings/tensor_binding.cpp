@@ -1,10 +1,17 @@
 #include "common.hpp"
+#include "../src/Tensor.h"
 
 void init_tensor_binding(py::module_ &m) {
   // Bind the Tensor class
   py::class_<Tensor, BaseTensor>(m, "Tensor")
 
     // Constructors
+    .def(py::init([](double scalar, bool has_grad = true) {
+        return new Tensor(scalar, has_grad); 
+        }), 
+        py::arg("scalar"), 
+        py::arg("has_grad") = true
+      )
     .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true) {
         return new Tensor(data, shape, bidx, has_grad);
         }), 
@@ -124,7 +131,6 @@ void init_tensor_binding(py::module_ &m) {
           } 
         }
       )
-
       .def("backprop", &Tensor::backprop, 
           py::arg("intermediate") = false 
       )
@@ -153,21 +159,12 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("inplace") = false,
         py::arg("has_grad") = true
       )
+    
     // order of the bindings matter: most specific should go first
     .def("__neg__", 
         [](Tensor *a) {
           double c = -1.;
-          return a->mul(&c);
-        }
-      )
-    .def("__add__", 
-        [](Tensor *a, ScalarTensor *b) {
-          return a->add(b);
-        }
-      )
-    .def("__radd__", 
-        [](Tensor *a, ScalarTensor *b) {
-          return b->add(a);
+          return a->mul(c);
         }
       )
     .def("__add__", 
@@ -196,26 +193,16 @@ void init_tensor_binding(py::module_ &m) {
         }
       )
     .def("__add__", 
-        [](Tensor *a, double *b) {
+        [](Tensor *a, double b) {
           return a->add(b);
         }
       )
     .def("__radd__", 
-        [](Tensor *a, double *b) {
+        [](Tensor *a, double b) {
           return a->add(b);
         }
       )
 
-    .def("__sub__", 
-        [](Tensor *a, ScalarTensor *b) {
-          return a->sub(b);
-        }
-      )
-    .def("__rsub__", 
-        [](Tensor *a, ScalarTensor *b) {
-          return b->sub(a);
-        }
-      )
     .def("__sub__", 
         [](Tensor *a, Tensor *b) {
           return a->sub(b);
@@ -242,25 +229,8 @@ void init_tensor_binding(py::module_ &m) {
         }
       )
     .def("__sub__", 
-        [](Tensor *a, double *b) {
+        [](Tensor *a, double b) {
           return a->sub(b);
-        }
-      )
-    .def("__rsub__", 
-        [](Tensor *a, double *b) {
-          ScalarTensor* scalar = new ScalarTensor(*b); 
-          return scalar->sub(a);
-        }
-      )
-
-    .def("__mul__", 
-        [](Tensor *a, ScalarTensor *b) {
-          return a->mul(b);
-        }
-      )
-    .def("__rmul__", 
-        [](Tensor *a, ScalarTensor *b) {
-          return b->mul(a);
         }
       )
     .def("__mul__", 
@@ -289,12 +259,12 @@ void init_tensor_binding(py::module_ &m) {
         }
       )
     .def("__mul__", 
-        [](Tensor *a, double *b) {
+        [](Tensor *a, double b) {
           return a->mul(b);
         }
       )
     .def("__rmul__", 
-        [](Tensor *a, double *b) {
+        [](Tensor *a, double b) {
           return a->mul(b);
         }
       )
@@ -318,6 +288,16 @@ void init_tensor_binding(py::module_ &m) {
     .def("sum", 
        [](Tensor *a) {
          return a->sum();
+       }
+     )
+    .def("sum", 
+       [](Tensor *a, size_t dim) {
+         return a->sum(dim);
+       }
+     )
+    .def("sum", 
+       [](Tensor *a, std::vector<size_t> dim) {
+         return a->sum(dim);
        }
      )
     .def("__pow__", 

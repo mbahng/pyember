@@ -11,10 +11,6 @@ run_python_tests() {
     python test/GradTensor/math_test.py
     python test/GradTensor/util_test.py
 
-    python test/ScalarTensor/constructor_test.py
-    python test/ScalarTensor/math_test.py
-    python test/ScalarTensor/util_test.py
-
     python test/Tensor/algebra_test.py
     python test/Tensor/constructor_test.py
     python test/Tensor/grad_test.py

@@ -26,7 +26,7 @@ class KNearestRegressor(Regression):
     # store dict of dist : y_truth. 
     d = dict()
     for x, y in self._dataset: 
-      distance = ((x.reshape(self._dataset.D) - X) ** 2).sum()[0].item()
+      distance = ((x.reshape(self._dataset.D) - X) ** 2).sum().item()
       d[distance] = y 
 
     return d
@@ -34,7 +34,7 @@ class KNearestRegressor(Regression):
   @track_access
   def forward(self, X: Tensor) -> Tensor: 
     self.d = self.k_nearest_neighbors(X)
-    res = Tensor.zeros(shape=self._dataset.Y[0].shape, bidx=0, has_grad=False)
+    res = Tensor.zeros(shape=self._dataset[0][1].shape, bidx=0, has_grad=False) 
     for k in sorted(self.d)[:self.K]: 
       res = res + self.d[k]    # TODO: this is a memory leak, add support for __iadd__ 
     self.z = res * (1/self.K)

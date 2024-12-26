@@ -4,6 +4,16 @@
 #include "../Tensor.h" 
 #include "../utils.h"
 
+Tensor::Tensor(double scalar, bool has_grad) {
+  // Scalar tensor 
+  this->storage_ = std::vector<double>{scalar}; 
+  this->shape_ = std::vector<size_t>{1}; 
+  this->bidx_ = 0;  
+  this->bshape_ = std::vector<size_t>{}; 
+  this->nbshape_ = std::vector<size_t>{}; 
+  this->has_grad_ = has_grad; 
+}
+
 Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool has_grad) {
   this->storage_ = std::vector<double>(CIntegrity::prod(shape), 0.0); 
   this->shape_ = shape; 

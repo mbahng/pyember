@@ -1,4 +1,5 @@
 #include "../Tensor.h"
+#include "../utils.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -56,6 +57,17 @@ std::string BaseTensor::meta() const {
   oss << ")\n"; 
   
   return oss.str(); 
+}
+
+bool BaseTensor::is_scalar() const {
+  return ((this->shape()).size() == 0) || CIntegrity::prod(this->shape()) == 1; 
+}
+
+double BaseTensor::item() const {
+  if (!this->is_scalar()) {
+    throw std::logic_error("You cannot call item() on a non-scalar tensor.");
+  }
+  return this->storage_[0];
 }
 
 bool BaseTensor::operator==(BaseTensor& other) const {
