@@ -41,6 +41,7 @@ class BaseTensor {
     const std::vector<size_t> bshape() const; 
     const std::vector<size_t> nbshape() const; 
     const size_t& bidx() const; 
+    const size_t hdim() const; 
 
     virtual std::string type() const;
     virtual std::string dtype() const;
@@ -134,6 +135,9 @@ class Tensor : public BaseTensor {
     std::vector<Tensor*> prev = std::vector<Tensor*>();
     std::function<void()> backward;
 
+    std::string type() const override { return "Tensor"; }
+    std::string meta() const override; 
+
     // constructors
     Tensor(double scalar, bool has_grad = true); 
     Tensor(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true);
@@ -141,10 +145,6 @@ class Tensor : public BaseTensor {
     Tensor(std::vector<double> data, size_t bidx = 0, bool has_grad = true);
     Tensor(std::vector<std::vector<double>> data, size_t bidx = 0, bool has_grad = true);
     Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx = 0, bool has_grad = true); 
-
-    // Destructors 
-    ~Tensor() { prev.clear(); }
-
     static Tensor* arange(int start, int stop, int step = 1, bool has_grad = true);
     static Tensor* linspace(double start, double stop, int numsteps, bool has_grad = true);
     static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool has_grad = true);
@@ -152,11 +152,17 @@ class Tensor : public BaseTensor {
     static Tensor* ones(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true);
     static Tensor* zeros(std::vector<size_t> shape, size_t bidx = 0, bool has_grad = true); 
 
-    std::string type() const override { return "Tensor"; }
+    // Destructors 
+    ~Tensor() { prev.clear(); }
+
     const bool& has_grad() const; 
-    virtual Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
+
+    Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool has_grad = true);
+    Tensor* squeeze(bool inplace = true, bool has_grad = true);
+    Tensor* squeeze(size_t dim, bool inplace = true, bool has_grad = true);
+    Tensor* unsqueeze(size_t dim, bool inplace = true, bool has_grad = true);
+
     Tensor* copy(bool has_grad = true) const; 
-    std::string meta() const override; 
 
     Tensor* transpose(const std::vector<size_t>& axes = {}, bool inplace = false, bool has_grad = true);
     operator std::string() const override; 

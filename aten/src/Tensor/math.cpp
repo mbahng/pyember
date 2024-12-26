@@ -115,7 +115,9 @@ Tensor* Tensor::sum() {
 }
 
 Tensor* Tensor::sum(size_t dim) {
-
+  if (dim < this->hdim() || dim < 0) {
+    throw std::logic_error("The dimensions you are summing up on is bad.");
+  }
 } 
 
 Tensor* Tensor::sum(std::vector<size_t> dims) {

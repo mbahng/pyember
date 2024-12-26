@@ -129,3 +129,40 @@ Tensor* Tensor::transpose(const std::vector<size_t>& axes, bool inplace, bool ha
   return result;
 }
 
+Tensor* Tensor::squeeze(bool inplace, bool has_grad) {
+  std::vector<size_t> newshape; 
+  for (auto s : this->shape()) {
+    if (s != 1) {
+      newshape.push_back(s);
+    }
+  }
+  if (newshape.size() == 0) {
+    newshape.push_back(1);
+  } 
+  return this->reshape(newshape, inplace, has_grad);
+}
+
+Tensor* Tensor::squeeze(size_t dim, bool inplace, bool has_grad) { 
+  if (this->shape_[dim] != 1) {
+    throw std::logic_error("The dimension you are squeezing is not 1.");
+  }
+  std::vector<size_t> newshape; 
+  for (int i = 0; i < this->hdim(); i++) { 
+    if (i != dim) {
+      newshape.push_back(this->shape()[i]);
+    }
+  }
+  return this->reshape(newshape, inplace, has_grad); 
+}
+
+Tensor* Tensor::unsqueeze(size_t dim, bool inplace, bool has_grad) { 
+  // dim = dimension that you want to add the 1 in 
+  std::vector<size_t> newshape; 
+  for (int i = 0; i < this->hdim(); i++) {
+    if (i == dim) {
+      newshape.push_back(1); 
+    }
+    newshape.push_back(this->shape()[i]); 
+  }
+  return this->reshape(newshape, inplace, has_grad); 
+}
