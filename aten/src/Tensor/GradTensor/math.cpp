@@ -1,7 +1,6 @@
 #include "../Tensor.h"
-#include <vector>
 #include <cassert>
-#include "../utils.h"
+#include "../../Util/utils.h"
 
 GradTensor* GradTensor::batchsum() {
   GradTensor* res = new GradTensor(this->nbshape(), 0, this->pidx() - this->_bidx); 

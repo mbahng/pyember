@@ -1,5 +1,5 @@
-#include "../../src/Tensor.h"
-#include "../../src/utils.h"
+#include "../../../src/Tensor/Tensor.h"
+#include "../../../src/Util/utils.h"
 #include <vector>
 
 namespace T_Add_T {
@@ -9,11 +9,11 @@ namespace T_Add_T {
     Tensor* t2 = Tensor::arange(0, 5); 
     Tensor* s1 = t1->add(t2);
     Tensor* truth_sum = Tensor::arange(0, 10, 2);
-    ASSERT_TRUE(s1 == truth_sum); 
+    ASSERT_TRUE(*s1 == *truth_sum); 
     s1->backprop(true);
     GradTensor* truth = GradTensor::eye(5, 0, 1);
-    ASSERT_TRUE(*(t1->grad) == truth); 
-    ASSERT_TRUE(*(t2->grad) == truth); 
+    ASSERT_TRUE(*(t1->grad) == *truth); 
+    ASSERT_TRUE(*(t2->grad) == *truth); 
     delete t1;
     delete t2;
     delete s1;
@@ -31,7 +31,7 @@ namespace T_Sub_T {
     Tensor* s1 = t1->sub(t2);
     Tensor* truth_sum = Tensor::zeros({5});
     
-    ASSERT_TRUE(s1 == truth_sum); 
+    ASSERT_TRUE(*s1 == *truth_sum); 
     
     s1->backprop(true);
     GradTensor* truth1 = GradTensor::eye(5, 0, 1);
@@ -39,8 +39,8 @@ namespace T_Sub_T {
     for (auto i : Index::generate_all_indices(truth1->shape())) {
       truth2->at(i) *= -1;
     }
-    ASSERT_TRUE((t1->grad) == truth1); 
-    ASSERT_TRUE((t2->grad) == truth2); 
+    ASSERT_TRUE(*(t1->grad) == *truth1); 
+    ASSERT_TRUE(*(t2->grad) == *truth2); 
 
     delete t1;
     delete t2;
@@ -74,10 +74,10 @@ namespace T_Matmul_T {
         CIntegrity::range(21, 48, 13), 
         CIntegrity::range(27, 62, 17)
       ), 
-      {5, 3}, true
+      {5, 3}, 0, true
     ); 
 
-    ASSERT_TRUE(prod == gt);
+    ASSERT_TRUE(*prod == *gt);
   }
 
   TEST(TensorAlgebraTest, B_matmul_NB) { 
@@ -94,10 +94,8 @@ namespace T_Matmul_T {
       ), 
       {2, 5, 3}, true
     );
-    ASSERT_TRUE(prod == gt);
+    ASSERT_TRUE(*prod == *gt);
   }
-  
-
 }
 
 namespace T_Add_GT {

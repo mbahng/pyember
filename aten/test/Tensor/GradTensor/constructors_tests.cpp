@@ -1,5 +1,5 @@
 #include <vector>
-#include "../../src/Tensor.h"
+#include "../../../src/Tensor/Tensor.h"
 
 TEST(UtilsTst, NullConstructor) {
   GradTensor* g1 = new GradTensor(); 
@@ -8,7 +8,7 @@ TEST(UtilsTst, NullConstructor) {
   ASSERT_EQ(g1->storage(), std::vector<double>{}); 
   ASSERT_EQ(g1->shape(), std::vector<size_t>{}); 
   ASSERT_EQ(g1->pidx(), 0); 
-  ASSERT_TRUE(g1 == g2);
+  ASSERT_TRUE(*g1 == *g2);
 }
 
 TEST(UtilsTst, FullConstructor) {

@@ -6,9 +6,9 @@ message(STATUS "Found Python: ${Python_VERSION}")
 
 set(BINDING_SOURCES
     aten_binding.cpp
-    gradtensor_binding.cpp
-    basetensor_binding.cpp 
-    tensor_binding.cpp 
+    Tensor/gradtensor_binding.cpp
+    Tensor/basetensor_binding.cpp 
+    Tensor/tensor_binding.cpp 
 )
 
 # Create the Python module named 'aten'

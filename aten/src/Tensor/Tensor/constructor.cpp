@@ -2,7 +2,7 @@
 #include <random> 
 #include <ctime>
 #include "../Tensor.h" 
-#include "../utils.h"
+#include "../../Util/utils.h"
 
 Tensor::Tensor(double scalar, bool requires_grad) {
   // Scalar tensor 

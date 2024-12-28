@@ -3,7 +3,7 @@
 #include <cassert>
 #include <cmath>
 #include <algorithm> 
-#include "../utils.h"
+#include "../../Util/utils.h"
 
 Tensor* Tensor::dot(Tensor* other) { 
   OIntegrity::Shape r = OIntegrity::compat(this, other); 

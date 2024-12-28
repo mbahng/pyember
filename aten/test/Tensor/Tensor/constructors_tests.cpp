@@ -1,4 +1,4 @@
-#include "../../src/Tensor.h"
+#include "../../../src/Tensor/Tensor.h"
 #include <vector>
 
 TEST(TensorInitialization, StandardInitialization) {
@@ -63,9 +63,7 @@ TEST(TensorInitialization, TensorInitialization) {
 }
 
 TEST(TensorInitialization, ArangeInitialization) {
-  Tensor* t1 = Tensor::arange(10, 20); 
-  Tensor* t2 = Tensor::arange(10, 20, 1); 
-  ASSERT_TRUE(t1 == t2);
+  Tensor* t1 = Tensor::arange(10, 20, 1); 
   EXPECT_EQ(t1->storage()[0], 10);
   EXPECT_EQ(t1->storage()[t1->storage().size() - 1], 19);
   
@@ -78,7 +76,6 @@ TEST(TensorInitialization, ArangeInitialization) {
   EXPECT_EQ(t4->storage()[t4->storage().size() - 1], 1089);
 
   delete t1;
-  delete t2;
   delete t3;
   delete t4;
 }

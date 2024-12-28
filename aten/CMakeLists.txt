@@ -12,41 +12,41 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # List all source files except main.cpp
 set(TENSOR_SOURCES
-  src/utils.cpp
+  src/Util/utils.cpp
 
-  src/BaseTensor/base.cpp
-  src/BaseTensor/comparison.cpp
-  src/BaseTensor/index.cpp
-  src/BaseTensor/string.cpp
+  src/Tensor/BaseTensor/base.cpp
+  src/Tensor/BaseTensor/comparison.cpp
+  src/Tensor/BaseTensor/index.cpp
+  src/Tensor/BaseTensor/string.cpp
 
-  src/GradTensor/algebra.cpp
-  src/GradTensor/base.cpp
-  src/GradTensor/comparison.cpp
-  src/GradTensor/constructor.cpp
-  src/GradTensor/index.cpp
-  src/GradTensor/math.cpp
-  src/GradTensor/shape.cpp
-  src/GradTensor/string.cpp
+  src/Tensor/GradTensor/algebra.cpp
+  src/Tensor/GradTensor/base.cpp
+  src/Tensor/GradTensor/comparison.cpp
+  src/Tensor/GradTensor/constructor.cpp
+  src/Tensor/GradTensor/index.cpp
+  src/Tensor/GradTensor/math.cpp
+  src/Tensor/GradTensor/shape.cpp
+  src/Tensor/GradTensor/string.cpp
 
-  src/Tensor/algebra.cpp
-  src/Tensor/backprop.cpp
-  src/Tensor/base.cpp
-  src/Tensor/comparison.cpp
-  src/Tensor/constructor.cpp
-  src/Tensor/index.cpp
-  src/Tensor/math.cpp
-  src/Tensor/shape.cpp
-  src/Tensor/string.cpp
+  src/Tensor/Tensor/algebra.cpp
+  src/Tensor/Tensor/backprop.cpp
+  src/Tensor/Tensor/base.cpp
+  src/Tensor/Tensor/comparison.cpp
+  src/Tensor/Tensor/constructor.cpp
+  src/Tensor/Tensor/index.cpp
+  src/Tensor/Tensor/math.cpp
+  src/Tensor/Tensor/shape.cpp
+  src/Tensor/Tensor/string.cpp
 )
 set(TENSOR_TESTS 
-  test/GradTensor/constructors_tests.cpp
-  test/GradTensor/util_tests.cpp
-  test/GradTensor/algebra_tests.cpp
+  test/Tensor/GradTensor/constructors_tests.cpp
+  test/Tensor/GradTensor/util_tests.cpp
+  test/Tensor/GradTensor/algebra_tests.cpp
 
-  test/Tensor/constructors_tests.cpp
-  test/Tensor/algebra_tests.cpp
-  test/Tensor/grad_tests.cpp
-  test/Tensor/math_tests.cpp
+  test/Tensor/Tensor/constructors_tests.cpp
+  test/Tensor/Tensor/algebra_tests.cpp
+  test/Tensor/Tensor/grad_tests.cpp
+  test/Tensor/Tensor/math_tests.cpp
 )
 
 # Create the main library
