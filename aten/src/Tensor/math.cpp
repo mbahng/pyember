@@ -11,7 +11,7 @@ Tensor* Tensor::dot(Tensor* other) {
   Tensor* res = new Tensor(
     Index::concat(r.b_shape, std::vector<size_t>{1}),
     std::max(this->bidx(), other->bidx()), 
-    this->has_grad() || other->has_grad()
+    this->requires_grad || other->requires_grad
   ); 
 
   if (this->shape().size() >= other->shape().size()) {
@@ -33,18 +33,18 @@ Tensor* Tensor::dot(Tensor* other) {
     }
   }
 
-  res->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad()) { res->prev.push_back(this); }
-  if (other->has_grad()) { res->prev.push_back(other); }
+  res->_prev = std::vector<Tensor*> {}; 
+  if (this->requires_grad) { res->_prev.push_back(this); }
+  if (other->requires_grad) { res->_prev.push_back(other); }
 
   Tensor* this_ptr = this; 
 
-  res->backward = [this_ptr, other, res, r] { 
+  res->_backward = [this_ptr, other, res, r] { 
     std::vector<size_t> newshape = Index::concat(r.b_shape, std::vector<size_t>{1}, r.nb_shape); 
-    size_t bidx = std::max(this_ptr->bidx_, other->bidx_); 
+    size_t bidx = std::max(this_ptr->_bidx, other->_bidx); 
     size_t pidx = bidx + 1 ; 
 
-    if (this_ptr->has_grad()) {
+    if (this_ptr->requires_grad) {
       this_ptr->grad = new GradTensor(newshape, bidx, pidx);  
       if (this_ptr->shape().size() >= other->shape().size()) {
         for (std::vector<size_t> b : Index::generate_all_indices(r.b_shape)) {
@@ -62,7 +62,7 @@ Tensor* Tensor::dot(Tensor* other) {
       }
     }
 
-    if (other->has_grad()) {
+    if (other->requires_grad) {
       other->grad = new GradTensor(newshape, bidx, pidx); 
       if (this_ptr->shape().size() >= other->shape().size()) {
         for (std::vector<size_t> b : Index::generate_all_indices(r.b_shape)) {
@@ -87,27 +87,27 @@ Tensor* Tensor::sum() {
   double out_data = 0.0;
   size_t length = CIntegrity::prod(this->shape());
   for (int i = 0; i < length; ++i) {
-    out_data += this->data()[i]; 
+    out_data += this->storage()[i]; 
   }
 
   Tensor* out = new Tensor(
     {out_data}, 
     std::vector<size_t>{1}, 
     0, 
-    this->has_grad()
+    this->requires_grad
   ); 
 
-  out->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad()) { out->prev.push_back(this); } 
+  out->_prev = std::vector<Tensor*> {}; 
+  if (this->requires_grad) { out->_prev.push_back(this); } 
 
   Tensor* this_ptr = this; 
  
-  out->backward = [this_ptr] { 
-    if (this_ptr->has_grad()) {
+  out->_backward = [this_ptr] { 
+    if (this_ptr->requires_grad) {
       std::vector<size_t> newshape = Index::concat(this_ptr->bshape(), {1}, this_ptr->nbshape());
-      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx_, this_ptr->bidx_ + 1);  
-      for (size_t i = 0; i < ((this_ptr->grad)->storage_).size(); ++i) {
-        (this_ptr->grad)->storage_[i] = 1.0;
+      this_ptr->grad = new GradTensor(newshape, this_ptr->_bidx, this_ptr->_bidx + 1);  
+      for (auto i : Index::generate_all_indices(this_ptr->grad->shape())) {
+        this_ptr->grad->at(i) = 1.0;
       }
     }
   };
@@ -127,21 +127,21 @@ Tensor* Tensor::sum(std::vector<size_t> dims) {
 Tensor* Tensor::pow(double* x) { 
   Tensor* out = this->copy(); 
 
-  for (int i = 0; i < (this->storage_).size(); i++) {
-    (out->storage_)[i] = std::pow((this->storage_)[i], *x);
+  for (int i = 0; i < (this->_storage).size(); i++) {
+    (out->_storage)[i] = std::pow((this->_storage)[i], *x);
   }
 
-  out->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad()) { out->prev.push_back(this); }
+  out->_prev = std::vector<Tensor*> {}; 
+  if (this->requires_grad) { out->_prev.push_back(this); }
 
-  // need to allocate this x on heap for it to be accessible by backward
+  // need to allocate this x on heap for it to be accessible by _backward
   double* x_ptr = new double(2); 
   
   Tensor* this_ptr = this; 
-  out->backward = [this_ptr, x_ptr] {  
-    if (this_ptr->has_grad()) {
+  out->_backward = [this_ptr, x_ptr] {  
+    if (this_ptr->requires_grad) {
       std::vector<size_t> newshape = Index::concat(this_ptr->shape(), this_ptr->nbshape());
-      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx_, (this_ptr->shape()).size());  
+      this_ptr->grad = new GradTensor(newshape, this_ptr->_bidx, (this_ptr->shape()).size());  
 
       for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
         for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
@@ -156,19 +156,19 @@ Tensor* Tensor::pow(double* x) {
 Tensor* Tensor::relu() { 
   Tensor* out = this->copy(); 
 
-  for (int i = 0; i < (this->storage_).size(); i++) {
-    if ((this->storage_)[i] < 0.0) { 
-      (out->storage_)[i] = 0.0;
+  for (int i = 0; i < (this->_storage).size(); i++) {
+    if ((this->_storage)[i] < 0.0) { 
+      (out->_storage)[i] = 0.0;
     }
   }
 
-  out->prev = std::vector<Tensor*> {}; 
-  if (this->has_grad()) { out->prev.push_back(this); }
+  out->_prev = std::vector<Tensor*> {}; 
+  if (this->requires_grad) { out->_prev.push_back(this); }
 
   Tensor* this_ptr = this;  
 
-  out->backward = [this_ptr] { 
-    if (this_ptr->has_grad()) {
+  out->_backward = [this_ptr] { 
+    if (this_ptr->requires_grad) {
       std::vector<size_t> newshape = Index::concat(
         this_ptr->bshape(), 
         this_ptr->nbshape(), 

@@ -4,42 +4,46 @@
 #include "../utils.h"
 
 GradTensor::GradTensor() {
-  this->storage_ = std::vector<double>{}; 
-  this->shape_ = std::vector<size_t>{}; 
-  this->bidx_ = 0; 
-  this->bshape_ = std::vector<size_t>{}; 
-  this->nbshape_ = std::vector<size_t>{}; 
-  this->pidx_ = 0;
+  this->_storage = std::vector<double>{}; 
+  this->_shape = std::vector<size_t>{}; 
+  this->_bidx = 0; 
+  this->_bshape = std::vector<size_t>{}; 
+  this->_nbshape = std::vector<size_t>{}; 
+  this->_pidx = 0; 
+  this->_size = 0; 
 }
 
 GradTensor::GradTensor(double scalar) {
-  this->storage_ = std::vector<double>{scalar}; 
-  this->shape_ = std::vector<size_t>{}; 
-  this->bidx_ = 0; 
-  this->bshape_ = std::vector<size_t>{}; 
-  this->nbshape_ = std::vector<size_t>{}; 
-  this->pidx_ = 0;
+  this->_storage = std::vector<double>{scalar}; 
+  this->_shape = std::vector<size_t>{1}; 
+  this->_bidx = 0; 
+  this->_bshape = std::vector<size_t>{}; 
+  this->_nbshape = std::vector<size_t>{1}; 
+  this->_pidx = 0;
+  this->_size = 1; 
 }
 
-GradTensor::GradTensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, size_t pidx) { 
-  if (data.size() != CIntegrity::prod(shape)) {
-    throw std::logic_error("The size of data and the shape do not match.");
+GradTensor::GradTensor(std::vector<double> storage, std::vector<size_t> shape, size_t bidx, size_t pidx) { 
+  if (storage.size() != CIntegrity::prod(shape)) {
+    throw std::logic_error("The size of storage and the shape do not match.");
   }
-  this->storage_ = data; 
-  this->shape_ = shape;  
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx, shape_.end());
-  this->pidx_ = pidx;
+  this->_storage = storage; 
+  this->_shape = shape;  
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
+  this->_pidx = pidx; 
+  this->_size = CIntegrity::prod(shape); 
 }
 
 GradTensor::GradTensor(std::vector<size_t> shape, size_t bidx, size_t pidx) {
-  this->storage_ = std::vector<double>(CIntegrity::prod(shape), 0.0); 
-  this->shape_ = shape;  
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx, shape_.end());
-  this->pidx_ = pidx;
+  this->_storage = std::vector<double>(CIntegrity::prod(shape), 0.0); 
+  this->_shape = shape;  
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
+  this->_pidx = pidx;
+  this->_size = CIntegrity::prod(shape); 
 }
 
 GradTensor* GradTensor::eye(size_t n, size_t bidx, size_t pidx) {

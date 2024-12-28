@@ -178,13 +178,13 @@ namespace OIntegrity {
   }
 
   Shape matmul_compat(GradTensor* t1, GradTensor* t2) {  
-    if (t1->bidx_ > 0 && t2->bidx_ > 0) { 
+    if (t1->bidx() > 0 && t2->bidx() > 0) { 
       if (t1->bshape() != t2->bshape()) {
         throw std::logic_error("You are multiplying two batches. This is not allowed."); 
       }
     } 
 
-    std::vector<size_t> b1 = t1->bidx_ > 0 ? t1->bshape() : t2->bshape(); 
+    std::vector<size_t> b1 = t1->bidx() > 0 ? t1->bshape() : t2->bshape(); 
 
     std::vector<size_t> s1 = t1->shape(); 
     std::vector<size_t> s2 = t2->shape(); 

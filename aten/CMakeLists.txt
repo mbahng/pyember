@@ -15,17 +15,28 @@ set(TENSOR_SOURCES
   src/utils.cpp
 
   src/BaseTensor/base.cpp
+  src/BaseTensor/comparison.cpp
+  src/BaseTensor/index.cpp
+  src/BaseTensor/string.cpp
 
-  src/GradTensor/constructor.cpp
-  src/GradTensor/base.cpp
-  src/GradTensor/math.cpp
   src/GradTensor/algebra.cpp
+  src/GradTensor/base.cpp
+  src/GradTensor/comparison.cpp
+  src/GradTensor/constructor.cpp
+  src/GradTensor/index.cpp
+  src/GradTensor/math.cpp
+  src/GradTensor/shape.cpp
+  src/GradTensor/string.cpp
 
-  src/Tensor/constructor.cpp
-  src/Tensor/base.cpp
-  src/Tensor/grad.cpp
-  src/Tensor/math.cpp
   src/Tensor/algebra.cpp
+  src/Tensor/backprop.cpp
+  src/Tensor/base.cpp
+  src/Tensor/comparison.cpp
+  src/Tensor/constructor.cpp
+  src/Tensor/index.cpp
+  src/Tensor/math.cpp
+  src/Tensor/shape.cpp
+  src/Tensor/string.cpp
 )
 set(TENSOR_TESTS 
   test/GradTensor/constructors_tests.cpp
