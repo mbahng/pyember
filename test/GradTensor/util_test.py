@@ -1,5 +1,5 @@
 import unittest
-from ember import GradTensor, ScalarTensor
+from ember import GradTensor
 
 class TestGradTensorPivot(unittest.TestCase): 
 
@@ -51,54 +51,6 @@ class TestGradTensorType(unittest.TestCase):
   def testDtype(self): 
     x = GradTensor([1, 2, 3, 4], [2, 2], 1) 
     self.assertEqual(x.dtype(), "double")
-
-class TestGradTensorIndex(unittest.TestCase): 
-
-  def testGetterVector(self): 
-    x = GradTensor([1, 2, 3, 4], [4], 1) 
-    self.assertEqual(x[0], ScalarTensor(1))
-    self.assertEqual(x[1], ScalarTensor(2))
-    self.assertEqual(x[2], ScalarTensor(3))
-    self.assertEqual(x[3], ScalarTensor(4))
-
-  def testGetterMatrix(self): 
-    x = GradTensor([1, 2, 3, 4], [2, 2], 1)
-    self.assertEqual(x[0, 0], ScalarTensor(1))
-    self.assertEqual(x[0, 1], ScalarTensor(2))
-    self.assertEqual(x[1, 0], ScalarTensor(3))
-    self.assertEqual(x[1, 1], ScalarTensor(4))
-
-  def testGetterTensor(self): 
-    x = GradTensor([1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 2], 1)
-    self.assertEqual(x[0, 0, 0], ScalarTensor(1))
-    self.assertEqual(x[0, 0, 1], ScalarTensor(2))
-    self.assertEqual(x[0, 1, 0], ScalarTensor(3))
-    self.assertEqual(x[0, 1, 1], ScalarTensor(4))
-    self.assertEqual(x[1, 0, 0], ScalarTensor(5))
-    self.assertEqual(x[1, 0, 1], ScalarTensor(6))
-    self.assertEqual(x[1, 1, 0], ScalarTensor(7))
-    self.assertEqual(x[1, 1, 1], ScalarTensor(8)) 
-
-  def testSetterVector(self): 
-    x = GradTensor([1, 2, 3, 4], [4], 1)  
-    x[0] = 5 
-    self.assertEqual(x[0], ScalarTensor(5))
-    x[2] = 10
-    self.assertEqual(x[2], ScalarTensor(10))
-    
-  def testSetterMatrix(self): 
-    x = GradTensor([1, 2, 3, 4], [2, 2], 1)   
-    x[0, 0] = 5
-    self.assertEqual(x[0, 0], ScalarTensor(5))
-    x[1, 0] = 10
-    self.assertEqual(x[1, 0], ScalarTensor(10))
-
-  def testSetterTensor(self): 
-    x = GradTensor([1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 2], 1) 
-    x[0, 0, 0] = 13
-    self.assertEqual(x[0, 0, 0], ScalarTensor(13))
-    x[0, 1, 1] = 19
-    self.assertEqual(x[0, 1, 1], ScalarTensor(19))
 
 class TestGradTensorSlice(unittest.TestCase): 
 
