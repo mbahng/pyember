@@ -2,7 +2,7 @@
 #include "../../Util/utils.h"
 
 GradTensor* GradTensor::copy() const {
-  return new GradTensor(this->_storage, this->_shape, this->_bidx, this->pidx());
+  return new GradTensor(this->_storage, this->_shape, this->bidx, this->pidx());
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
@@ -15,7 +15,7 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
   }
   else { 
     // usually pidx will become meaningless when you reshape it. 
-    GradTensor* out = new GradTensor(_storage, new_shape, _bidx, _pidx);
+    GradTensor* out = new GradTensor(_storage, new_shape, bidx, _pidx);
     return out; 
   }
 }

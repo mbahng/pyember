@@ -8,7 +8,7 @@ Tensor::Tensor(double scalar, bool requires_grad) {
   // Scalar tensor 
   this->_storage = std::vector<double>{scalar}; 
   this->_shape = std::vector<size_t>{1}; 
-  this->_bidx = 0;  
+  this->bidx = 0;  
   this->_bshape = std::vector<size_t>{}; 
   this->_nbshape = std::vector<size_t>{}; 
   this->requires_grad = requires_grad; 
@@ -17,18 +17,18 @@ Tensor::Tensor(double scalar, bool requires_grad) {
 Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
   this->_storage = std::vector<double>(CIntegrity::prod(shape), 0.0); 
   this->_shape = shape; 
-  this->_bidx = bidx; 
-  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
-  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
 }
 
 Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool requires_grad) {
   this->_storage = data; 
   this->_shape = shape;  
-  this->_bidx = bidx; 
-  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
-  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
 }
 
@@ -36,9 +36,9 @@ Tensor::Tensor(std::vector<double> data, size_t bidx, bool requires_grad) {
   this->_storage = data; 
   std::vector<size_t> s = {data.size()};
   this->_shape = s; 
-  this->_bidx = bidx; 
-  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
-  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
 }
 
@@ -51,9 +51,9 @@ Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool requires
     res.insert(res.end(), data[i].begin(), data[i].end()); 
   }
   this->_storage = res;  
-  this->_bidx = bidx; 
-  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
-  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
 }
 
@@ -68,9 +68,9 @@ Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, 
     }
   }
   this->_storage = res;  
-  this->_bidx = bidx; 
-  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
-  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
 }
 

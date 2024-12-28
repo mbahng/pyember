@@ -20,7 +20,7 @@ void init_basetensor_binding(py::module_ &m) {
     .def_property_readonly("shape", &BaseTensor::shape)
     .def_property_readonly("bshape", &BaseTensor::bshape)
     .def_property_readonly("nbshape", &BaseTensor::nbshape)
-    .def_property_readonly("bidx", &BaseTensor::bidx)
+    .def_readwrite("bidx", &BaseTensor::bidx)
     .def_property_readonly("type", &BaseTensor::type)
     .def_property_readonly("dtype", &BaseTensor::dtype)
     .def("is_scalar", &BaseTensor::is_scalar)

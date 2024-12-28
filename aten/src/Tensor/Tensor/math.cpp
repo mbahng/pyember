@@ -10,7 +10,7 @@ Tensor* Tensor::dot(Tensor* other) {
 
   Tensor* res = new Tensor(
     Index::concat(r.b_shape, std::vector<size_t>{1}),
-    std::max(this->bidx(), other->bidx()), 
+    std::max(this->bidx, other->bidx), 
     this->requires_grad || other->requires_grad
   ); 
 
@@ -41,7 +41,7 @@ Tensor* Tensor::dot(Tensor* other) {
 
   res->_backward = [this_ptr, other, res, r] { 
     std::vector<size_t> newshape = Index::concat(r.b_shape, std::vector<size_t>{1}, r.nb_shape); 
-    size_t bidx = std::max(this_ptr->_bidx, other->_bidx); 
+    size_t bidx = std::max(this_ptr->bidx, other->bidx); 
     size_t pidx = bidx + 1 ; 
 
     if (this_ptr->requires_grad) {
@@ -105,7 +105,7 @@ Tensor* Tensor::sum() {
   out->_backward = [this_ptr] { 
     if (this_ptr->requires_grad) {
       std::vector<size_t> newshape = Index::concat(this_ptr->bshape(), {1}, this_ptr->nbshape());
-      this_ptr->grad = new GradTensor(newshape, this_ptr->_bidx, this_ptr->_bidx + 1);  
+      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx, this_ptr->bidx + 1);  
       for (auto i : Index::generate_all_indices(this_ptr->grad->shape())) {
         this_ptr->grad->at(i) = 1.0;
       }
@@ -141,7 +141,7 @@ Tensor* Tensor::pow(double* x) {
   out->_backward = [this_ptr, x_ptr] {  
     if (this_ptr->requires_grad) {
       std::vector<size_t> newshape = Index::concat(this_ptr->shape(), this_ptr->nbshape());
-      this_ptr->grad = new GradTensor(newshape, this_ptr->_bidx, (this_ptr->shape()).size());  
+      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx, (this_ptr->shape()).size());  
 
       for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
         for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {
@@ -174,7 +174,7 @@ Tensor* Tensor::relu() {
         this_ptr->nbshape(), 
         this_ptr->nbshape()
       );
-      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx(), (this_ptr->shape()).size());  
+      this_ptr->grad = new GradTensor(newshape, this_ptr->bidx, (this_ptr->shape()).size());  
 
       for (std::vector<size_t> b : Index::generate_all_indices(this_ptr->bshape())) {
         for (std::vector<size_t> i : Index::generate_all_indices(this_ptr->nbshape())) {

@@ -10,7 +10,6 @@ const std::vector<size_t>& BaseTensor::shape() const { return _shape; }
 const std::vector<size_t> BaseTensor::bshape() const { return _bshape; }
 const std::vector<size_t> BaseTensor::nbshape() const { return _nbshape; }
 const size_t& BaseTensor::size() const { return _size; }
-const size_t& BaseTensor::bidx() const { return _bidx; }
 
 bool BaseTensor::is_scalar() const {
   return ((this->shape()).size() == 0) || CIntegrity::prod(this->shape()) == 1; 
