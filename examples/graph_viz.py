@@ -1,7 +1,6 @@
 import ember 
 import networkx as nx
 import matplotlib.pyplot as plt 
-from pprint import pprint
 
 def rep(t: ember.Tensor): 
   return f"{t.shape}\n{t.grad.shape}"
