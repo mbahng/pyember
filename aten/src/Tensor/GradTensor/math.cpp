@@ -3,7 +3,7 @@
 #include "../../Util/utils.h"
 
 GradTensor* GradTensor::batchsum() {
-  GradTensor* res = new GradTensor(this->nbshape(), 0, this->pidx() - this->_bidx); 
+  GradTensor* res = new GradTensor(this->nbshape(), 0, this->pidx() - this->bidx); 
 
   for (std::vector<size_t> i : Index::generate_all_indices(this->nbshape())) {
     double sum = 0.0; 

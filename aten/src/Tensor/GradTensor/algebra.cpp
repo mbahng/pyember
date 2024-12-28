@@ -40,7 +40,7 @@ GradTensor* GradTensor::add(GradTensor* other) {
   }
 
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx(), other->bidx()), r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx, other->bidx), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
 
   if (this->shape().size() >= other->shape().size()) {  
@@ -68,7 +68,7 @@ GradTensor* GradTensor::sub(GradTensor* other) {
     return this->sub(other->item());
   }
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx(), other->bidx()), r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx, other->bidx), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {  
@@ -97,7 +97,7 @@ GradTensor* GradTensor::mul(GradTensor* other) {
   }
 
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx(), other->bidx()), r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx, other->bidx), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {  
@@ -201,14 +201,14 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
   OIntegrity::Shape r = OIntegrity::matmul_compat(this, other); 
   GradTensor* res = new GradTensor(r.shape, r.b_shape.size(), r.pidx); 
 
-  std::vector<size_t> B = this->bidx() > 0 ? this->bshape() : other->bshape(); 
-  std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin() + this->bidx(), this->shape().begin() + this->pidx()); 
-  std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin() + other->bidx(), other->shape().begin() + other->pidx());
+  std::vector<size_t> B = this->bidx > 0 ? this->bshape() : other->bshape(); 
+  std::vector<size_t> C1 = std::vector<size_t>(this->shape().begin() + this->bidx, this->shape().begin() + this->pidx()); 
+  std::vector<size_t> C2 = std::vector<size_t>(other->shape().begin() + other->bidx, other->shape().begin() + other->pidx());
   std::vector<size_t> C3 = std::vector<size_t>(other->shape().begin() + other->pidx(), other->shape().end()); 
 
   // switch based on batches
 
-  if (this->bidx() == 0 && other->bidx() == 0) {
+  if (this->bidx == 0 && other->bidx == 0) {
     for (std::vector<size_t> i : Index::generate_all_indices(C1)) {
       for (std::vector<size_t> k : Index::generate_all_indices(C3)) { 
         double contraction = 0.0;
@@ -219,7 +219,7 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
       }
     }
   }
-  else if (this->bidx() > 0 && other->bidx() > 0) {
+  else if (this->bidx > 0 && other->bidx > 0) {
     for (std::vector<size_t> b : Index::generate_all_indices(B)) {
       for (std::vector<size_t> i : Index::generate_all_indices(C1)) {
         for (std::vector<size_t> k : Index::generate_all_indices(C3)) { 
@@ -232,7 +232,7 @@ GradTensor* GradTensor::matmul(GradTensor* other) {
       }
     }
   }
-  else if (this->bidx() > 0) {
+  else if (this->bidx > 0) {
     for (std::vector<size_t> b : Index::generate_all_indices(B)) {
       for (std::vector<size_t> i : Index::generate_all_indices(C1)) {
         for (std::vector<size_t> k : Index::generate_all_indices(C3)) { 

@@ -2,7 +2,7 @@
 
 Tensor* Tensor::copy(bool requires_grad) const {
   // does not copy gradients
-  return new Tensor(this->_storage, this->_shape, this->_bidx); 
+  return new Tensor(this->_storage, this->_shape, this->bidx); 
 }
 
 Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool requires_grad) { 

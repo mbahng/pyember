@@ -33,7 +33,6 @@ class BaseTensor {
     std::vector<size_t> _bshape; 
     std::vector<size_t> _nbshape; 
     size_t _rank; 
-    size_t _bidx;  
     size_t _size; 
 
     // helper methods
@@ -46,6 +45,8 @@ class BaseTensor {
                         std::vector<double>& result_storage) const;
 
   public:  
+    size_t bidx;  
+
     // base.cpp  
     const std::vector<double>& storage() const; 
     const size_t rank() const; 
@@ -53,7 +54,6 @@ class BaseTensor {
     const std::vector<size_t>& shape() const;
     const std::vector<size_t> bshape() const; 
     const std::vector<size_t> nbshape() const; 
-    const size_t& bidx() const; 
     const size_t& size() const; 
     virtual std::string type() const;
     virtual std::string dtype() const;
@@ -107,7 +107,7 @@ class GradTensor : public BaseTensor {
 
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override {
       auto base_result = BaseTensor::slice(slices);
-      return std::make_unique<GradTensor>(base_result->storage(), base_result->shape(), this->bidx(), this->pidx());
+      return std::make_unique<GradTensor>(base_result->storage(), base_result->shape(), this->bidx, this->pidx());
     }
 
     // shape.cpp 

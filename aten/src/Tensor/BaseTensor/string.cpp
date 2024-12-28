@@ -67,7 +67,7 @@ BaseTensor::operator std::string() const {
   for (int i = 0; i < _shape.size() - 1; i++) {
     oss << _shape[i] << ", ";
   }
-  oss << _shape[_shape.size()-1] << "), dtype = " << this->dtype() << ", bidx = " << this->_bidx; 
+  oss << _shape[_shape.size()-1] << "), dtype = " << this->dtype() << ", bidx = " << this->bidx; 
   return oss.str();
 }
 

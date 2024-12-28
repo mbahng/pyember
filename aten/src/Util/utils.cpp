@@ -178,19 +178,19 @@ namespace OIntegrity {
   }
 
   Shape matmul_compat(GradTensor* t1, GradTensor* t2) {  
-    if (t1->bidx() > 0 && t2->bidx() > 0) { 
+    if (t1->bidx > 0 && t2->bidx > 0) { 
       if (t1->bshape() != t2->bshape()) {
         throw std::logic_error("You are multiplying two batches. This is not allowed."); 
       }
     } 
 
-    std::vector<size_t> b1 = t1->bidx() > 0 ? t1->bshape() : t2->bshape(); 
+    std::vector<size_t> b1 = t1->bidx > 0 ? t1->bshape() : t2->bshape(); 
 
     std::vector<size_t> s1 = t1->shape(); 
     std::vector<size_t> s2 = t2->shape(); 
-    std::vector<size_t> L1 = std::vector<size_t> (s1.begin() + t1->bidx(), s1.begin() + t1->pidx());
+    std::vector<size_t> L1 = std::vector<size_t> (s1.begin() + t1->bidx, s1.begin() + t1->pidx());
     std::vector<size_t> R1 = std::vector<size_t> (s1.begin() + t1->pidx(), s1.end()); 
-    std::vector<size_t> L2 = std::vector<size_t> (s2.begin() + t2->bidx(), s2.begin() + t2->pidx()); 
+    std::vector<size_t> L2 = std::vector<size_t> (s2.begin() + t2->bidx, s2.begin() + t2->pidx()); 
     std::vector<size_t> R2 = std::vector<size_t> (s2.begin() + t2->pidx(), s2.end()); 
 
     if (R1 != L2) {
