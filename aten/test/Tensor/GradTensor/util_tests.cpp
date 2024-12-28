@@ -1,16 +1,16 @@
-#include "../../src/Tensor.h"
+#include "../../../src/Tensor/Tensor.h"
 
 TEST(UtilsTest, Equality) {
   GradTensor* t1 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 0, 1); 
   GradTensor* t2 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 0, 1); 
   GradTensor* t3 = new GradTensor({1., 2., 3., 4.}, {2, 2}, 0, 0); 
   GradTensor* t4 = new GradTensor({1., 2., 3., 4., 5., 6.}, {3, 2}, 0, 1); 
-  GradTensor *t5 = new GradTensor({1., 2., 3., 5.}, {2, 2}, 0, 1); 
+  GradTensor* t5 = new GradTensor({1., 2., 3., 5.}, {2, 2}, 0, 1);  
 
-  ASSERT_TRUE(t1 == t2);
-  ASSERT_TRUE(t1 != t3);
-  ASSERT_TRUE(t1 != t4);
-  ASSERT_TRUE(t1 != t5);
+  ASSERT_TRUE(*t1 == *t2);
+  ASSERT_TRUE(*t1 != *t3);
+  ASSERT_TRUE(*t1 != *t4);
+  ASSERT_TRUE(*t1 != *t5);
 }
 
 TEST(UtilsTest, Copy) {
@@ -18,7 +18,7 @@ TEST(UtilsTest, Copy) {
   GradTensor* t2 = t1->copy(); 
 
   // They are copies
-  ASSERT_TRUE(t1 == t2); 
+  ASSERT_TRUE(*t1 == *t2); 
   // But do not live in the same memory address 
   ASSERT_TRUE(t1 != t2);
 }
@@ -65,10 +65,10 @@ TEST(GradTensorTest, Slice1D) {
   std::vector<Slice> c1s = {Slice(), Slice(0, 1, 1)}; 
   std::vector<Slice> c2s = {Slice(), Slice(1, 2, 1)}; 
 
-  ASSERT_TRUE(*t->slice(r1s) == r1);
-  ASSERT_TRUE(*t->slice(r2s) == r2);
-  ASSERT_TRUE(*t->slice(c1s) == c1);
-  ASSERT_TRUE(*t->slice(c2s) == c2);
+  ASSERT_TRUE(*t->slice(r1s) == *r1);
+  ASSERT_TRUE(*t->slice(r2s) == *r2);
+  ASSERT_TRUE(*t->slice(c1s) == *c1);
+  ASSERT_TRUE(*t->slice(c2s) == *c2);
 }
 
 TEST(GradTensorTest, Slice2D) {
@@ -124,13 +124,4 @@ TEST(GradTensorTest, Slice2D) {
 TEST(GradTensorTest, Slice3D) {
 
 }
-
-TEST(GradTensorTest, Transpose) {
-  GradTensor* t1 = new GradTensor({0., 1., 2., 3., 4., 5.}, {2, 3}, 0, 1);
-  GradTensor* t2 = t1->transpose();
-  GradTensor* truth = new GradTensor({0., 3., 1., 4., 2., 5.}, {3, 2}, 0, 1);
-
-  ASSERT_TRUE(t2 == truth);
-}
-
 

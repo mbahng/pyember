@@ -1,7 +1,7 @@
 #include <vector> 
 #include <ctime>
 #include "../Tensor.h"
-#include "../utils.h"
+#include "../../Util/utils.h"
 
 GradTensor::GradTensor() {
   this->_storage = std::vector<double>{}; 

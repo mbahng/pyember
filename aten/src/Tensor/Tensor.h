@@ -65,8 +65,8 @@ class BaseTensor {
     virtual std::string meta() const; 
 
     // comparison.cpp
-    virtual bool operator==(BaseTensor* other) const; 
-    virtual bool operator!=(BaseTensor* other) const;  
+    virtual bool operator==(BaseTensor& other) const; 
+    virtual bool operator!=(BaseTensor& other) const;  
  
     // index.cpp
     virtual double at(const std::vector<size_t>& indices) const;
@@ -97,8 +97,8 @@ class GradTensor : public BaseTensor {
     std::string meta() const override; 
 
     // comparison.cpp 
-    bool operator==(GradTensor* other) const; 
-    bool operator!=(GradTensor* other) const;  
+    bool operator==(GradTensor& other) const; 
+    bool operator!=(GradTensor& other) const;  
     // add < and > comparisons
     
     // index.cpp 
@@ -167,8 +167,8 @@ class Tensor : public BaseTensor {
     std::string meta() const override;  
 
     // comparison.cpp
-    bool operator==(Tensor* other) const; 
-    bool operator!=(Tensor* other) const;  
+    bool operator==(Tensor& other) const; 
+    bool operator!=(Tensor& other) const;  
 
     // index.cpp
     double at(const std::vector<size_t>& indices) const override; 

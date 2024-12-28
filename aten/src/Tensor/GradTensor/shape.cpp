@@ -1,5 +1,5 @@
 #include "../Tensor.h"
-#include "../utils.h"
+#include "../../Util/utils.h"
 
 GradTensor* GradTensor::copy() const {
   return new GradTensor(this->_storage, this->_shape, this->_bidx, this->pidx());

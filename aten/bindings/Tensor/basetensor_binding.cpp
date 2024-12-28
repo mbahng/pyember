@@ -1,5 +1,5 @@
-#include "common.hpp"
-#include "../src/Tensor.h"
+#include "../common.hpp"
+#include "../../src/Tensor/Tensor.h"
 
 void init_basetensor_binding(py::module_ &m) {
   py::class_<Slice>(m, "Slice")

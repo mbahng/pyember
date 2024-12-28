@@ -1,7 +1,7 @@
 #include <vector>
 #include <cassert>
 #include "../Tensor.h"
-#include "../utils.h"
+#include "../../Util/utils.h"
 
 Tensor* Tensor::add(double other) {
   // initialize scalar tensor so we can work with gradients

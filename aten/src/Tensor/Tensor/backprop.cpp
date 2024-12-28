@@ -1,5 +1,5 @@
 #include "../Tensor.h" 
-#include "../utils.h" 
+#include "../../Util/utils.h"
 #include <vector> 
 #include <cassert>
 

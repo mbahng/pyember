@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
-#include "Tensor.h"
+#include "../Tensor/Tensor.h"
 
 namespace CIntegrity  {
   // Constructor Integrity

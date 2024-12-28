@@ -1,7 +1,7 @@
 #include <vector>
 #include <cassert> 
 #include "utils.h"
-#include "Tensor.h"
+#include "../Tensor/Tensor.h"
 
 namespace CIntegrity {
   size_t prod(std::vector<size_t> input) {
