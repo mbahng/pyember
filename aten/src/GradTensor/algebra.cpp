@@ -6,24 +6,24 @@
 // Scalar Operations
 GradTensor* GradTensor::add(double other) {
   GradTensor* res = this->copy(); 
-  for (int bi = 0; bi < (this->storage_).size(); ++bi) {
-    res->storage_[bi] += other;
+  for (int bi = 0; bi < (this->_storage).size(); ++bi) {
+    res->_storage[bi] += other;
   }
   return res;
 }
 
 GradTensor* GradTensor::sub(double other) {
   GradTensor* res = this->copy(); 
-  for (int bi = 0; bi < (this->storage_).size(); ++bi) {
-    res->storage_[bi] -= other;
+  for (int bi = 0; bi < (this->_storage).size(); ++bi) {
+    res->_storage[bi] -= other;
   }
   return res;
 }
 
 GradTensor* GradTensor::mul(double other) {
   GradTensor* res = this->copy(); 
-  for (int bi = 0; bi < (this->storage_).size(); ++bi) {
-    res->storage_[bi] *= other;
+  for (int bi = 0; bi < (this->_storage).size(); ++bi) {
+    res->_storage[bi] *= other;
   }
   return res;
 }
@@ -40,20 +40,20 @@ GradTensor* GradTensor::add(GradTensor* other) {
   }
 
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx(), other->bidx()), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
 
   if (this->shape().size() >= other->shape().size()) {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] + other->storage_[i]; 
+        res->_storage[b * bs + i] = this->_storage[b * bs + i] + other->_storage[i]; 
       }
     }
   }
   else {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] + other->storage_[b * bs + i]; 
+        res->_storage[b * bs + i] = this->_storage[i] + other->_storage[b * bs + i]; 
       }
     }
   }
@@ -68,20 +68,20 @@ GradTensor* GradTensor::sub(GradTensor* other) {
     return this->sub(other->item());
   }
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx(), other->bidx()), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
+        res->_storage[b * bs + i] = this->_storage[b * bs + i] - other->_storage[i]; 
       }
     }
   }
   else {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] - other->storage_[b * bs + i]; 
+        res->_storage[b * bs + i] = this->_storage[i] - other->_storage[b * bs + i]; 
       }
     }
   }
@@ -97,20 +97,20 @@ GradTensor* GradTensor::mul(GradTensor* other) {
   }
 
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
-  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx_, other->bidx_), r.pidx); 
+  GradTensor* res = new GradTensor(r.shape, std::max(this->bidx(), other->bidx()), r.pidx); 
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
   if (this->shape().size() >= other->shape().size()) {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
+        res->_storage[b * bs + i] = this->_storage[b * bs + i] * other->_storage[i]; 
       }
     }
   }
   else {
     for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
       for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] * other->storage_[b * bs + i]; 
+        res->_storage[b * bs + i] = this->_storage[i] * other->_storage[b * bs + i]; 
       }
     }
   }
@@ -126,17 +126,17 @@ Tensor* GradTensor::add(Tensor* other) {
   Tensor* res = new Tensor(r.shape);
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
-  if (this->shape().size() >= other->shape().size()) {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] + other->storage_[i]; 
+  if (this->shape().size() >= other->shape().size()) { 
+    for (std::vector<size_t> b : Index::generate_all_indices(this->bshape())) {
+      for (std::vector<size_t> i : Index::generate_all_indices(this->shape())) {
+        res->at(Index::concat(b, i)) = this->at(Index::concat(b, i)) + other->at(i);
       }
     }
   }
   else {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] + other->storage_[b * bs + i]; 
+    for (std::vector<size_t> b : Index::generate_all_indices(other->bshape())) {
+      for (std::vector<size_t> i : Index::generate_all_indices(this->shape())) {
+        res->at(Index::concat(b, i)) = this->at(i) + other->at(Index::concat(b, i));
       }
     }
   }
@@ -149,17 +149,17 @@ Tensor* GradTensor::sub(Tensor* other) {
   Tensor* res = new Tensor(r.shape);
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
-  if (this->shape().size() >= other->shape().size()) {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] - other->storage_[i]; 
+  if (this->shape().size() >= other->shape().size()) { 
+    for (std::vector<size_t> b : Index::generate_all_indices(this->bshape())) {
+      for (std::vector<size_t> i : Index::generate_all_indices(this->shape())) {
+        res->at(Index::concat(b, i)) = this->at(Index::concat(b, i)) - other->at(i);
       }
     }
   }
   else {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] - other->storage_[b * bs + i]; 
+    for (std::vector<size_t> b : Index::generate_all_indices(other->bshape())) {
+      for (std::vector<size_t> i : Index::generate_all_indices(this->shape())) {
+        res->at(Index::concat(b, i)) = this->at(i) - other->at(Index::concat(b, i));
       }
     }
   }
@@ -172,17 +172,17 @@ Tensor* GradTensor::mul(Tensor* other) {
   Tensor* res = new Tensor(r.shape);
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
   
-  if (this->shape().size() >= other->shape().size()) {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) { 
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[b * bs + i] * other->storage_[i]; 
+  if (this->shape().size() >= other->shape().size()) { 
+    for (std::vector<size_t> b : Index::generate_all_indices(this->bshape())) {
+      for (std::vector<size_t> i : Index::generate_all_indices(this->shape())) {
+        res->at(Index::concat(b, i)) = this->at(Index::concat(b, i)) * other->at(i);
       }
     }
   }
   else {
-    for (int b = 0; b < CIntegrity::prod(r.b_shape); b++) {
-      for (int i = 0; i < CIntegrity::prod(r.nb_shape); i++) {
-        res->storage_[b * bs + i] = this->storage_[i] * other->storage_[b * bs + i]; 
+    for (std::vector<size_t> b : Index::generate_all_indices(other->bshape())) {
+      for (std::vector<size_t> i : Index::generate_all_indices(this->shape())) {
+        res->at(Index::concat(b, i)) = this->at(i) * other->at(Index::concat(b, i));
       }
     }
   }

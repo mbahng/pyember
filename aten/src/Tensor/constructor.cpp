@@ -4,94 +4,94 @@
 #include "../Tensor.h" 
 #include "../utils.h"
 
-Tensor::Tensor(double scalar, bool has_grad) {
+Tensor::Tensor(double scalar, bool requires_grad) {
   // Scalar tensor 
-  this->storage_ = std::vector<double>{scalar}; 
-  this->shape_ = std::vector<size_t>{1}; 
-  this->bidx_ = 0;  
-  this->bshape_ = std::vector<size_t>{}; 
-  this->nbshape_ = std::vector<size_t>{}; 
-  this->has_grad_ = has_grad; 
+  this->_storage = std::vector<double>{scalar}; 
+  this->_shape = std::vector<size_t>{1}; 
+  this->_bidx = 0;  
+  this->_bshape = std::vector<size_t>{}; 
+  this->_nbshape = std::vector<size_t>{}; 
+  this->requires_grad = requires_grad; 
 }
 
-Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  this->storage_ = std::vector<double>(CIntegrity::prod(shape), 0.0); 
-  this->shape_ = shape; 
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad_ = has_grad; 
+Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
+  this->_storage = std::vector<double>(CIntegrity::prod(shape), 0.0); 
+  this->_shape = shape; 
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->requires_grad = requires_grad; 
 }
 
-Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  this->storage_ = data; 
-  this->shape_ = shape;  
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad_ = has_grad; 
+Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool requires_grad) {
+  this->_storage = data; 
+  this->_shape = shape;  
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->requires_grad = requires_grad; 
 }
 
-Tensor::Tensor(std::vector<double> data, size_t bidx, bool has_grad) {
-  this->storage_ = data; 
+Tensor::Tensor(std::vector<double> data, size_t bidx, bool requires_grad) {
+  this->_storage = data; 
   std::vector<size_t> s = {data.size()};
-  this->shape_ = s; 
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad_ = has_grad; 
+  this->_shape = s; 
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->requires_grad = requires_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool has_grad) {
+Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool requires_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size()};
   CIntegrity::array_matches_shape(data, shape); 
-  this->shape_ = shape; 
+  this->_shape = shape; 
   std::vector<double> res = {}; 
   for (int i = 0; i < shape[0]; i++) {
     res.insert(res.end(), data[i].begin(), data[i].end()); 
   }
-  this->storage_ = res;  
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad_ = has_grad; 
+  this->_storage = res;  
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->requires_grad = requires_grad; 
 }
 
-Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool has_grad) {
+Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool requires_grad) {
   std::vector<size_t> shape = {data.size(), data[0].size(), data[0][0].size()}; 
   CIntegrity::array_matches_shape(data, shape); 
-  this->shape_ = shape; 
+  this->_shape = shape; 
   std::vector<double> res = {}; 
   for (int i = 0; i < shape[0]; i++) {
     for (int j = 0; j < shape[1]; j++) {
       res.insert(res.end(), data[i][j].begin(), data[i][j].end()); 
     }
   }
-  this->storage_ = res;  
-  this->bidx_ = bidx; 
-  this->bshape_ = std::vector<size_t>(shape_.begin(), shape_.begin() + bidx_);
-  this->nbshape_ = std::vector<size_t>(shape_.begin() + bidx_, shape_.end());
-  this->has_grad_ = has_grad; 
+  this->_storage = res;  
+  this->_bidx = bidx; 
+  this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + _bidx);
+  this->_nbshape = std::vector<size_t>(_shape.begin() + _bidx, _shape.end());
+  this->requires_grad = requires_grad; 
 }
 
-Tensor* Tensor::arange(int start, int stop, int step, bool has_grad) {
-  std::vector<double> storage_ = {}; 
+Tensor* Tensor::arange(int start, int stop, int step, bool requires_grad) {
+  std::vector<double> _storage = {}; 
   for (int i = start; i < stop; i += step) {
-    storage_.push_back(i);
+    _storage.push_back(i);
   }
-  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, 0, has_grad);
+  return new Tensor(_storage, std::vector<size_t>{_storage.size()}, 0, requires_grad);
 }
 
-Tensor* Tensor::linspace(double start, double stop, int numsteps, bool has_grad){
-  std::vector<double> storage_ = {}; 
+Tensor* Tensor::linspace(double start, double stop, int numsteps, bool requires_grad){
+  std::vector<double> _storage = {}; 
   double stepsize = (stop - start) / (numsteps - 1); 
   for (double i = start; i <= stop; i += stepsize) {
-    storage_.push_back(i);
+    _storage.push_back(i);
   }
-  return new Tensor(storage_, std::vector<size_t>{storage_.size()}, 0, has_grad);
+  return new Tensor(_storage, std::vector<size_t>{_storage.size()}, 0, requires_grad);
 }
 
-Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev, size_t bidx, bool has_grad) {
+Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev, size_t bidx, bool requires_grad) {
   // Create a unique seed by combining high-resolution time and a counter
   static std::atomic<unsigned long long> seed_counter{0};
 
@@ -114,10 +114,10 @@ Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev, 
     result[i] = distribution(generator);
   }
 
-  return new Tensor(result, shape, bidx, has_grad);
+  return new Tensor(result, shape, bidx, requires_grad);
 }
 
-Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, size_t bidx, bool has_grad) {
+Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, size_t bidx, bool requires_grad) {
   // (Use the same unique seeding method as in the gaussian function)
   static std::atomic<unsigned long long> seed_counter{0};
 
@@ -134,14 +134,14 @@ Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, size_
     result[i] = distribution(generator);
   }
 
-  return new Tensor(result, shape, bidx, has_grad);
+  return new Tensor(result, shape, bidx, requires_grad);
 }
 
-Tensor* Tensor::ones(std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  return new Tensor(std::vector<double> (CIntegrity::prod(shape), 1.0), shape, bidx, has_grad); 
+Tensor* Tensor::ones(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
+  return new Tensor(std::vector<double> (CIntegrity::prod(shape), 1.0), shape, bidx, requires_grad); 
 }
 
-Tensor* Tensor::zeros(std::vector<size_t> shape, size_t bidx, bool has_grad) {
-  return new Tensor(std::vector<double>(CIntegrity::prod(shape), 0.0), shape, bidx, has_grad); 
+Tensor* Tensor::zeros(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
+  return new Tensor(std::vector<double>(CIntegrity::prod(shape), 0.0), shape, bidx, requires_grad); 
 }
 

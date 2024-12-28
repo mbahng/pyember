@@ -2,100 +2,57 @@
 #include "../src/Tensor.h"
 
 void init_basetensor_binding(py::module_ &m) {
-  py::class_<BaseTensor::Slice>(m, "Slice")
+  py::class_<Slice>(m, "Slice")
     .def(py::init<size_t, size_t, size_t>(),
        py::arg("start") = 0,
        py::arg("stop") = std::numeric_limits<size_t>::max(),
        py::arg("step") = 1)
-    .def_readwrite("start", &BaseTensor::Slice::start)
-    .def_readwrite("stop", &BaseTensor::Slice::stop)
-    .def_readwrite("step", &BaseTensor::Slice::step);
+    .def_readwrite("start", &Slice::start)
+    .def_readwrite("stop", &Slice::stop)
+    .def_readwrite("step", &Slice::step);
 
   py::class_<BaseTensor>(m, "BaseTensor")
-    .def_property("storage",
-        [](const BaseTensor &t) -> const std::vector<double>& { 
-          return t.storage_; 
-        },
-        [](BaseTensor &t, const std::vector<double> &value) { 
-          t.storage_ = value; 
-        }
-      )
-    .def_property("shape",
-        [](const BaseTensor &t) -> const std::vector<size_t>& { 
-          return t.shape_; 
-        },
-        [](BaseTensor &t, const std::vector<size_t> &value) { 
-        t.shape_ = value; 
-        }
-      )
-    .def_property("bshape",
-        [](const BaseTensor &t) -> const std::vector<size_t>& { 
-          return t.bshape_; 
-        },
-        [](BaseTensor &t, const std::vector<size_t> &value) { 
-          t.bshape_ = value; 
-        }
-      )
-    .def_property("nbshape",
-        [](const BaseTensor &t) -> const std::vector<size_t>& { 
-          return t.nbshape_; 
-        },
-        [](BaseTensor &t, const std::vector<size_t> &value) {
-          t.nbshape_ = value; 
-        }
-      )
-    .def_property("bidx",
-        [](const BaseTensor &t) -> const size_t { 
-          return t.bidx_; 
-        },
-        [](BaseTensor &t, const size_t &value) { 
-          t.bidx_ = value;  
-          t.bshape_ = std::vector<size_t>(t.shape_.begin(), t.shape_.begin() + t.bidx_);
-          t.nbshape_ = std::vector<size_t>(t.shape_.begin() + t.bidx_, t.shape_.end());
-        }
-      )
 
-    .def("__repr__", &BaseTensor::operator std::string, py::is_operator()) 
-    .def("__str__", &BaseTensor::operator std::string, py::is_operator())
-    .def("__eq__", &BaseTensor::operator==, py::is_operator())
-    .def("__ne__", &BaseTensor::operator!=, py::is_operator()) 
-    .def("type", &BaseTensor::type, py::is_operator())
-    .def("dtype", &BaseTensor::dtype, py::is_operator())
-    .def("data", &BaseTensor::data, py::is_operator())
-    .def("size", &BaseTensor::shape, py::is_operator())
-    .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at))
-    .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at, py::const_))
-    
+    // base
+    .def_property_readonly("storage", &BaseTensor::storage)
+    .def_property_readonly("rank", &BaseTensor::rank)
+    .def_property_readonly("hdim", &BaseTensor::hdim)
+    .def_property_readonly("shape", &BaseTensor::shape)
+    .def_property_readonly("bshape", &BaseTensor::bshape)
+    .def_property_readonly("nbshape", &BaseTensor::nbshape)
+    .def_property_readonly("bidx", &BaseTensor::bidx)
+    .def_property_readonly("type", &BaseTensor::type)
+    .def_property_readonly("dtype", &BaseTensor::dtype)
+    .def("is_scalar", &BaseTensor::is_scalar)
     .def("item", &BaseTensor::item)
-    .def("__float__", &BaseTensor::item)  // We can reuse item() for float conversion
+    .def("__len__", &BaseTensor::size)
+    .def("__float__", &BaseTensor::item)
     .def("__int__", [](BaseTensor &t) -> int64_t {
         return static_cast<int64_t>(t.item());
     })
+
+    // string
+    .def("__repr__", &BaseTensor::operator std::string, py::is_operator()) 
+    .def("__str__", &BaseTensor::operator std::string, py::is_operator())
+    .def("meta", &BaseTensor::meta)
+
+    // comparison
+    .def("__eq__", &BaseTensor::operator==, py::is_operator())
+    .def("__ne__", &BaseTensor::operator!=, py::is_operator()) 
+
+    // index
+    .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at))
+    .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at, py::const_))
+    
     .def("__index__", [](BaseTensor &t) -> int64_t {
         return static_cast<int64_t>(t.item());
     })
-
-    .def("is_scalar", 
-        [](BaseTensor *a) {
-          return a->is_scalar(); 
-        }
-      )
-    .def("meta", 
-        [](BaseTensor *a) {
-          return a->meta(); 
-        }
-      )
-    .def("__len__", 
-        [](Tensor *a) {
-          return (a->data()).size();
-        }
-      )
 
     .def("__getitem__", [](BaseTensor &t, const py::object &index) -> py::object {
       if (py::isinstance<py::tuple>(index)) {
         // Handle multiple indices
         py::tuple idx_tuple = index.cast<py::tuple>();
-        std::vector<BaseTensor::Slice> slices;
+        std::vector<Slice> slices;
         
         // First, convert all indices to appropriate slices
         for (size_t i = 0; i < t.shape().size(); ++i) {
@@ -107,15 +64,15 @@ void init_basetensor_binding(py::module_ &m) {
               if (!slice.compute(t.shape()[i], &start, &stop, &step, &slicelength)) {
                 throw py::error_already_set();
               }
-              slices.push_back(BaseTensor::Slice(start, stop, step));
+              slices.push_back(Slice(start, stop, step));
             } else {
               // Convert integer index to single-element slice
               size_t idx_val = idx.cast<size_t>();
-              slices.push_back(BaseTensor::Slice(idx_val, idx_val + 1, 1));
+              slices.push_back(Slice(idx_val, idx_val + 1, 1));
             }
           } else {
             // If fewer indices than dimensions, use full slice for remaining dimensions
-            slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
+            slices.push_back(Slice(0, t.shape()[i], 1));
           }
         }
 
@@ -126,11 +83,11 @@ void init_basetensor_binding(py::module_ &m) {
       } else if (py::isinstance<py::int_>(index)) {
         // Single integer index - convert to slice
         size_t idx_val = index.cast<size_t>();
-        std::vector<BaseTensor::Slice> slices;
-        slices.push_back(BaseTensor::Slice(idx_val, idx_val + 1, 1));
+        std::vector<Slice> slices;
+        slices.push_back(Slice(idx_val, idx_val + 1, 1));
         // Add full slices for remaining dimensions
         for (size_t i = 1; i < t.shape().size(); ++i) {
-          slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
+          slices.push_back(Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
         return py::cast(t.slice(slices)); 
@@ -141,11 +98,11 @@ void init_basetensor_binding(py::module_ &m) {
         if (!slice.compute(t.shape()[0], &start, &stop, &step, &slicelength)) {
           throw py::error_already_set();
         }
-        std::vector<BaseTensor::Slice> slices;
-        slices.push_back(BaseTensor::Slice(start, stop, step));
+        std::vector<Slice> slices;
+        slices.push_back(Slice(start, stop, step));
         // Add full slices for remaining dimensions
         for (size_t i = 1; i < t.shape().size(); ++i) {
-          slices.push_back(BaseTensor::Slice(0, t.shape()[i], 1));
+          slices.push_back(Slice(0, t.shape()[i], 1));
         }
         std::unique_ptr<BaseTensor> out = t.slice(slices); 
         return py::cast(t.slice(slices)); 
