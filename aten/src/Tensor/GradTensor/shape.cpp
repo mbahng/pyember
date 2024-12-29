@@ -50,8 +50,7 @@ GradTensor* GradTensor::transpose(size_t d1, size_t d2) {
   }
 
   if ((d1 < this->pidx() && d2 >= this->pidx()) || (d1 >= this->pidx() && d2 < this->pidx())) {
-    res_pidx = 0; 
-    std::cerr << "You are attempting to transpose ranks across the pivot. The pivot will be reset to 0.\n"; 
+    std::cerr << "You are attempting to transpose ranks across the pivot. The pivot is set to the original gradtensor pivot. Proceed with caution.\n"; 
   }
 
   // newshape is divided into 5 parts: before d1, d1, between, d2, after d2 
