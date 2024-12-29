@@ -19,9 +19,9 @@ void init_tensor_binding(py::module_ &m) {
     /*   }, */
     /*   [](Tensor &t, GradTensor *g) { t.grad = g; }) */
     /*  */
-    /*   .def("backprop", &Tensor::backprop,  */
-    /*       py::arg("intermediate") = false  */
-    /*   ) */
+    .def("backprop", &Tensor::backprop, 
+        py::arg("intermediate") = false 
+    )
     .def_readwrite("requires_grad", &Tensor::requires_grad)
 
     // constructor
