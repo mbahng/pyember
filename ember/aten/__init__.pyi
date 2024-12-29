@@ -44,13 +44,13 @@ class GradTensor(BaseTensor):
 
   # constructor
   @overload
-  def __init__(self) -> None: ...
+  def __init__(self, scalar: float) -> None: ...
   @overload
-  def __init__(self, data: List[float], shape: List[int], pivot: int) -> None: ...
+  def __init__(self, storage: List[float], shape: List[int], bidx: int, pidx: int) -> None: ...
   @overload
-  def __init__(self, shape: List[int], pivot: int) -> None: ...
+  def __init__(self, shape: List[int], bidx: int, pidx: int) -> None: ...
   @staticmethod
-  def eye(n: int, pivot: int = 1) -> 'GradTensor': ...
+  def eye(n: int, pidx: int = 1) -> 'GradTensor': ...
 
   # string
   def __str__(self) -> str: ...
@@ -148,7 +148,7 @@ class Tensor(BaseTensor):
   @overload
   def __init__(
     self, 
-    data: List[float], 
+    storage: List[float], 
     shape: List[int], 
     bidx: int = 0, 
     requires_grad: bool = True
@@ -157,7 +157,7 @@ class Tensor(BaseTensor):
   @overload
   def __init__(
     self, 
-    data: List[float], 
+    storage: List[float], 
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> None: ...
@@ -165,7 +165,7 @@ class Tensor(BaseTensor):
   @overload
   def __init__(
     self, 
-    data: List[List[float]], 
+    storage: List[List[float]], 
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> None: ...
@@ -173,7 +173,7 @@ class Tensor(BaseTensor):
   @overload
   def __init__(
     self, 
-    data: List[List[List[float]]],
+    storage: List[List[List[float]]],
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> None: ...
