@@ -10,9 +10,6 @@ void init_gradtensor_binding(py::module_ &m) {
     .def_property_readonly("dtype", &BaseTensor::dtype)
 
     // constructor
-    .def(py::init([]() {
-        return new GradTensor();
-      }))
     .def(py::init([](std::vector<double> data, std::vector<size_t> shape, size_t bidx, size_t pidx) {
         return new GradTensor(data, shape, bidx, pidx);
       }))
@@ -38,6 +35,8 @@ void init_gradtensor_binding(py::module_ &m) {
     // index 
     
     // shape 
+    .def("shallowcopy", &GradTensor::shallowcopy)
+    .def("deepcopy", &GradTensor::deepcopy)
     .def("copy", &GradTensor::copy)
     .def("reshape", 
         static_cast<GradTensor* (GradTensor::*)(std::vector<size_t>, bool)>(&GradTensor::reshape),

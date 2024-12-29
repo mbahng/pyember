@@ -89,7 +89,6 @@ class GradTensor : public BaseTensor {
     std::string dtype() const override; 
 
     // constructor.cpp
-    GradTensor(); 
     GradTensor(double scalar); 
     GradTensor(std::vector<double> storage, std::vector<size_t> shape, size_t bidx, size_t pidx); 
     GradTensor(std::vector<size_t> shape, size_t bidx, size_t pidx); 

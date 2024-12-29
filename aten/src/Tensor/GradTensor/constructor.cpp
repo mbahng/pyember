@@ -3,17 +3,6 @@
 #include "../Tensor.h"
 #include "../../Util/utils.h"
 
-GradTensor::GradTensor() {
-  this->_storage = std::vector<double>{}; 
-  this->_shape = std::vector<size_t>{}; 
-  this->bidx = 0; 
-  this->_bshape = std::vector<size_t>{}; 
-  this->_nbshape = std::vector<size_t>{}; 
-  this->_pidx = 0; 
-  this->_size = 0; 
-  this->_rank = 0; 
-}
-
 GradTensor::GradTensor(double scalar) {
   this->_storage = std::vector<double>{scalar}; 
   this->_shape = std::vector<size_t>{1}; 
