@@ -46,11 +46,11 @@ class TestGradTensorType(unittest.TestCase):
 
   def testType(self): 
     x = GradTensor([1, 2, 3, 4], [2, 2], 1) 
-    self.assertEqual(x.type(), "GradTensor")
+    self.assertEqual(x.type, "GradTensor")
 
   def testDtype(self): 
     x = GradTensor([1, 2, 3, 4], [2, 2], 1) 
-    self.assertEqual(x.dtype(), "double")
+    self.assertEqual(x.dtype, "double")
 
 class TestGradTensorSlice(unittest.TestCase): 
 
