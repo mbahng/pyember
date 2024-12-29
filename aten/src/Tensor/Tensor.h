@@ -124,15 +124,15 @@ class GradTensor : public BaseTensor {
     GradTensor* transpose(const std::vector<size_t>& axes = {});
 
     // algebra.cpp 
-    GradTensor* add(double other); 
-    GradTensor* add(GradTensor* other); 
-    Tensor* add(Tensor* other); 
-    GradTensor* sub(double other); 
-    GradTensor* sub(GradTensor* other); 
-    Tensor* sub(Tensor* other); 
-    GradTensor* mul(double other); 
-    GradTensor* mul(GradTensor* other); 
-    Tensor* mul(Tensor* other); 
+    GradTensor* operator+(double other); 
+    GradTensor* operator+(GradTensor* other); 
+    Tensor* operator+(Tensor* other); 
+    GradTensor* operator-(double other); 
+    GradTensor* operator-(GradTensor* other); 
+    Tensor* operator-(Tensor* other); 
+    GradTensor* operator*(double other); 
+    GradTensor* operator*(GradTensor* other); 
+    Tensor* operator*(Tensor* other); 
     GradTensor* matmul(GradTensor* other); 
 
     // math.cpp
@@ -202,20 +202,20 @@ class Tensor : public BaseTensor {
     std::vector<Tensor*> backprop(bool intermediate); 
 
     // algebra.cpp
-    Tensor* add(double other); 
-    Tensor* add(Tensor* other); 
-    Tensor* add(GradTensor* other); 
-    Tensor* iadd(GradTensor* other); 
+    Tensor* operator+(double other); 
+    Tensor* operator+(Tensor* other); 
+    Tensor* operator+(GradTensor* other); 
+    Tensor* operator+=(GradTensor* other); 
 
-    Tensor* sub(double other); 
-    Tensor* sub(Tensor* other); 
-    Tensor* sub(GradTensor* other); 
-    Tensor* isub(GradTensor* other); 
+    Tensor* operator-(double other); 
+    Tensor* operator-(Tensor* other); 
+    Tensor* operator-(GradTensor* other); 
+    Tensor* operator-=(GradTensor* other); 
 
-    Tensor* mul(double other); 
-    Tensor* mul(Tensor* other); 
-    Tensor* mul(GradTensor* other); 
-    Tensor* imul(GradTensor* other); 
+    Tensor* operator*(double other); 
+    Tensor* operator*(Tensor* other); 
+    Tensor* operator*(GradTensor* other); 
+    Tensor* operator*=(GradTensor* other); 
 
     Tensor* matmul(Tensor* other); 
 

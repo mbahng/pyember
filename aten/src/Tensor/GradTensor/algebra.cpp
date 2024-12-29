@@ -4,7 +4,7 @@
 #include "../../Util/utils.h"
 
 // Scalar Operations
-GradTensor* GradTensor::add(double other) {
+GradTensor* GradTensor::operator+(double other) {
   GradTensor* res = this->copy(); 
   for (int bi = 0; bi < (this->_storage).size(); ++bi) {
     res->_storage[bi] += other;
@@ -12,7 +12,7 @@ GradTensor* GradTensor::add(double other) {
   return res;
 }
 
-GradTensor* GradTensor::sub(double other) {
+GradTensor* GradTensor::operator-(double other) {
   GradTensor* res = this->copy(); 
   for (int bi = 0; bi < (this->_storage).size(); ++bi) {
     res->_storage[bi] -= other;
@@ -20,7 +20,7 @@ GradTensor* GradTensor::sub(double other) {
   return res;
 }
 
-GradTensor* GradTensor::mul(double other) {
+GradTensor* GradTensor::operator*(double other) {
   GradTensor* res = this->copy(); 
   for (int bi = 0; bi < (this->_storage).size(); ++bi) {
     res->_storage[bi] *= other;
@@ -31,12 +31,12 @@ GradTensor* GradTensor::mul(double other) {
 // GradTensor o GradTensor Operations 
 // Used for when we want to modify gradients 
 // This supports adding with Scalar GradTensors for broadcasting 
-GradTensor* GradTensor::add(GradTensor* other) { 
+GradTensor* GradTensor::operator+(GradTensor* other) { 
   if (this->is_scalar()) {
-    return other->add(this->item());
+    return *other + this->item(); 
   }
   else if (other->is_scalar()) {
-    return this->add(other->item());
+    return *this + other->item(); 
   }
 
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
@@ -60,12 +60,12 @@ GradTensor* GradTensor::add(GradTensor* other) {
   return res;
 }
 
-GradTensor* GradTensor::sub(GradTensor* other) {
+GradTensor* GradTensor::operator-(GradTensor* other) {
   if (this->is_scalar()) {
-    return other->sub(this->item());
+    return *other - this->item(); 
   }
   else if (other->is_scalar()) {
-    return this->sub(other->item());
+    return *this - other->item();
   }
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   GradTensor* res = new GradTensor(r.shape, std::max(this->bidx, other->bidx), r.pidx); 
@@ -88,12 +88,12 @@ GradTensor* GradTensor::sub(GradTensor* other) {
   return res;
 }
 
-GradTensor* GradTensor::mul(GradTensor* other) {
+GradTensor* GradTensor::operator*(GradTensor* other) {
   if (this->is_scalar()) {
-    return other->mul(this->item());
+    return *other * this->item(); 
   }
   else if (other->is_scalar()) {
-    return this->mul(other->item());
+    return *this * other->item(); 
   }
 
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
@@ -121,7 +121,7 @@ GradTensor* GradTensor::mul(GradTensor* other) {
 // This should be strictest and should not support Scalar broadcasting 
 // It does support regular broadcasting for when we want to take a batch of 
 // gradients and add it to a tensor
-Tensor* GradTensor::add(Tensor* other) {
+Tensor* GradTensor::operator+(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(r.shape);
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
@@ -144,7 +144,7 @@ Tensor* GradTensor::add(Tensor* other) {
   return res;
 }
 
-Tensor* GradTensor::sub(Tensor* other) {
+Tensor* GradTensor::operator-(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(r.shape);
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 
@@ -167,7 +167,7 @@ Tensor* GradTensor::sub(Tensor* other) {
   return res;
 }
 
-Tensor* GradTensor::mul(Tensor* other) {
+Tensor* GradTensor::operator*(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(r.shape);
   size_t bs = CIntegrity::prod(r.nb_shape); // batch size 

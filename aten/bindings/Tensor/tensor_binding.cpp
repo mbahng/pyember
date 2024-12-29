@@ -134,28 +134,34 @@ void init_tensor_binding(py::module_ &m) {
       )
 
     // algebra 
-    .def("__neg__", [](Tensor *a) { return a->mul(-1.); })
-    .def("__add__", [](Tensor *a, Tensor *b) { return a->add(b); })
-    .def("__radd__", [](Tensor *a, Tensor *b) { return b->add(a); })
-    .def("__add__", [](Tensor *a, GradTensor *b) { return a->add(b); })
-    .def("__radd__", [](Tensor *a, GradTensor *b) { return b->add(a); })
-    .def("__iadd__", [](Tensor *a, GradTensor *b) { return a->iadd(b); })
-    .def("__add__", [](Tensor *a, double b) { return a->add(b); })
-    .def("__radd__", [](Tensor *a, double b) { return a->add(b); })
+    .def("__neg__", [](Tensor *a) { double c = -1.; return *a * c; ; })
 
-    .def("__sub__",  [](Tensor *a, Tensor *b) { return a->sub(b); })
-    .def("__rsub__", [](Tensor *a, Tensor *b) { return b->sub(a); })
-    .def("__sub__", [](Tensor *a, GradTensor *b) { return a->sub(b); })
-    .def("__rsub__", [](Tensor *a, GradTensor *b) { return b->sub(a); })
-    .def("__isub__", [](Tensor *a, GradTensor *b) { return a->isub(b); })
-    .def("__sub__", [](Tensor *a, double b) { return a->sub(b); })
-    .def("__mul__", [](Tensor *a, Tensor *b) { return a->mul(b); })
-    .def("__rmul__", [](Tensor *a, Tensor *b) { return b->mul(a); })
-    .def("__mul__", [](Tensor *a, GradTensor *b) { return a->mul(b); })
-    .def("__rmul__", [](Tensor *a, GradTensor *b) { return b->mul(a); })
-    .def("__imul__", [](Tensor *a, GradTensor *b) { return a->imul(b); })
-    .def("__mul__", [](Tensor *a, double b) { return a->mul(b); })
-    .def("__rmul__", [](Tensor *a, double b) { return a->mul(b); })
+    .def("__add__", [](Tensor *a, Tensor *b) { return *a + b; })
+    .def("__radd__", [](Tensor *a, Tensor *b) { return *b + a; })
+    .def("__add__", [](Tensor *a, GradTensor *b) { return *a + b; })
+    .def("__radd__", [](Tensor *a, GradTensor *b) { return *b + a; })
+    .def("__add__", [](Tensor *a, double b) { return *a + b; })
+    .def("__radd__", [](Tensor *a, double b) { return *a + b; })
+
+    .def("__iadd__", [](Tensor *a, GradTensor *b) { return *a += b; })
+
+    .def("__sub__",  [](Tensor *a, Tensor *b) { return *a - b; })
+    .def("__rsub__", [](Tensor *a, Tensor *b) { return *b - a; })
+    .def("__sub__", [](Tensor *a, GradTensor *b) { return *a - b; })
+    .def("__rsub__", [](Tensor *a, GradTensor *b) { return *b - a; })
+    .def("__sub__", [](Tensor *a, double b) { return *a - b; })
+    // rsub needs to be implemented for doubles
+
+    .def("__isub__", [](Tensor *a, GradTensor *b) { return *a -= b; })
+
+    .def("__mul__", [](Tensor *a, Tensor *b) { return *a * b; })
+    .def("__rmul__", [](Tensor *a, Tensor *b) { return *b * a; })
+    .def("__mul__", [](Tensor *a, GradTensor *b) { return *a * b; })
+    .def("__rmul__", [](Tensor *a, GradTensor *b) { return *b * a; })
+    .def("__mul__", [](Tensor *a, double b) { return *a * b; })
+    .def("__rmul__", [](Tensor *a, double b) { return *a * b; })
+
+    .def("__imul__", [](Tensor *a, GradTensor *b) { return *a *= b; })
 
     .def("matmul", [](Tensor *a, Tensor *b) { return a->matmul(b);  })
     .def("__matmul__", [](Tensor *a, Tensor *b) { return a->matmul(b);  })
