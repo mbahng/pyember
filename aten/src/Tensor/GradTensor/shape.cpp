@@ -1,8 +1,22 @@
 #include "../Tensor.h"
 #include "../../Util/utils.h"
 
+GradTensor* GradTensor::shallowcopy() const {
+  // creates a shallow copy 
+  return new GradTensor(this->_storage, this->_shape, this->bidx, this->pidx()); 
+}
+
+GradTensor* GradTensor::deepcopy() const {
+  // creates a deep copy 
+  std::vector<double> storage = this->_storage; 
+  std::vector<size_t> shape = this->_shape;  
+  size_t bidx = this->bidx; 
+  size_t pidx = this->pidx();
+  return new GradTensor(storage, shape, bidx, pidx); 
+}
+
 GradTensor* GradTensor::copy() const {
-  return new GradTensor(this->_storage, this->_shape, this->bidx, this->pidx());
+  return this->shallowcopy();
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {

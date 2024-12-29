@@ -117,6 +117,8 @@ class GradTensor : public BaseTensor {
     }
 
     // shape.cpp 
+    GradTensor* shallowcopy() const; 
+    GradTensor* deepcopy() const; 
     GradTensor* copy() const; 
     GradTensor* reshape(std::vector<size_t> new_shape, bool inplace = false); 
     GradTensor* transpose(const std::vector<size_t>& axes = {});
@@ -186,6 +188,8 @@ class Tensor : public BaseTensor {
     std::unique_ptr<BaseTensor> slice(const std::vector<Slice>& slices) const override;
 
     // shape.cpp
+    Tensor* shallowcopy(bool requires_grad = true) const; 
+    Tensor* deepcopy(bool requires_grad = true) const; 
     Tensor* copy(bool requires_grad = true) const; 
     Tensor* reshape(std::vector<size_t> new_shape, bool inplace = true, bool requires_grad = true);
     Tensor* squeeze(bool inplace = true, bool requires_grad = true);

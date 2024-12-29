@@ -1,8 +1,21 @@
 #include "../Tensor.h"
 
+Tensor* Tensor::shallowcopy(bool requires_grad) const {
+  // creates a shallow copy 
+  return new Tensor(this->_storage, this->_shape, this->bidx, requires_grad); 
+}
+
+Tensor* Tensor::deepcopy(bool requires_grad) const {
+  // creates a deep copy 
+  std::vector<double> storage = this->_storage; 
+  std::vector<size_t> shape = this->_shape;  
+  size_t bidx = this->bidx; 
+  return new Tensor(storage, shape, bidx, requires_grad); 
+}
+
 Tensor* Tensor::copy(bool requires_grad) const {
-  // does not copy gradients
-  return new Tensor(this->_storage, this->_shape, this->bidx); 
+  // alias for shallow copy
+  return this->shallowcopy(requires_grad);
 }
 
 Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool requires_grad) { 
