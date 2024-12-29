@@ -67,6 +67,10 @@ class BaseTensor {
     // comparison.cpp
     virtual bool operator==(BaseTensor& other) const; 
     virtual bool operator!=(BaseTensor& other) const;  
+    virtual bool operator>(BaseTensor& other) const;  
+    virtual bool operator>=(BaseTensor& other) const;  
+    virtual bool operator<(BaseTensor& other) const;  
+    virtual bool operator<=(BaseTensor& other) const;  
  
     // index.cpp
     virtual double at(const std::vector<size_t>& indices) const;
@@ -99,7 +103,10 @@ class GradTensor : public BaseTensor {
     // comparison.cpp 
     bool operator==(GradTensor& other) const; 
     bool operator!=(GradTensor& other) const;  
-    // add < and > comparisons
+    bool operator>(GradTensor& other) const;  
+    bool operator>=(GradTensor& other) const;  
+    bool operator<(GradTensor& other) const;  
+    bool operator<=(GradTensor& other) const;  
     
     // index.cpp 
     double at(const std::vector<size_t>& indices) const override;
@@ -169,6 +176,10 @@ class Tensor : public BaseTensor {
     // comparison.cpp
     bool operator==(Tensor& other) const; 
     bool operator!=(Tensor& other) const;  
+    bool operator>(Tensor& other) const;  
+    bool operator>=(Tensor& other) const;  
+    bool operator<(Tensor& other) const;  
+    bool operator<=(Tensor& other) const;  
 
     // index.cpp
     double at(const std::vector<size_t>& indices) const override; 
