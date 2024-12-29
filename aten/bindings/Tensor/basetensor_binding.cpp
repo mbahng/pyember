@@ -39,6 +39,10 @@ void init_basetensor_binding(py::module_ &m) {
     // comparison
     .def("__eq__", &BaseTensor::operator==, py::is_operator())
     .def("__ne__", &BaseTensor::operator!=, py::is_operator()) 
+    .def("__lt__", &BaseTensor::operator<, py::is_operator()) 
+    .def("__gt__", &BaseTensor::operator>, py::is_operator()) 
+    .def("__le__", &BaseTensor::operator<=, py::is_operator()) 
+    .def("__ge__", &BaseTensor::operator>=, py::is_operator()) 
 
     // index
     .def("at", py::overload_cast<const std::vector<size_t>&>(&BaseTensor::at))

@@ -30,6 +30,10 @@ void init_gradtensor_binding(py::module_ &m) {
     // comparison
     .def("__eq__", &GradTensor::operator==, py::is_operator())
     .def("__ne__", &GradTensor::operator!=, py::is_operator()) 
+    .def("__lt__", &GradTensor::operator<, py::is_operator()) 
+    .def("__gt__", &GradTensor::operator>, py::is_operator()) 
+    .def("__le__", &GradTensor::operator<=, py::is_operator()) 
+    .def("__ge__", &GradTensor::operator>=, py::is_operator()) 
 
     // index 
     

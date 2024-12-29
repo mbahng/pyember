@@ -97,6 +97,10 @@ void init_tensor_binding(py::module_ &m) {
     // comparison 
     .def("__eq__", &Tensor::operator==, py::is_operator())
     .def("__ne__", &Tensor::operator!=, py::is_operator()) 
+    .def("__lt__", &Tensor::operator<, py::is_operator()) 
+    .def("__gt__", &Tensor::operator>, py::is_operator()) 
+    .def("__le__", &Tensor::operator<=, py::is_operator()) 
+    .def("__ge__", &Tensor::operator>=, py::is_operator()) 
 
     // index 
 
