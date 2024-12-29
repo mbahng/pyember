@@ -117,19 +117,45 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("requires_grad") = true
       )
     .def("transpose", 
-        [](Tensor &a, const std::vector<size_t> &axes, bool inplace = false, bool requires_grad = true) {
-            return a.transpose(axes, inplace, requires_grad);
+        [](Tensor &a, size_t d1, size_t d2, bool requires_grad = true) {
+            return a.transpose(d1, d2, requires_grad);
+        }, 
+        py::arg("d1"), 
+        py::arg("d2"), 
+        py::arg("requires_grad") = true
+      )
+    .def("transpose", 
+        [](Tensor &a, bool requires_grad = true) {
+            return a.transpose(requires_grad);
+        }, 
+        py::arg("requires_grad") = true
+      )
+    .def("transpose", 
+        [](Tensor &a, const std::vector<size_t> &axes, bool requires_grad = true) {
+            return a.transpose(axes, requires_grad);
         }, 
         py::arg("axes") = std::vector<size_t>{1, 0}, 
-        py::arg("inplace") = false,
         py::arg("requires_grad") = true
       )
     .def("T", 
-        [](Tensor &a, const std::vector<size_t> &axes, bool inplace = false, bool requires_grad = true) {
-            return a.transpose(axes, inplace, requires_grad);
+        [](Tensor &a, size_t d1, size_t d2, bool requires_grad = true) {
+            return a.transpose(d1, d2, requires_grad);
+        }, 
+        py::arg("d1"), 
+        py::arg("d2"), 
+        py::arg("requires_grad") = true
+      )
+    .def("T", 
+        [](Tensor &a, bool requires_grad = true) {
+            return a.transpose(requires_grad);
+        }, 
+        py::arg("requires_grad") = true
+      )
+    .def("T", 
+        [](Tensor &a, const std::vector<size_t> &axes, bool requires_grad = true) {
+            return a.transpose(axes, requires_grad);
         },
         py::arg("axes") = std::vector<size_t>{1, 0},
-        py::arg("inplace") = false,
         py::arg("requires_grad") = true
       )
 
