@@ -3,7 +3,7 @@
 #include "../Tensor.h"
 #include "../../Util/utils.h"
 
-Tensor* Tensor::add(double other) {
+Tensor* Tensor::operator+(double other) {
   // initialize scalar tensor so we can work with gradients
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
@@ -47,7 +47,7 @@ Tensor* Tensor::add(double other) {
   return res; 
 }
 
-Tensor* Tensor::sub(double other) {
+Tensor* Tensor::operator-(double other) {
   // initialize scalar tensor so we can work with gradients
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
@@ -91,7 +91,7 @@ Tensor* Tensor::sub(double other) {
   return res; 
 }
 
-Tensor* Tensor::mul(double other) {
+Tensor* Tensor::operator*(double other) {
   // initialize scalar tensor so we can work with gradients
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
@@ -137,7 +137,7 @@ Tensor* Tensor::mul(double other) {
   return res; 
 }
 
-Tensor* Tensor::add(GradTensor* other) { 
+Tensor* Tensor::operator+(GradTensor* other) { 
   // supports batching of Tensor but not GradTensor
 
   if (this->nbshape() != other->nbshape()) {
@@ -170,7 +170,7 @@ Tensor* Tensor::add(GradTensor* other) {
   return res;
 }
 
-Tensor* Tensor::sub(GradTensor* other) {
+Tensor* Tensor::operator-(GradTensor* other) {
   // supports batching of Tensor but not GradTensor
 
   if (this->nbshape() != other->nbshape()) {
@@ -203,7 +203,7 @@ Tensor* Tensor::sub(GradTensor* other) {
   return res;
 }
 
-Tensor* Tensor::mul(GradTensor* other) {
+Tensor* Tensor::operator*(GradTensor* other) {
   // supports batching of Tensor but not GradTensor
 
   if (this->nbshape() != other->nbshape()) {
@@ -236,7 +236,7 @@ Tensor* Tensor::mul(GradTensor* other) {
   return res;
 }
 
-Tensor* Tensor::iadd(GradTensor* other) {
+Tensor* Tensor::operator+=(GradTensor* other) {
   if (this->bidx < other->bidx) {
     throw std::logic_error("You cannot iadd a tensor with a larger batch shape to this.");
   }
@@ -249,7 +249,7 @@ Tensor* Tensor::iadd(GradTensor* other) {
   return this; 
 }
 
-Tensor* Tensor::isub(GradTensor* other) {
+Tensor* Tensor::operator-=(GradTensor* other) {
   if (this->bidx < other->bidx) {
     throw std::logic_error("You cannot iadd a tensor with a larger batch shape to this.");
   }
@@ -262,7 +262,7 @@ Tensor* Tensor::isub(GradTensor* other) {
   return this; 
 }
 
-Tensor* Tensor::imul(GradTensor* other) {
+Tensor* Tensor::operator*=(GradTensor* other) {
   if (this->bidx < other->bidx) {
     throw std::logic_error("You cannot iadd a tensor with a larger batch shape to this.");
   }
@@ -275,7 +275,7 @@ Tensor* Tensor::imul(GradTensor* other) {
   return this; 
 }
 
-Tensor* Tensor::add(Tensor* other) {
+Tensor* Tensor::operator+(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(
     r.shape, 
@@ -333,7 +333,7 @@ Tensor* Tensor::add(Tensor* other) {
   return res; 
 }
 
-Tensor* Tensor::sub(Tensor* other) {
+Tensor* Tensor::operator-(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(
     r.shape, 
@@ -392,7 +392,7 @@ Tensor* Tensor::sub(Tensor* other) {
   return res; 
 }
 
-Tensor* Tensor::mul(Tensor* other) {
+Tensor* Tensor::operator*(Tensor* other) {
   OIntegrity::Shape r = OIntegrity::compat(this, other);  
   Tensor* res = new Tensor(
     r.shape, 

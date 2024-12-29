@@ -114,10 +114,14 @@ TEST(GradTensorTest, Slice2D) {
     std::vector<Slice> c3s = {Slice(), Slice(), Slice(2, 3, 1)};
     std::vector<Slice> c4s = {Slice(), Slice(), Slice(3, 4, 1)};
 
-    /* ASSERT_TRUE(*t.slice(c1s) == c1); */
+    /* ASSERT_TRUE(*t->slice(c1s) == c1); */
     /* ASSERT_TRUE(*t.slice(c2s) == c2); */
     /* ASSERT_TRUE(*t.slice(c3s) == c3); */
-    /* ASSERT_TRUE(*t.slice(c4s) == c4); */
+    /* ASSERT_TRUE(*t.slice(c4s) == c4);  */
+
+    delete t; 
+    delete b1; 
+    delete b2; 
   }
 }
 

@@ -7,7 +7,7 @@ namespace T_Add_T {
   TEST(TensorAlgebraTest, AddTensorVector) {
     Tensor* t1 = Tensor::arange(0, 5);
     Tensor* t2 = Tensor::arange(0, 5); 
-    Tensor* s1 = t1->add(t2);
+    Tensor* s1 = *t1 + t2;
     Tensor* truth_sum = Tensor::arange(0, 10, 2);
     ASSERT_TRUE(*s1 == *truth_sum); 
     s1->backprop(true);
@@ -28,7 +28,7 @@ namespace T_Sub_T {
   TEST(TensorAlgebraTest, SubTensor) {
     Tensor* t1 = Tensor::arange(0, 5);
     Tensor* t2 = Tensor::arange(0, 5); 
-    Tensor* s1 = t1->sub(t2);
+    Tensor* s1 = *t1 - t2;
     Tensor* truth_sum = Tensor::zeros({5});
     
     ASSERT_TRUE(*s1 == *truth_sum); 
