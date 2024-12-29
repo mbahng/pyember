@@ -6,7 +6,7 @@ class Dataloader():
   def __init__(self, dataset: Dataset, batch_size = 1, shuffle = True): 
     self.batch_size = batch_size 
     self.n_batches = len(dataset) // batch_size
-    assert(batch_size < len(dataset))
+    assert(batch_size <= len(dataset))
     self.dataset = dataset 
     self.shuffle = shuffle
     self.idx = 0 
