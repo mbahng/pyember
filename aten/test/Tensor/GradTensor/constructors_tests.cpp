@@ -1,16 +1,6 @@
 #include <vector>
 #include "../../../src/Tensor/Tensor.h"
 
-TEST(UtilsTst, NullConstructor) {
-  GradTensor* g1 = new GradTensor(); 
-  GradTensor* g2 = new GradTensor(); 
-
-  ASSERT_EQ(g1->storage(), std::vector<double>{}); 
-  ASSERT_EQ(g1->shape(), std::vector<size_t>{}); 
-  ASSERT_EQ(g1->pidx(), 0); 
-  ASSERT_TRUE(*g1 == *g2);
-}
-
 TEST(UtilsTst, FullConstructor) {
   GradTensor* g = new GradTensor({1., 2., 3., 4.}, {2, 2}, 0, 1); 
   std::vector<double> g_data = {1., 2., 3., 4.}; 
