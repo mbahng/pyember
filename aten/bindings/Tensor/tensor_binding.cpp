@@ -105,6 +105,8 @@ void init_tensor_binding(py::module_ &m) {
     // index 
 
     // shape 
+    .def("shallowcopy", &Tensor::shallowcopy, py::arg("requires_grad") = true)
+    .def("deepcopy", &Tensor::deepcopy, py::arg("requires_grad") = true)
     .def("copy", &Tensor::copy, py::arg("requires_grad") = true)
     .def("reshape", 
         [](Tensor &a, std::vector<size_t> newshape, bool inplace = true, bool requires_grad = true) {
