@@ -20,9 +20,9 @@ class MSELoss(Loss):
     def __call__(self, y_truth: Tensor, y_pred: Tensor) -> Tensor:  
       if y_truth.shape != y_pred.shape: 
         raise Exception(f"The truth shape {y_truth.shape} and predicted shape {y_pred.shape} are not the same. ")
-      if y_truth.has_grad:
+      if y_truth.requires_grad:
         warnings.warn(f"y_truth does has gradients, which will likely backprop the data. Did you mean to do this?") 
-      if not y_pred.has_grad:
+      if not y_pred.requires_grad:
         warnings.warn(f"y_pred does not have gradients. You won't be able to backprop the model parameters. ")  
       self.y_truth = y_truth
       self.y_pred = y_pred 
