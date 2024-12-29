@@ -44,7 +44,13 @@ void init_gradtensor_binding(py::module_ &m) {
         py::arg("inplace") = false 
       )
     .def("transpose", 
-        static_cast<GradTensor* (GradTensor::*)(const std::vector<size_t> &axes)>(&GradTensor::transpose)
+        static_cast<GradTensor* (GradTensor::*)(const std::vector<size_t>&)>(&GradTensor::transpose)
+      )
+    .def("transpose", 
+        static_cast<GradTensor* (GradTensor::*)(size_t, size_t)>(&GradTensor::transpose)
+      )
+    .def("transpose", 
+        static_cast<GradTensor* (GradTensor::*)()>(&GradTensor::transpose)
       )
 
     // algebra
