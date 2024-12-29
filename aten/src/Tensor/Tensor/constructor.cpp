@@ -12,6 +12,7 @@ Tensor::Tensor(double scalar, bool requires_grad) {
   this->_bshape = std::vector<size_t>{}; 
   this->_nbshape = std::vector<size_t>{}; 
   this->requires_grad = requires_grad; 
+  this->_rank = 0; 
 }
 
 Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
@@ -21,6 +22,7 @@ Tensor::Tensor(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
   this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
+  this->_rank = shape.size(); 
 }
 
 Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx, bool requires_grad) {
@@ -30,16 +32,18 @@ Tensor::Tensor(std::vector<double> data, std::vector<size_t> shape, size_t bidx,
   this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
+  this->_rank = shape.size(); 
 }
 
 Tensor::Tensor(std::vector<double> data, size_t bidx, bool requires_grad) {
   this->_storage = data; 
-  std::vector<size_t> s = {data.size()};
-  this->_shape = s; 
+  std::vector<size_t> shape = {data.size()};
+  this->_shape = shape; 
   this->bidx = bidx; 
   this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
+  this->_rank = shape.size();
 }
 
 Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool requires_grad) {
@@ -55,6 +59,7 @@ Tensor::Tensor(std::vector<std::vector<double>> data, size_t bidx, bool requires
   this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
+  this->_rank = shape.size();
 }
 
 Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, bool requires_grad) {
@@ -72,6 +77,7 @@ Tensor::Tensor(std::vector<std::vector<std::vector<double>>> data, size_t bidx, 
   this->_bshape = std::vector<size_t>(_shape.begin(), _shape.begin() + bidx);
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->requires_grad = requires_grad; 
+  this->_rank = shape.size();
 }
 
 Tensor* Tensor::arange(int start, int stop, int step, bool requires_grad) {

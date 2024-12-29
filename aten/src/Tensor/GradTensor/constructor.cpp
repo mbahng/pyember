@@ -11,6 +11,7 @@ GradTensor::GradTensor() {
   this->_nbshape = std::vector<size_t>{}; 
   this->_pidx = 0; 
   this->_size = 0; 
+  this->_rank = 0; 
 }
 
 GradTensor::GradTensor(double scalar) {
@@ -21,6 +22,7 @@ GradTensor::GradTensor(double scalar) {
   this->_nbshape = std::vector<size_t>{1}; 
   this->_pidx = 0;
   this->_size = 1; 
+  this->_rank = 0; 
 }
 
 GradTensor::GradTensor(std::vector<double> storage, std::vector<size_t> shape, size_t bidx, size_t pidx) { 
@@ -34,6 +36,7 @@ GradTensor::GradTensor(std::vector<double> storage, std::vector<size_t> shape, s
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->_pidx = pidx; 
   this->_size = CIntegrity::prod(shape); 
+  this->_rank = shape.size(); 
 }
 
 GradTensor::GradTensor(std::vector<size_t> shape, size_t bidx, size_t pidx) {
@@ -44,6 +47,7 @@ GradTensor::GradTensor(std::vector<size_t> shape, size_t bidx, size_t pidx) {
   this->_nbshape = std::vector<size_t>(_shape.begin() + bidx, _shape.end());
   this->_pidx = pidx;
   this->_size = CIntegrity::prod(shape); 
+  this->_rank = shape.size(); 
 }
 
 GradTensor* GradTensor::eye(size_t n, size_t bidx, size_t pidx) {
