@@ -1,4 +1,6 @@
 #include "../Tensor.h"
+#include "../../Util/utils.h"
+
 
 Tensor* Tensor::shallowcopy(bool requires_grad) const {
   // creates a shallow copy 
@@ -29,91 +31,84 @@ Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool requir
   }
 }
 
-Tensor* Tensor::transpose(const std::vector<size_t>& axes, bool inplace, bool requires_grad) {
-  // If no axes specified, reverse all dimensions
-  std::vector<size_t> perm_axes = axes;
-  if (perm_axes.empty()) {
-      perm_axes.resize(_shape.size());
-      for (size_t i = 0; i < _shape.size(); ++i) {
-          perm_axes[i] = _shape.size() - 1 - i;
+Tensor* Tensor::transpose(size_t d1, size_t d2, bool requires_grad) {
+  if (d1 >= this->rank() or d2 >= this->rank()) {
+    throw std::invalid_argument("Transposed ranks are out of bounds.");
+  }
+
+  if (d1 < this->bidx or d2 < this->bidx) {
+    // this should be an error
+    throw std::logic_error("You are attempting to transpose the batch ranks. The result bidx will be reset to 0.");
+  }
+  
+  // newshape is divided into 5 parts: before d1, d1, between, d2, after d2 
+  std::vector<size_t> before = std::vector<size_t>(this->shape().begin(), this->shape().begin() + d1);  
+  std::vector<size_t> d1_idx = std::vector<size_t>{this->shape()[d1]};
+  std::vector<size_t> between = std::vector<size_t>(this->shape().begin() + d1 + 1, this->shape().begin() + d2); 
+  std::vector<size_t> d2_idx = std::vector<size_t>{this->shape()[d2]};
+  std::vector<size_t> after = std::vector<size_t>(this->shape().begin() + d2 + 1, this->shape().end());
+
+  Tensor* res = new Tensor(
+    Index::concat(before, d2_idx, between, d1_idx, after), 
+    this->bidx, requires_grad
+  );
+
+  for (auto bef : Index::generate_all_indices(before)) {
+    for (auto _d1 : Index::generate_all_indices(d1_idx)) {
+      for (auto bet : Index::generate_all_indices(between)) {
+        for (auto _d2 : Index::generate_all_indices(d2_idx)) {
+          for (auto aft : Index::generate_all_indices(after)) {
+            res->at(Index::concat(bef, _d2, bet, _d1, aft)) = this->at(Index::concat(bef, _d1, bet, _d2, aft));
+          }
+        }
       }
+    }
   }
-  
-  // Validate axes
-  if (perm_axes.size() != _shape.size()) {
-      throw std::invalid_argument("Number of axes must match tensor dimensions");
-  }
-  
-  // Check for duplicates and valid range
-  std::vector<bool> used(_shape.size(), false);
-  for (size_t axis : perm_axes) {
-      if (axis >= _shape.size()) {
-          throw std::out_of_range("Axis index out of range");
+  res->_prev = std::vector<Tensor*> {}; 
+  if (this->requires_grad) { res->_prev.push_back(this); }
+  Tensor* this_ptr = this; 
+
+  res->_backward = [this_ptr, res, d1, d2] {
+    if (this_ptr->requires_grad) {
+      this_ptr->grad = new GradTensor(
+        Index::concat(this_ptr->bshape(), res->nbshape(), this_ptr->nbshape()), 
+        this_ptr->bidx, 
+        this_ptr->rank() 
+      ); 
+
+      std::vector<size_t> before = std::vector<size_t>(this_ptr->shape().begin() + this_ptr->bidx, this_ptr->shape().begin() + d1);  
+      std::vector<size_t> d1_idx = std::vector<size_t>{this_ptr->shape()[d1]};
+      std::vector<size_t> between = std::vector<size_t>(this_ptr->shape().begin() + d1 + 1, this_ptr->shape().begin() + d2); 
+      std::vector<size_t> d2_idx = std::vector<size_t>{this_ptr->shape()[d2]};
+      std::vector<size_t> after = std::vector<size_t>(this_ptr->shape().begin() + d2 + 1, this_ptr->shape().end());
+
+      for (auto b : Index::generate_all_indices(this_ptr->bshape())) {
+        for (auto bef : Index::generate_all_indices(before)) {
+          for (auto _d1 : Index::generate_all_indices(d1_idx)) {
+            for (auto bet : Index::generate_all_indices(between)) {
+              for (auto _d2 : Index::generate_all_indices(d2_idx)) {
+                for (auto aft : Index::generate_all_indices(after)) {
+                  this_ptr->grad->at(Index::concat(b, 
+                    bef, _d2, bet, _d1, aft, 
+                    bef, _d1, bet, _d2, aft
+                    )) = 1.0;
+                }
+              }
+            }
+          }
+        }
       }
-      if (used[axis]) {
-          throw std::invalid_argument("Duplicate axis in permutation");
-      }
-      used[axis] = true;
-  }
-  
-  // Calculate new shape
-  std::vector<size_t> new_shape(_shape.size());
-  for (size_t i = 0; i < _shape.size(); ++i) {
-      new_shape[i] = _shape[perm_axes[i]];
-  }
-  
-  Tensor* result;
-  if (inplace) {
-      result = this;
-  } else {
-      result = copy(requires_grad);
-  }
-  
-  // Create temporary storage for the transposed data
-  std::vector<double> temp_storage(_storage.size());
-  
-  // Helper function to convert flat index to multidimensional indices
-  auto flat_to_indices = [](size_t flat_idx, const std::vector<size_t>& shape) {
-      std::vector<size_t> indices(shape.size());
-      for (int i = shape.size() - 1; i >= 0; --i) {
-          indices[i] = flat_idx % shape[i];
-          flat_idx /= shape[i];
-      }
-      return indices;
+    }
   };
-  
-  // Helper function to convert multidimensional indices to flat index
-  auto indices_to_flat = [](const std::vector<size_t>& indices, const std::vector<size_t>& shape) {
-      size_t flat_idx = 0;
-      size_t multiplier = 1;
-      for (int i = shape.size() - 1; i >= 0; --i) {
-          flat_idx += indices[i] * multiplier;
-          multiplier *= shape[i];
-      }
-      return flat_idx;
-  };
-  
-  // Perform the transpose
-  for (size_t i = 0; i < _storage.size(); ++i) {
-      // Get original indices
-      std::vector<size_t> orig_indices = flat_to_indices(i, _shape);
-      
-      // Create new indices based on permutation
-      std::vector<size_t> new_indices(_shape.size());
-      for (size_t j = 0; j < _shape.size(); ++j) {
-          new_indices[j] = orig_indices[perm_axes[j]];
-      }
-      
-      // Calculate new flat index and copy data
-      size_t new_flat_idx = indices_to_flat(new_indices, new_shape);
-      temp_storage[new_flat_idx] = _storage[i];
-  }
-  
-  // Update shape and storage
-  result->_shape = new_shape;
-  result->_storage = std::move(temp_storage);
-  
-  return result;
+
+  return res; 
+}
+
+Tensor* Tensor::transpose(bool requires_grad) {
+  return this->transpose(this->rank() - 2, this->rank() - 1);  
+}
+
+Tensor* Tensor::transpose(const std::vector<size_t>& axes, bool requires_grad) {
 }
 
 Tensor* Tensor::squeeze(bool inplace, bool requires_grad) {

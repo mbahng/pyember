@@ -197,7 +197,9 @@ class Tensor : public BaseTensor {
     Tensor* squeeze(bool inplace = true, bool requires_grad = true);
     Tensor* squeeze(size_t dim, bool inplace = true, bool requires_grad = true);
     Tensor* unsqueeze(size_t dim, bool inplace = true, bool requires_grad = true);
-    Tensor* transpose(const std::vector<size_t>& axes = {}, bool inplace = false, bool requires_grad = true);
+    Tensor* transpose(bool requires_grad = true); 
+    Tensor* transpose(size_t d1, size_t d2, bool requires_grad = true); 
+    Tensor* transpose(const std::vector<size_t>& axes = {}, bool requires_grad = true);
 
     // backprop.cpp
     void build_topo(Tensor* v, std::set<Tensor*>& visited, std::vector<Tensor*>& topo); 
