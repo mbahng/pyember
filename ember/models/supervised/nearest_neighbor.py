@@ -13,7 +13,7 @@ class KNearestRegressor(Regression):
       raise Exception("K must be positive.") 
     if weight is None: 
       # set default weights to be just average
-      self.weight = Tensor.ones([K], bidx = 0, has_grad=False) 
+      self.weight = Tensor.ones([K], bidx = 0, requires_grad=False) 
     elif weight.shape != [K]: 
       raise Exception("Input weight should be of shape [K].") 
     else: 
@@ -34,7 +34,7 @@ class KNearestRegressor(Regression):
   @track_access
   def forward(self, X: Tensor) -> Tensor: 
     self.d = self.k_nearest_neighbors(X)
-    res = Tensor.zeros(shape=self._dataset[0][1].shape, bidx=0, has_grad=False) 
+    res = Tensor.zeros(shape=self._dataset[0][1].shape, bidx=0, requires_grad=False) 
     for k in sorted(self.d)[:self.K]: 
       res = res + self.d[k]    # TODO: this is a memory leak, add support for __iadd__ 
     self.z = res * (1/self.K)

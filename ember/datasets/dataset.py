@@ -3,21 +3,21 @@ from .. import Tensor
 class Dataset(): 
 
   def __init__(self, X: Tensor, Y: Tensor) -> None: 
-    if (X.has_grad or Y.has_grad): 
+
+    if X.bidx == 0 or Y.bidx == 0: 
+      raise Exception("You have not set any batch indices. ")
+    if X.bshape != Y.bshape: 
+      raise Exception("The batches of X and Y do not match.")
+
+    if (X.requires_grad or Y.requires_grad): 
       raise Exception("X or Y has gradients and will be backpropagated. Did you mean to do this?")
 
     self.index = 0
     self.X = X 
     self.Y = Y 
-    self.D = X.shape[1:] 
-    self.X.bidx = 1
-    self.Y.bidx = 1
+    self.D = X.nbshape 
 
-    assert self.X.shape[0] == self.Y.shape[0], \
-      f"Length of input ({self.X.shape[0]}) does not \
-       match length of output ({self.Y.shape[0]})."
-
-    self.limit = self.X.shape[0]
+    self.limit = self.X.shape[0] # support an nbatches method
 
   def __len__(self): 
     return self.limit 
@@ -57,12 +57,10 @@ class LinearDataset(Dataset):
     """
     Generates a dummy dataset with targets linear w.r.t. covariates, w/ noise.  
     """
-    X = Tensor.uniform([N, D + 1], 0, 10, has_grad = False) # +1 for bias term 
-    for i in range(N): 
-      X[i, 0] = 1.0 
-    self.truth_param = Tensor.uniform([D + 1, 1], -10, 10, has_grad = False)
-    Y_truth = X @ self.truth_param
-    noise = Tensor.gaussian([N, 1], 0, 1, has_grad=False)
+    X = Tensor.uniform([N, D], 0, 10, bidx = 1, requires_grad = False) # +1 for bias term 
+    self.truth_param = Tensor.uniform([D], -10, 10, bidx = 1, requires_grad = False)
+    Y_truth = X.dot(self.truth_param)
+    noise = Tensor.gaussian([N, 1], 0, 1, requires_grad=False)
     Y = Y_truth + noise
 
     super().__init__(X, Y)
