@@ -20,10 +20,12 @@ GradTensor* GradTensor::copy() const {
 }
 
 GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
-  if (CIntegrity::prod(new_shape) != CIntegrity::prod(this->_shape)) {
+
+  if (CIntegrity::prod(new_shape) != this->size()) {
     throw std::invalid_argument("New shape must have the same total number of elements as the current shape");
   }
-  if (inplace) {
+  if (inplace) { 
+    // should not be used in the computational graph
     this->_shape = new_shape; 
     return this; 
   }
@@ -32,6 +34,54 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
     GradTensor* out = new GradTensor(_storage, new_shape, bidx, _pidx);
     return out; 
   }
+} 
+
+GradTensor* GradTensor::transpose(size_t d1, size_t d2) {
+  if (d1 >= this->rank() or d2 >= this->rank()) {
+    throw std::invalid_argument("Transposed ranks are out of bounds.");
+  }
+
+  size_t res_bidx = this->bidx;
+  size_t res_pidx = this->pidx();
+
+  if (d1 < this->bidx or d2 < this->bidx) {
+    res_bidx = 0; 
+    std::cerr << "You are attempting to transpose the batch ranks. The result bidx will be reset to 0.\n";
+  }
+
+  if ((d1 < this->pidx() && d2 >= this->pidx()) || (d1 >= this->pidx() && d2 < this->pidx())) {
+    res_pidx = 0; 
+    std::cerr << "You are attempting to transpose ranks across the pivot. The pivot will be reset to 0.\n"; 
+  }
+
+  // newshape is divided into 5 parts: before d1, d1, between, d2, after d2 
+  std::vector<size_t> before = std::vector<size_t>(this->shape().begin(), this->shape().begin() + d1);  
+  std::vector<size_t> d1_idx = std::vector<size_t>{this->shape()[d1]};
+  std::vector<size_t> between = std::vector<size_t>(this->shape().begin() + d1 + 1, this->shape().begin() + d2); 
+  std::vector<size_t> d2_idx = std::vector<size_t>{this->shape()[d2]};
+  std::vector<size_t> after = std::vector<size_t>(this->shape().begin() + d2 + 1, this->shape().end());
+
+  GradTensor* res = new GradTensor(
+    Index::concat(before, d2_idx, between, d1_idx, after), 
+    res_bidx, res_pidx
+  );
+
+  for (auto bef : Index::generate_all_indices(before)) {
+    for (auto _d1 : Index::generate_all_indices(d1_idx)) {
+      for (auto bet : Index::generate_all_indices(between)) {
+        for (auto _d2 : Index::generate_all_indices(d2_idx)) {
+          for (auto aft : Index::generate_all_indices(after)) {
+            res->at(Index::concat(bef, _d2, bet, _d1, aft)) = this->at(Index::concat(bef, _d1, bet, _d2, aft));
+          }
+        }
+      }
+    }
+  }
+  return res; 
+}
+
+GradTensor* GradTensor::transpose() { 
+  return this->transpose(this->rank() - 2, this->rank() - 1);  
 }
 
 GradTensor* GradTensor::transpose(const std::vector<size_t>& axes) {

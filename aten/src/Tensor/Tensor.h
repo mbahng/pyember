@@ -121,6 +121,8 @@ class GradTensor : public BaseTensor {
     GradTensor* deepcopy() const; 
     GradTensor* copy() const; 
     GradTensor* reshape(std::vector<size_t> new_shape, bool inplace = false); 
+    GradTensor* transpose(); 
+    GradTensor* transpose(size_t d1, size_t d2); 
     GradTensor* transpose(const std::vector<size_t>& axes = {});
 
     // algebra.cpp 
