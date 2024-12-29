@@ -1,12 +1,12 @@
 import ember 
 
-ds = ember.datasets.LinearDataset(N=20, D=14)
+ds = ember.datasets.LinearDataset(N=20, D=15)
 dl = ember.datasets.Dataloader(ds, batch_size=2)
 model = ember.models.LinearRegression(15) 
 mse = ember.objectives.MSELoss() 
-optim = ember.optimizers.SGDOptimizer(model, 1e-5)
+optim = ember.optimizers.SGDOptimizer(model, 1e-4)
 
-for epoch in range(500): 
+for epoch in range(10000): 
   loss = None
   for x, y in dl: 
     y_ = model.forward(x)  
@@ -14,5 +14,9 @@ for epoch in range(500):
     loss.backprop()
     optim.step()
 
-  if epoch % 25 == 0: 
+  if epoch % 100 == 0: 
+    print("========================================")
     print(loss)
+    print(ds.truth_param.reshape([15])) 
+    print(model.W) 
+    print(model.b)
