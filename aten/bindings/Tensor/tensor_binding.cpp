@@ -7,22 +7,13 @@ void init_tensor_binding(py::module_ &m) {
 
     // base
     .def_property_readonly("prev", &Tensor::prev)
+    .def_readwrite("requires_grad", &Tensor::requires_grad)
+    .def_readwrite("grad", &Tensor::grad)
     .def_property_readonly("type", &Tensor::type)
     .def_property_readonly("dtype", &Tensor::dtype)
-    .def_readwrite("grad", &Tensor::grad)
-    /* .def_property("_grad", */
-    /*   [](const Tensor &t) -> const GradTensor* {  */
-    /*     if (t.grad == nullptr) { */
-    /*       throw std::logic_error("Gradient is not initialized. Call backprop(). "); */
-    /*     } */
-    /*     return t.grad;  */
-    /*   }, */
-    /*   [](Tensor &t, GradTensor *g) { t.grad = g; }) */
-    /*  */
     .def("backprop", &Tensor::backprop, 
         py::arg("intermediate") = false 
     )
-    .def_readwrite("requires_grad", &Tensor::requires_grad)
 
     // constructor
     .def(py::init([](double scalar, bool requires_grad = true) {
@@ -99,8 +90,13 @@ void init_tensor_binding(py::module_ &m) {
       )
 
     // string
+    .def("__repr__", &Tensor::operator std::string, py::is_operator())
+    .def("__str__", &Tensor::operator std::string, py::is_operator())
+    .def("meta", &Tensor::meta)
 
     // comparison 
+    .def("__eq__", &Tensor::operator==, py::is_operator())
+    .def("__ne__", &Tensor::operator!=, py::is_operator()) 
 
     // index 
 
