@@ -21,19 +21,18 @@ Look [here](docs/progress.md) to see the methods it supports.
 
 ### System Support 
 
-This library supports both x86_64/amd64 and arm64/aarch64. Check if your system is supported on the table below. 
+This library supports both x86_64/amd64 and arm64/aarch64. Check if your system is supported out of the box in the table below. The library requires very few dependencies, so as long as your machine supports a C++ compiler and python, you should be able to get it working by fiddling with the CMake and setuptools files. 
 
 |x86_64|Python 3.13|Python 3.12|Python 3.11|Python 3.10|Python 3.9|Python 3.8|Python 3.7|
 |-|-|-|-|-|-|-|-|
-|Ubuntu 24.04               | || | | | | |
-|Ubuntu 22.04               | || | | | | |
-|Ubuntu 20.04               | || | | | | |
+|Ubuntu 24.04               | |✅| | | | | |
+|Ubuntu 22.04               | |✅| | | | | |
+|Ubuntu 20.04               | |✅| | | | | |
 |ArchLinux 6.6.68 LTS       | || | | | | |
 |Debian 13                  | || | | | | |
-|Debian 12                  | || | | | | |
-|Debian 11                  | || | | | | |
-|Debian 10                  | || | | | | |
-|Debian 9                   | || | | | | |
+|Debian 12                  | |✅| | | | | |
+|Debian 11                  | |✅| | | | | |
+|Debian 10                  | |❌| | | | | |
 |LinuxMint 22               | || | | | | |
 |LinuxMint 21               | || | | | | |
 |MacOS 10.15 Catalina       | || | | | | |
@@ -56,7 +55,7 @@ This library supports both x86_64/amd64 and arm64/aarch64. Check if your system 
 |Ubuntu 22.04               | |✅| | | | | |
 |Ubuntu 20.04               | |✅| | | | | |
 |MacOS 15.x Sequoia         | || | | | | |
-|MacOS 14.x Sonoma          | || | | | | |
+|MacOS 14.x Sonoma          | |✅| | | | | |
 |MacOS 13.x Ventura         | || | | | | |
 |MacOS 12.x Monterey        | || | | | | |
 |MacOS 11.x Big Sur         | || | | | | |
