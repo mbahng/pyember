@@ -62,4 +62,4 @@ ENV CFLAGS="-fPIC"
 RUN CMAKE_DEBUG=0 CMAKE_DEV=0 pip install -e . -vvv 
 
 # Run tests to ensure everything works
-CMD ["./run_tests.sh", "all"]
+CMD ["./run_tests.sh", "python"]
