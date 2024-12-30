@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
-from setuptools import Extension, Command
+from setuptools import Extension
 import subprocess
-import os
+import os, glob
 import shutil
 import sysconfig
 
@@ -20,24 +20,11 @@ class CMakeExtension(Extension):
         super().__init__(name, sources=[])
 
 
-class BuildOptions(Command):
-  description = "Set build options"
-  user_options = [
+class CMakeBuildExt(build_ext):
+  user_options = build_ext.user_options + [
     ('debug', None, 'Enable debug mode'),
     ('dev', None, 'Enable development mode'),
   ]
-
-  def initialize_options(self):
-    self.debug = False
-    self.dev = False
-
-  def finalize_options(self):
-    pass
-
-  def run(self):
-    pass
-
-class CMakeBuildExt(build_ext):
 
   def initialize_options(self): 
     super().initialize_options() 
@@ -45,19 +32,28 @@ class CMakeBuildExt(build_ext):
     self.dev = False
 
   def build_extension(self, ext):
-      # Create build directory if it doesn't exist
+    # remove all previous build directories and .so files if they exist
+    for so_file in glob.glob(os.path.join("ember", "*.so")): 
+      os.remove(so_file)
+    if os.path.isdir(os.path.join("aten", "build")): 
+      shutil.rmtree(os.path.join("aten", "build")) 
+    if os.path.isdir(os.path.join("build")): 
+      shutil.rmtree(os.path.join("build"))
+
+    # Create build directory if it doesn't exist
     build_dir = os.path.join("aten", "build")
     os.makedirs(build_dir, exist_ok=True)
+    debug = os.environ.get('CMAKE_DEBUG', '').upper() in ('1', 'ON', 'TRUE', 'YES')
+    dev = os.environ.get('CMAKE_DEV', '').upper() in ('1', 'ON', 'TRUE', 'YES')
 
     # Configure CMake
     cmake_args = [ 
-      '-B', build_dir, 
-      '-S', os.path.join(os.path.dirname(__file__), 'aten'),
-      '-DBUILD_PYTHON_BINDINGS=ON', 
-      f'-DBUILD_DEBUG={"ON" if self.debug else "OFF"}', 
-      f'-DBUILD_DEV={"ON" if self.dev else "OFF"}'        # type: ignore
+                  '-B', build_dir, 
+                  '-S', os.path.join(os.path.dirname(__file__), 'aten'),
+                  '-DBUILD_PYTHON_BINDINGS=ON', 
+                  f'-DBUILD_DEBUG={debug}', 
+                  f'-DBUILD_DEV={dev}'
     ]
-
     print("Building extension...")
     # runs cmake for aten to construct the Makefile
     subprocess.check_call(['cmake'] + cmake_args)
@@ -86,8 +82,7 @@ setup(
     # in the build directory and the source directory 
     ext_modules=[CMakeExtension('ember.aten')], 
     cmdclass={
-      "build_ext" : CMakeBuildExt, 
-      "build_options" : BuildOptions
+      "build_ext" : CMakeBuildExt
     },
     zip_safe=False,
     packages=find_packages(),
