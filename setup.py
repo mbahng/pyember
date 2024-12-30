@@ -35,8 +35,6 @@ class CMakeBuildExt(build_ext):
     # remove all previous build directories and .so files if they exist
     for so_file in glob.glob(os.path.join("ember", "*.so")): 
       os.remove(so_file)
-    if os.path.isdir(os.path.join("aten", "build")): 
-      shutil.rmtree(os.path.join("aten", "build")) 
     if os.path.isdir(os.path.join("build")): 
       shutil.rmtree(os.path.join("build"))
 
@@ -68,9 +66,14 @@ class CMakeBuildExt(build_ext):
     # Get the target location from setuptools
     ext_fullpath = self.get_ext_fullpath(ext.name) 
     os.makedirs(os.path.dirname(ext_fullpath), exist_ok=True)
+    shutil.copy(built_so, ext_fullpath)
     
-    shutil.move(built_so, ext_fullpath)
     print(f"Successfully moved {built_so} to {ext_fullpath}")
+    
+    # the .so file should be moved from ext_fullpath to ember/, but on ubuntu it doesn't 
+    # so we move it manually 
+    shutil.move(built_so, "ember")
+    print(f"Successfully moved {built_so} to ember/")
 
 setup(
     name=package_name,
