@@ -41,7 +41,7 @@ class CMakeBuildExt(build_ext):
       shutil.rmtree(os.path.join("build"))
 
     # Create build directory if it doesn't exist
-    build_dir = os.path.join("aten", "build")
+    build_dir = os.path.join("build")
     os.makedirs(build_dir, exist_ok=True)
     debug = os.environ.get('CMAKE_DEBUG', '').upper() in ('1', 'ON', 'TRUE', 'YES')
     dev = os.environ.get('CMAKE_DEV', '').upper() in ('1', 'ON', 'TRUE', 'YES')
