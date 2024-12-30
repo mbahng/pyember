@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # add option 
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
-option(BUILD_DEBUG "Enable debug build with -g flat" OFF) 
-option(BUILD_DEV "Build developerment/testing files" OFF)
+option(BUILD_DEBUG "Enable debug build with -g flat" ON) 
+option(BUILD_DEV "Build developerment/testing files" ON)
 
 if(BUILD_PYTHON_BINDINGS) 
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Interpreter Development)
@@ -19,6 +19,7 @@ endif()
 add_subdirectory(src)
 
 if (BUILD_DEV) 
+  message(STATUS "Development mode ON")
   FetchContent_Declare(
       googletest
       GIT_REPOSITORY https://github.com/google/googletest.git
@@ -26,12 +27,17 @@ if (BUILD_DEV)
   )
   enable_testing()
   add_subdirectory(test)
+else() 
+  message(STATUS "Development mode OFF")
 endif()
 
-if(BUILD_DEBUG) 
-  set(CMAKE_BUILD_TYPE Debug)
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-endif() 
+if(BUILD_DEBUG)
+    message(STATUS "Debug mode ON")
+    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+else()
+    message(STATUS "Debug mode OFF")
+endif()
 
 if(BUILD_PYTHON_BINDINGS) 
   FetchContent_Declare(

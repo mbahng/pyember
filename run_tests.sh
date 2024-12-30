@@ -23,7 +23,7 @@ run_python_tests() {
 # Function to run C++ tests
 run_cpp_tests() {
     echo "Running C++ tests..."
-    ./build/aten/tests
+    ./aten/build/test/tests
     return $?
 }
 
