@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
-
-find_package(Python 3.12 EXACT REQUIRED COMPONENTS Interpreter Development)
-message(STATUS "Found Python: ${Python_VERSION}")
-
+find_package(pybind11 REQUIRED)
 
 set(BINDING_SOURCES
     aten_binding.cpp
