@@ -18,7 +18,8 @@ RUN apt-get update && \
     libgtest-dev \
     wget \ 
     ca-certificates \
-    pybind11-dev \
+    pybind11-dev \ 
+    libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -40,6 +41,9 @@ ENV PATH="/user/dev/miniconda3/bin:${PATH}"
 # just install conda to base environment
 RUN conda install -y python=${PYTHON_VERSION} && pip install pybind11==2.13.5
 
+# need this for some reason so that ember detects .so file 
+RUN conda install -c conda-forge libstdcxx-ng
+
 # Set the working directory in the container
 WORKDIR /user/dev/pyember
 
@@ -55,7 +59,7 @@ ENV CFLAGS="-fPIC"
 
 # Install Python dependencies and build the package 
 # no debug -g (for lldb) or test modules are needed for production 
-RUN CMAKE_DEBUG=0 CMAKE_DEV=0 pip install . -vvv 
+RUN CMAKE_DEBUG=0 CMAKE_DEV=0 pip install -e . -vvv 
 
 # Run tests to ensure everything works
 CMD ["./run_tests.sh", "all"]
