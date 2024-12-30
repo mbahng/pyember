@@ -1,6 +1,7 @@
 #include <vector> 
 #include <random> 
 #include <ctime>
+#include <chrono>
 #include "../Tensor.h" 
 #include "../../Util/utils.h"
 
