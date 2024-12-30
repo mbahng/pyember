@@ -7,17 +7,17 @@ class TestTensorType(unittest.TestCase):
        x = Tensor([1])
        y = Tensor([1, 2, 3])
        z = Tensor([[2, 3], [4, 5]])
-       self.assertEqual(x.type(), "Tensor")
-       self.assertEqual(y.type(), "Tensor")
-       self.assertEqual(z.type(), "Tensor")
+       self.assertEqual(x.type, "Tensor")
+       self.assertEqual(y.type, "Tensor")
+       self.assertEqual(z.type, "Tensor")
 
    def testDtype(self):
        x = Tensor([1])
        y = Tensor([1, 2, 3])
        z = Tensor([[2, 3], [4, 5]])
-       self.assertEqual(x.dtype(), "double")
-       self.assertEqual(y.dtype(), "double")
-       self.assertEqual(z.dtype(), "double")
+       self.assertEqual(x.dtype, "double")
+       self.assertEqual(y.dtype, "double")
+       self.assertEqual(z.dtype, "double")
 
 class TestTensorEquality(unittest.TestCase):
 
