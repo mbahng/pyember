@@ -1,0 +1,6 @@
+ember.egg-info/
+**/build/
+**/__pycache__/
+**/*.so
+*.DS_store
+
