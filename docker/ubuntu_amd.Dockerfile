@@ -1,11 +1,8 @@
-ARG ARCH=arm64
+ARG ARCH=amd64
 ARG OS_VERSION=22.04
 ARG PYTHON_VERSION=3.12
 FROM ubuntu:${OS_VERSION} 
-ENV MINICONDA_ARCH=aarch64
-RUN if [ "$ARCH" = "amd64" ]; then \
-      ENV MINICONDA_ARCH=x86_64; \
-    fi
+ENV MINICONDA_ARCH=x86_64
 
 # Install minimal system dependencies including CMake, C++ compiler
 RUN apt-get update && \
@@ -16,8 +13,8 @@ RUN apt-get update && \
     g++ \
     git \
     libgtest-dev \
-    wget \ 
     ca-certificates \
+    wget \ 
     pybind11-dev \ 
     libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
@@ -30,11 +27,11 @@ RUN chown -R dev:dev /user/dev
 USER dev
 
 # install conda 
-RUN mkdir -p ~/miniconda3 \ 
+RUN mkdir -p /user/dev/miniconda3 \
     && echo ${MINICONDA_ARCH} \
-    && wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${MINICONDA_ARCH}.sh" -O ~/miniconda3/miniconda.sh \
-    && bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 \
-    && rm ~/miniconda3/miniconda.sh  
+    && wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${MINICONDA_ARCH}.sh" -O /user/dev/miniconda3/miniconda.sh \
+    && bash /user/dev/miniconda3/miniconda.sh -b -u -p /user/dev/miniconda3 \
+    && rm /user/dev/miniconda3/miniconda.sh
 
 ENV PATH="/user/dev/miniconda3/bin:${PATH}"
 
