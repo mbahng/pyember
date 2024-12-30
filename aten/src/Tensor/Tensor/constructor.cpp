@@ -2,6 +2,7 @@
 #include <random> 
 #include <ctime>
 #include <chrono>
+#include <atomic>
 #include "../Tensor.h" 
 #include "../../Util/utils.h"
 
