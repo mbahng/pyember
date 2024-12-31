@@ -9,7 +9,6 @@
 #include <stdexcept>
 #include <cmath> 
 #include <set>
-#include <gtest/gtest.h> 
 
 class Tensor; 
 class GradTensor; 
