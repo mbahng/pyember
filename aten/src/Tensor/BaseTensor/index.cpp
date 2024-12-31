@@ -1,7 +1,6 @@
 #include "../Tensor.h"
 #include <sstream>
 #include <iostream>
-#include <cxxabi.h>
 
 double BaseTensor::at(const std::vector<size_t>& indices) const {
   validate_indices(indices);

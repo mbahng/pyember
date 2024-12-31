@@ -1,5 +1,4 @@
 #include "../Tensor.h"
-#include <cxxabi.h>
 
 bool BaseTensor::operator==(BaseTensor& other) const { 
   if (this->is_scalar() && other.is_scalar()) {

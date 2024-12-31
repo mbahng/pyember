@@ -1,7 +1,6 @@
 #include "../Tensor.h"
 #include "../../Util/utils.h"
 #include <string>
-#include <cxxabi.h>
 
 const std::vector<double>& BaseTensor::storage() const { return _storage; }
 const size_t BaseTensor::rank() const { return _rank; }

@@ -59,7 +59,11 @@ class CMakeBuildExt(build_ext):
     subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release'])
 
     # This is where CMake puts it
-    built_so = os.path.join(build_dir, f"aten{sysconfig.get_config_var('EXT_SUFFIX')}") 
+    if os.name == 'nt':  # Windows
+        built_so = os.path.join(build_dir, 'Release', f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
+    else:  # Linux/Mac
+        built_so = os.path.join(build_dir, f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
+    
     if not os.path.exists(built_so):
       raise RuntimeError(f"Build failed: {built_so} not found!")
 

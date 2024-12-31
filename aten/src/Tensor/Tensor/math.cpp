@@ -118,10 +118,11 @@ Tensor* Tensor::sum(size_t dim) {
   if (dim < this->hdim() || dim < 0) {
     throw std::logic_error("The dimensions you are summing up on is bad.");
   }
+  throw std::logic_error("Not implemented.");
 } 
 
 Tensor* Tensor::sum(std::vector<size_t> dims) {
-
+  throw std::logic_error("Not implemented.");
 } 
 
 Tensor* Tensor::pow(double* x) { 
