@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iomanip>
 #include <functional>
-#include <cxxabi.h>
 
 BaseTensor::operator std::string() const {  
   // recursive call on each row. 

@@ -1,5 +1,8 @@
 ember.egg-info/
 **/build/
 **/__pycache__/
+*.DS_store 
+
+# .so files for *NIX, .pyd files for Windows
 **/*.so
-*.DS_store
+**/*.pyd

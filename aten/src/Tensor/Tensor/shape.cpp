@@ -32,11 +32,11 @@ Tensor* Tensor::reshape(std::vector<size_t> new_shape, bool inplace, bool requir
 }
 
 Tensor* Tensor::transpose(size_t d1, size_t d2, bool requires_grad) {
-  if (d1 >= this->rank() or d2 >= this->rank()) {
+  if (d1 >= this->rank() || d2 >= this->rank()) {
     throw std::invalid_argument("Transposed ranks are out of bounds.");
   }
 
-  if (d1 < this->bidx or d2 < this->bidx) {
+  if (d1 < this->bidx || d2 < this->bidx) {
     // this should be an error
     throw std::logic_error("You are attempting to transpose the batch ranks. The result bidx will be reset to 0.");
   }
@@ -109,6 +109,7 @@ Tensor* Tensor::transpose(bool requires_grad) {
 }
 
 Tensor* Tensor::transpose(const std::vector<size_t>& axes, bool requires_grad) {
+  throw std::logic_error("Not implemented.");
 }
 
 Tensor* Tensor::squeeze(bool inplace, bool requires_grad) {

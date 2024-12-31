@@ -3,6 +3,7 @@
 #include <ctime>
 #include <chrono>
 #include <atomic>
+#include <numeric>
 #include "../Tensor.h" 
 #include "../../Util/utils.h"
 

@@ -37,14 +37,14 @@ GradTensor* GradTensor::reshape(std::vector<size_t> new_shape, bool inplace) {
 } 
 
 GradTensor* GradTensor::transpose(size_t d1, size_t d2) {
-  if (d1 >= this->rank() or d2 >= this->rank()) {
+  if (d1 >= this->rank() || d2 >= this->rank()) {
     throw std::invalid_argument("Transposed ranks are out of bounds.");
   }
 
   size_t res_bidx = this->bidx;
   size_t res_pidx = this->pidx();
 
-  if (d1 < this->bidx or d2 < this->bidx) {
+  if (d1 < this->bidx || d2 < this->bidx) {
     res_bidx = 0; 
     std::cerr << "You are attempting to transpose the batch ranks. The result bidx will be reset to 0.\n";
   }
