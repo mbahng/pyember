@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <cmath> 
 #include <set>
+#include <memory>
+#include <functional> 
 
 class Tensor; 
 class GradTensor; 
