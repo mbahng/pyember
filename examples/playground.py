@@ -1,4 +1,4 @@
-from ember import Tensor, GradTensor
+from ember import Tensor
 
 x = Tensor.gaussian([2, 3]) 
 

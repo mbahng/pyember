@@ -1,6 +1,6 @@
 import ember 
 
-ds = ember.datasets.LinearDataset(N=20, D=14)
+ds = ember.datasets.LinearDataset(N=20, D=15)
 dl = ember.datasets.Dataloader(ds, batch_size=2)
 model = ember.models.MultiLayerPerceptron(15, 10) 
 mse = ember.objectives.MSELoss()
