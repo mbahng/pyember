@@ -24,4 +24,12 @@ keywords = ["machine learning", "autograd", "deep learning", "statistics"]
 [project.urls] 
 Homepage = "https://github.com/mbahng/pyember" 
 
+[tool.setuptools]
+include-package-data = true
 
+[tool.setuptools.packages.find]
+include = ["ember*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"*" = ["*.py", "*.pyi", "*.so"]
