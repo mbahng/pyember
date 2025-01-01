@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools import Extension
 import subprocess
@@ -59,7 +59,7 @@ class CMakeBuildExt(build_ext):
     shutil.move(built_so, "ember")
     print(f"Successfully moved {built_so} to ember/")
 
-packages = ["ember"]
+packages = find_packages()
 
 ember_package_data = [
   "ember/*", 
@@ -80,4 +80,5 @@ setup(
   packages = packages,
   package_data = package_data, 
   ext_modules = [CMakeExtension('ember.aten')], 
+  cmdclass={'build_ext': CMakeBuildExt}
 )
