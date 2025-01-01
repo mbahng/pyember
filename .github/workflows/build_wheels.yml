@@ -45,10 +45,6 @@ jobs:
             PYTHON_INCLUDE_DIR="/opt/hostedtoolcache/Python/3.12.8/x64/include/python3.12"
             PYTHON_LIBRARY="/opt/hostedtoolcache/Python/3.12.8/x64/lib/python3.12"
             CMAKE_ARGS="-DPython_EXECUTABLE=/opt/hostedtoolcache/Python/3.12.8/x64/bin/python3.12"
-          CIBW_ENVIRONMENT_MACOS: >
-            PYTHON_INCLUDE_DIR="$(python3-config --includes)"
-            PYTHON_LIBRARY="$(python3-config --prefix)/lib"
-            CMAKE_PREFIX_PATH="$(python3-config --prefix)"
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
