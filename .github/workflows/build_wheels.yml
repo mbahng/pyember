@@ -40,9 +40,11 @@ jobs:
             yum makecache && \
             yum install -y python3-devel
           CIBW_ENVIRONMENT_LINUX: >
-            Python_ROOT_DIR="/opt/python/cp38-cp38"
-            CMAKE_PREFIX_PATH="/opt/python/cp38-cp38"
-            CMAKE_ARGS="-DPython_EXECUTABLE=$(which python)"
+            Python_ROOT_DIR="/opt/hostedtoolcache/Python/3.12.8/x64"
+            CMAKE_PREFIX_PATH="/opt/hostedtoolcache/Python/3.12.8/x64"
+            PYTHON_INCLUDE_DIR="/opt/hostedtoolcache/Python/3.12.8/x64/include/python3.12"
+            PYTHON_LIBRARY="/opt/hostedtoolcache/Python/3.12.8/x64/lib/python3.12"
+            CMAKE_ARGS="-DPython_EXECUTABLE=/opt/hostedtoolcache/Python/3.12.8/x64/bin/python3.12"
           CIBW_ENVIRONMENT_MACOS: >
             PYTHON_INCLUDE_DIR="$(python3-config --includes)"
             PYTHON_LIBRARY="$(python3-config --prefix)/lib"
