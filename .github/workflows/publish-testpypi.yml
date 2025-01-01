@@ -46,10 +46,21 @@ jobs:
           path: dist/
           skip_unpack: false
 
-      - name: Organize wheels
+      - name: Clean and organize wheels
         run: |
-          find dist -name "*.whl" -exec mv {} dist/ \;
-          echo "Contents of dist after organizing:"
+          # Create a temporary directory
+          mkdir tmp_wheels
+          # Move only .whl files to tmp directory
+          find dist -name "*.whl" -exec mv {} tmp_wheels/ \;
+          # Clean dist directory
+          rm -rf dist
+          mkdir dist
+          # Move wheels back to dist
+          mv tmp_wheels/* dist/
+          # Remove temp directory
+          rm -rf tmp_wheels
+          # Show final contents
+          echo "Final contents of dist:"
           ls -la dist/
         
       - name: Publish wheels to TestPyPI
