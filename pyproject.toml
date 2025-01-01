@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project] 
 name = "pyember" 
-version = "0.0.6"
+version = "0.0.7"
 description = "A statistics and machine learning package." 
 readme = "README.md" 
 authors = [{name = "Muchang Bahng", email = "bahngmc@gmail.com"}] 
