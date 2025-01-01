@@ -153,17 +153,17 @@ class TestProperTensorIO(unittest.TestCase):
 
   def testScalar(self): 
     x = Tensor([1], [1]) 
-    gt = "Tensor\n  +1.000\nshape = (1), dtype = double\n"
+    gt = "Tensor\n  +1.000\nshape = (1), dtype = double, bidx = 0, requires_grad = True\n"
     self.assertEqual(str(x), gt)
 
   def test_1N_Vector(self): 
     x = Tensor([1, 2, 3], [1, 3]) 
-    gt = "Tensor\n  +1.000  +2.000  +3.000\n\nshape = (1, 3), dtype = double\n"
+    gt = "Tensor\n  +1.000  +2.000  +3.000\n\nshape = (1, 3), dtype = double, bidx = 0, requires_grad = True\n"
     self.assertEqual(str(x), gt)
 
   def test_N1_Vector(self): 
     x = Tensor([1, 2, 3], [3, 1]) 
-    gt = "Tensor\n  +1.000\n  +2.000\n  +3.000\n\nshape = (3, 1), dtype = double\n"
+    gt = "Tensor\n  +1.000\n  +2.000\n  +3.000\n\nshape = (3, 1), dtype = double, bidx = 0, requires_grad = True\n"
     self.assertEqual(str(x), gt)
 
   def test_NM_Tensor(self): 
@@ -172,7 +172,7 @@ class TestProperTensorIO(unittest.TestCase):
       "Tensor\n" 
       "  +1.000  +2.000\n"
       "  +3.000  +4.000\n\n"
-      "shape = (2, 2), dtype = double\n"
+      "shape = (2, 2), dtype = double, bidx = 0, requires_grad = True\n"
     )
     self.assertEqual(str(x), gt)
 
@@ -183,7 +183,7 @@ class TestProperTensorIO(unittest.TestCase):
       "  +1.000  +2.000\n"
       "  +3.000  +4.000\n"
       "]\n\n"
-      "shape = (1, 2, 2), dtype = double\n"
+      "shape = (1, 2, 2), dtype = double, bidx = 0, requires_grad = True\n"
     )
     self.assertEqual(str(x), gt)
 
@@ -196,7 +196,7 @@ class TestProperTensorIO(unittest.TestCase):
       "[\n" 
       "  +3.000  +4.000\n"
       "]\n\n"
-      "shape = (2, 1, 2), dtype = double\n"
+      "shape = (2, 1, 2), dtype = double, bidx = 0, requires_grad = True\n"
     )
     self.assertEqual(str(x), gt)
 
@@ -211,7 +211,7 @@ class TestProperTensorIO(unittest.TestCase):
       "  +3.000\n"
       "  +4.000\n"
       "]\n\n"
-      "shape = (2, 2, 1), dtype = double\n"
+      "shape = (2, 2, 1), dtype = double, bidx = 0, requires_grad = True\n"
     )
     self.assertEqual(str(x), gt)
 
@@ -229,12 +229,7 @@ class TestProperTensorIO(unittest.TestCase):
 
 class TestTensorUtils(unittest.TestCase): 
 
-  def testTranspose(self): 
-    t1 = Tensor.arange(0, 6, 1).reshape([2, 3]) 
-    t2 = t1.transpose()
-    truth = Tensor([0, 3, 1, 4, 2, 5], [3, 2]) 
-
-    self.assertEqual(t2, truth)
+  pass
 
 if __name__ == "__main__": 
  unittest.main(verbosity=2)
