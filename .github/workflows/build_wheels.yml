@@ -22,6 +22,10 @@ jobs:
           
       - name: Install dependencies
         run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            sudo apt-get update
+            sudo apt-get install -y python3-dev
+          fi
           python -m pip install --upgrade pip
           pip install "pybind11[global]"  
           pip install cibuildwheel
