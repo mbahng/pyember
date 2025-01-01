@@ -68,7 +68,7 @@ jobs:
       - name: Download all wheels
         uses: actions/download-artifact@v4
         with:
-          pattern: *.whl  # Download wheels from all OS builds
+          pattern: pyember-*.whl  # Download wheels from all OS builds
           path: dist/
           merge-multiple: true  # Merge all wheels into dist directory
           
