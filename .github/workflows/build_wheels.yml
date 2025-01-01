@@ -14,32 +14,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Conda
-        uses: conda-incubator/setup-miniconda@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-          channels: defaults
-          activate-environment: build-env
-          auto-activate-base: false
 
       - name: Install dependencies
-        shell: bash -l {0}
         run: |
-          conda install pybind11 cmake pip
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]"
           pip install cibuildwheel
 
       - name: Build wheels
-        shell: bash -l {0}
         run: |
-          echo "Python version: ${{ matrix.python }}"
-          echo "First digit: ${{ matrix.python[0] }}"
-          echo "Third digit: ${{ matrix.python[2] }}"
-          echo "CIBW_BUILD pattern: cp${{ format('{0}{1}', matrix.python[0], matrix.python[2]) }}-*"
+          # Set Python version for CIBW_BUILD
+          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+          export CIBW_BUILD="cp${PYTHON_VERSION}-*"
+          echo "CIBW_BUILD: $CIBW_BUILD"
           python -m cibuildwheel
         env:
           CIBW_BUILD_VERBOSITY: 1
-          CIBW_BUILD: "cp${{ format('{0}{1}', matrix.python[0], matrix.python[2]) }}-*"
           CIBW_SKIP: "*-win32 *-manylinux_i686 pp*"
 
       - name: Store the wheels
