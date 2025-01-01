@@ -1,0 +1,16 @@
+name: Build Wheels
+
+on: [push, release]
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-14]  # macos-14 for ARM
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pypa/cibuildwheel@v2.16.2
