@@ -1,4 +1,4 @@
-name: Build Wheels
+name: build-wheels-macos-arm64 
 on: 
   push:
     branches: [ main ] 
@@ -28,10 +28,6 @@ jobs:
       
       - name: Build wheels
         run: |
-          # Set Python version for CIBW_BUILD
-          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-          export CIBW_BUILD="cp${PYTHON_VERSION}-*"
-          echo "CIBW_BUILD: $CIBW_BUILD"
           python -m cibuildwheel
         env:
           CIBW_BUILD_VERBOSITY: 1
@@ -43,7 +39,7 @@ jobs:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}
           path: ./wheelhouse/*.whl
           compression-level: 0
-
+  
   publish-to-testpypi:
     needs: build_wheels
     runs-on: ubuntu-latest
