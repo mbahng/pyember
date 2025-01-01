@@ -4,29 +4,42 @@ on:
     workflows: ["build-wheels-macos-arm64"] 
     types: 
       - completed
-    branches: [main] 
+    branches: [main]
 
-jobs: 
-  publish-to-testpypi:
+jobs:
+  verify-artifacts:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts from build workflow
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build-wheels-macos-arm64
+          workflow_conclusion: success
+          path: dist/
+          
+      - name: List wheels
+        run: ls -l dist/
+
+  publish-to-testpypi:
+    needs: verify-artifacts
+    runs-on: ubuntu-latest
     environment:
-      name: testpypi
+      name: testpypi-approval
       url: https://test.pypi.org/project/pyember/
     permissions:
       id-token: write
   
     steps:
-      - name: Download all wheels
-        uses: actions/download-artifact@v4
+      - name: Download artifacts from build workflow
+        uses: dawidd6/action-download-artifact@v2
         with:
-          pattern: wheels-*  # Download wheels from all OS builds
+          workflow: build-wheels-macos-arm64
+          workflow_conclusion: success
           path: dist/
-          merge-multiple: true  # Merge all wheels into dist directory
         
       - name: Publish wheels to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
           verbose: true
-
