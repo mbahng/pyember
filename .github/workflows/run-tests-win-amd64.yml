@@ -25,18 +25,18 @@ jobs:
       - name: Compile aten
         shell: pwsh
         run: |
-          Write-Host "Current directory: $(Get-Location)"
-          Write-Host "Directory contents:"
-          Get-ChildItem
-          
-          Write-Host "Python version:"
-          python --version
-          
-          Write-Host "Pip version:"
-          pip --version
-          
           $env:CMAKE_DEV = 1
           pip install . -vvv
+          
+          # Debug: Check installation
+          Write-Host "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+          
+          Write-Host "Installed files:"
+          Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\${{ matrix.python }}\x64\ember"
+          
+          Write-Host "Checking aten module:"
+          python -c "from ember import aten; print(dir(aten))"
           
       - name: Find and Run CPP tests
         shell: pwsh
@@ -65,7 +65,11 @@ jobs:
           }
           
       - name: Run Python tests 
+        shell: pwsh
         run: | 
+          # Add PYTHONPATH to ensure tests can find the package
+          $env:PYTHONPATH = "."
+          
           python test/GradTensor/algebra_test.py
           python test/GradTensor/constructor_test.py
           python test/GradTensor/util_test.py
