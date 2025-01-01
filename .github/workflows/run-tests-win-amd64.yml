@@ -1,4 +1,4 @@
-name: run-tests-manylinux-arm64
+name: run-tests-win-amd64
 on: 
   push: 
 
@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os:  [ubuntu-latest]
+        os:  [windows-latest]
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +40,5 @@ jobs:
           python test/Tensor/algebra_test.py
           python test/Tensor/constructor_test.py
           python test/Tensor/util_test.py
-
 
 
