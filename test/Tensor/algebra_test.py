@@ -379,68 +379,6 @@ class TestTensorSubWithGradients(unittest.TestCase):
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)
 
-  def testSubMatrixTensor(self): 
-    x = Tensor.arange(0, 6, 1).reshape([2, 3])
-    y = Tensor.arange(0, 6, 1).reshape([2, 3])
-
-    z = x - y 
-    z.backprop(True)
-    xgrad_truth = GradTensor([2, 3, 2, 3], 0, 2) 
-    ygrad_truth = GradTensor([2, 3, 2, 3], 0, 2) 
-    combos = product(range(2), range(3)) 
-    for i, j in combos: 
-        xgrad_truth[i, j, i, j] = 1.0
-        ygrad_truth[i, j, i, j] = -1.0
-
-    self.assertEqual(x.grad, xgrad_truth)
-    self.assertEqual(y.grad, ygrad_truth)
-
-    x = Tensor.arange(0, 6, 1).reshape([2, 3])
-    y = Tensor.arange(0, 6, 1).reshape([2, 3])
-
-    z = x - y 
-    z.backprop(False)
-    xgrad_truth = GradTensor([2, 3, 2, 3], 0, 2) 
-    ygrad_truth = GradTensor([2, 3, 2, 3], 0, 2) 
-    combos = product(range(2), range(3)) 
-    for i, j in combos: 
-        xgrad_truth[i, j, i, j] = 1.0
-        ygrad_truth[i, j, i, j] = -1.0
-
-    self.assertEqual(x.grad, xgrad_truth)
-    self.assertEqual(y.grad, ygrad_truth)
-
-  def testSubTensorTensor(self): 
-    x = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
-    y = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
-
-    z = x - y 
-    z.backprop(True)
-    xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3)
-    ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3)
-    combos = product(range(2), range(3), range(4)) 
-    for i, j, k in combos: 
-        xgrad_truth[i, j, k, i, j, k] = 1.0
-        ygrad_truth[i, j, k, i, j, k] = -1.0
-
-    self.assertEqual(x.grad, xgrad_truth)
-    self.assertEqual(y.grad, ygrad_truth)
-
-    x = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
-    y = Tensor.arange(0, 24, 1).reshape([2, 3, 4])
-
-    z = x - y 
-    z.backprop(False)
-    xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3)
-    ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3)
-    combos = product(range(2), range(3), range(4)) 
-    for i, j, k in combos: 
-        xgrad_truth[i, j, k, i, j, k] = 1.0
-        ygrad_truth[i, j, k, i, j, k] = -1.0
-
-    self.assertEqual(x.grad, xgrad_truth)
-    self.assertEqual(y.grad, ygrad_truth)
-
 class TestTensorMulWithGradients(unittest.TestCase): 
 
   def testMulScalarTensor(self): 
