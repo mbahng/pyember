@@ -2,11 +2,10 @@ name: build-wheels-macos-arm64
 on: 
   push:
     branches: [ main ] 
-  workflow_dispatch: 
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }}-cp${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -28,6 +27,10 @@ jobs:
       
       - name: Build wheels
         run: |
+          # Set Python version for CIBW_BUILD
+          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+          export CIBW_BUILD="cp${PYTHON_VERSION}-*"
+          echo "CIBW_BUILD: $CIBW_BUILD"
           python -m cibuildwheel
         env:
           CIBW_BUILD_VERBOSITY: 1

@@ -1,0 +1,46 @@
+name: Run Tests
+on: 
+  push:
+
+jobs:
+  run_tests:
+    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:  [macos-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]" 
+
+      - name: Run tests 
+        run: | 
+          echo "Running CPP tests..."
+          ./build/test/tests
+          echo "Running Python tests..."
+          python test/BaseTensor/integrity_test.py
+          python test/BaseTensor/util_test.py
+          python test/GradTensor/algebra_test.py
+
+          python test/GradTensor/algebra_test.py
+          python test/GradTensor/constructor_test.py
+          python test/GradTensor/math_test.py
+          python test/GradTensor/util_test.py
+
+          python test/Tensor/algebra_test.py
+          python test/Tensor/constructor_test.py
+          python test/Tensor/grad_test.py
+          python test/Tensor/math_test.py
+          python test/Tensor/util_test.py
+
+
