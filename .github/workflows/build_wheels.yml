@@ -38,7 +38,7 @@ jobs:
           CIBW_ENVIRONMENT: >
             PYTHON_INCLUDE_DIR="$(python3-config --include)"
             PYTHON_LIBRARY="$(python3-config --prefix)/lib"
-            CMAKE_PREFIX_PATH="/opt/python/$(python -c 'import sys; print(f\"cp{sys.version_info.major}{sys.version_info.minor}-cp{sys.version_info.major}{sys.version_info.minor}\")')"
+            CMAKE_PREFIX_PATH="/opt/python/cp$(python3 -c 'import sys; print(f"{sys.version_info.major}{sys.version_info.minor}")')"
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
