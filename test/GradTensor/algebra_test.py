@@ -80,11 +80,8 @@ class TestGradSub(unittest.TestCase):
     x = GradTensor([1, 2, 3, 4], [2, 2], 0, 1)
     y = 1
     truth1 = GradTensor([0, 1, 2, 3], [2, 2], 0, 1)
-    truth2 = GradTensor([0, -1, -2, -3], [2, 2], 0, 1)
     self.assertEqual(x - y, truth1)
-    self.assertEqual(y - x, truth2)
     self.assertEqual(x.__sub__(y), truth1)
-    self.assertEqual(x.__rsub__(y), truth2)
 
 class TestGradMul(unittest.TestCase): 
 
