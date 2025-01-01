@@ -28,7 +28,7 @@ jobs:
     needs: verify-artifacts
     runs-on: ubuntu-latest
     environment:
-      name: testpypi-approval
+      name: testpypi
       url: https://test.pypi.org/project/pyember/
     permissions:
       id-token: write
