@@ -1,6 +1,4 @@
-include setup.py
-include pyproject.toml
-include README.md
+include ember/__init__.py
 recursive-include aten *
 recursive-include ember *.py
 recursive-include ember *.pyi
