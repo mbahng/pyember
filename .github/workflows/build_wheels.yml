@@ -37,6 +37,7 @@ jobs:
           python -m cibuildwheel
         env:
           CIBW_BUILD_VERBOSITY: 1
+          CIBW_BUILD: "cp${{ matrix.python | replace('.', '') }}-*"
           CIBW_SKIP: "*-win32 *-manylinux_i686"
           # Remove the PATH modification from CIBW_ENVIRONMENT
           CIBW_ENVIRONMENT: >
