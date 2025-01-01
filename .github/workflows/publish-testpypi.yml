@@ -23,7 +23,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-win-amd64
-          name: macos-wheels
+          name: windows-wheels 
           workflow_conclusion: success
           path: dist/windows/
           skip_unpack: false
