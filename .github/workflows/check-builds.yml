@@ -1,46 +1,50 @@
 name: check-builds
 on:
-  workflow_run:
-    workflows: ["build-wheels-macos-arm64", "build-wheels-win-amd64"]
-    types:
-      - completed
-    branches: [main]
+ workflow_run:
+   workflows: ["build-wheels-macos-arm64", "build-wheels-win-amd64"]
+   types:
+     - completed
+   branches: [main]
+
+permissions:
+ id-token: write
+ contents: read
 
 jobs:
-  wait-for-builds:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check build statuses
-        id: check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            
-            // Get the latest run for each workflow
-            const macosWorkflow = await github.rest.actions.listWorkflowRuns({
-              owner,
-              repo,
-              workflow_id: 'build-wheels-macos-arm64.yml',
-              branch: 'main',
-              per_page: 1
-            });
-            
-            const windowsWorkflow = await github.rest.actions.listWorkflowRuns({
-              owner,
-              repo,
-              workflow_id: 'build-wheels-win-amd64.yml',
-              branch: 'main',
-              per_page: 1
-            });
-            
-            // Check if both builds succeeded
-            const macosSuccess = macosWorkflow.data.workflow_runs[0]?.conclusion === 'success';
-            const windowsSuccess = windowsWorkflow.data.workflow_runs[0]?.conclusion === 'success';
-            
-            core.setOutput('builds_succeeded', macosSuccess && windowsSuccess);
+ wait-for-builds:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Check build statuses
+       id: check
+       uses: actions/github-script@v7
+       with:
+         script: |
+           const { owner, repo } = context.repo;
+           
+           const macosWorkflow = await github.rest.actions.listWorkflowRuns({
+             owner,
+             repo,
+             workflow_id: 'build-wheels-macos-arm64.yml',
+             branch: 'main',
+             per_page: 1
+           });
+           
+           const windowsWorkflow = await github.rest.actions.listWorkflowRuns({
+             owner,
+             repo,
+             workflow_id: 'build-wheels-win-amd64.yml',
+             branch: 'main',
+             per_page: 1
+           });
+           
+           const macosSuccess = macosWorkflow.data.workflow_runs[0]?.conclusion === 'success';
+           const windowsSuccess = windowsWorkflow.data.workflow_runs[0]?.conclusion === 'success';
+           
+           core.setOutput('builds_succeeded', macosSuccess && windowsSuccess);
 
-  trigger-publish:
-    needs: wait-for-builds
-    if: needs.wait-for-builds.outputs.builds_succeeded == 'true'
-    uses: ./.github/workflows/publish-testpypi.yml
+ trigger-publish:
+   needs: wait-for-builds
+   if: needs.wait-for-builds.outputs.builds_succeeded == 'true'
+   permissions:
+     id-token: write
+   uses: ./.github/workflows/publish-testpypi.yml
