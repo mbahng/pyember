@@ -1,5 +1,4 @@
 [build-system]
-# packages required to BUILD my project
 requires = [
   "setuptools>=45", 
   "wheel", 
@@ -14,8 +13,7 @@ version = "0.0.7"
 description = "A statistics and machine learning package." 
 readme = "README.md" 
 authors = [{name = "Muchang Bahng", email = "bahngmc@gmail.com"}] 
-requires-python = ">=3.12" 
-# packages required to RUN my project
+requires-python = ">=3.9" 
 dependencies = [
   "pybind11>=2.10.0"
 ]

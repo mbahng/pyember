@@ -11,10 +11,10 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 option(BUILD_DEBUG "Enable debug build with -g flat" ON) 
 option(BUILD_DEV "Build developerment/testing files" ON)
 
-if(BUILD_PYTHON_BINDINGS) 
-  find_package(Python 3.12 EXACT REQUIRED COMPONENTS Interpreter Development)
+if(BUILD_PYTHON_BINDINGS)
+  find_package(Python 3.9 REQUIRED COMPONENTS Interpreter Development)
   message(STATUS "Found Python: ${Python_VERSION}")
-endif() 
+endif()
 
 add_subdirectory(src)
 

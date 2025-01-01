@@ -7,12 +7,13 @@ import shutil
 import sysconfig
 
 class CMakeExtension(Extension):
-    def __init__(self, name):  # Fixed initialization
+    def __init__(self, name): 
         super().__init__(name, sources=[])
 
 class CMakeBuildExt(build_ext):
 
   def run(self):
+    # a bit of a hacky way to do it
     # Create all necessary directories first
     ember_dirs = [
         os.path.join(self.build_lib, 'ember'),
