@@ -36,9 +36,9 @@ jobs:
           CIBW_BEFORE_ALL_LINUX: |
             yum install -y python3-devel
           CIBW_ENVIRONMENT: >
-            PYTHON_INCLUDE_DIR="$(python3-config --include)"
-            PYTHON_LIBRARY="$(python3-config --prefix)/lib"
-            CMAKE_PREFIX_PATH="/opt/python/cp$(python3 -c 'import sys; print(f"{sys.version_info.major}{sys.version_info.minor}")')"
+            PYTHON_INCLUDE_DIR="$(/opt/python/cp38-cp38/bin/python3-config --includes)"
+            PYTHON_LIBRARY="$(/opt/python/cp38-cp38/bin/python3-config --prefix)/lib"
+            CMAKE_PREFIX_PATH="/opt/python/cp38-cp38"
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
