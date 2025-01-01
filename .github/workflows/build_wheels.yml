@@ -22,10 +22,6 @@ jobs:
           
       - name: Install dependencies
         run: |
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            sudo apt-get update
-            sudo apt-get install -y python3-dev
-          fi
           python -m pip install --upgrade pip
           pip install "pybind11[global]"  
           pip install cibuildwheel
@@ -36,6 +32,9 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           # Optional: Skip 32-bit builds
           CIBW_SKIP: "*-win32 *-manylinux_i686"
+          CIBW_BEFORE_ALL_LINUX: |
+            yum install -y python3-devel || 
+            apt-get update && apt-get install -y python3-dev  
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
