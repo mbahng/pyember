@@ -61,10 +61,6 @@ class CMakeBuildExt(build_ext):
 
 packages = find_packages() 
 packages.append("ember.aten")
-print("===================")
-for p in packages: 
-  print(p)
-print("===================")
 
 ember_package_data = [
   "ember/*", 
