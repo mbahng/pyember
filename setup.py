@@ -59,7 +59,11 @@ class CMakeBuildExt(build_ext):
     shutil.move(built_so, "ember")
     print(f"Successfully moved {built_so} to ember/")
 
-packages = find_packages()
+packages = find_packages() 
+print("===================")
+for p in packages: 
+  print(p)
+print("===================")
 
 ember_package_data = [
   "ember/*", 
