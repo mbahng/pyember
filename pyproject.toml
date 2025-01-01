@@ -1,0 +1,27 @@
+[build-system]
+# packages required to BUILD my project
+requires = [
+  "setuptools>=45", 
+  "wheel", 
+  "pybind11>=2.10"
+]
+# tells pip to use setuptools, which runs setup.py
+build-backend = "setuptools.build_meta"
+
+[project] 
+name = "pyember" 
+version = "0.0.2" 
+description = "A statistics and machine learning package." 
+readme = "README.md" 
+authors = [{name = "Muchang Bahng", email = "bahngmc@gmail.com"}] 
+requires-python = ">=3.12" 
+# packages required to RUN my project
+dependencies = [
+  "pybind11>=2.10.0"
+]
+keywords = ["machine learning", "autograd", "deep learning", "statistics"] 
+
+[project.urls] 
+Homepage = "https://github.com/mbahng/pyember" 
+
+

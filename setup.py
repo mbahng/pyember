@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools import Extension
 import subprocess
@@ -6,31 +6,11 @@ import os, glob
 import shutil
 import sysconfig
 
-package_name = "ember"
-version = "0.0.1"
-description = "Lightweight ML library for my personal use."
-author = "Muchang Bahng"
-author_email = "bahngmc@gmail.com"
-install_requires = [
-    "pybind11>=2.10.0",
-]
-
 class CMakeExtension(Extension):
     def __init__(self, name):  # Fixed initialization
         super().__init__(name, sources=[])
 
-
 class CMakeBuildExt(build_ext):
-  user_options = build_ext.user_options + [
-    ('debug', None, 'Enable debug mode'),
-    ('dev', None, 'Enable development mode'),
-  ]
-
-  def initialize_options(self): 
-    super().initialize_options() 
-    self.debug = False 
-    self.dev = False
-
   def build_extension(self, ext):
     # remove all previous build directories and .so files if they exist
     for so_file in glob.glob(os.path.join("ember", "*.so")): 
@@ -60,7 +40,7 @@ class CMakeBuildExt(build_ext):
 
     # This is where CMake puts it
     if os.name == 'nt':  # Windows
-        built_so = os.path.join(build_dir, 'Release', f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
+        built_so = os.path.join(build_dir, 'Release', f"aten{sysconfig.get_config_var('EXT_SUFFIX')}") 
     else:  # Linux/Mac
         built_so = os.path.join(build_dir, f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
     
@@ -79,21 +59,25 @@ class CMakeBuildExt(build_ext):
     shutil.move(built_so, "ember")
     print(f"Successfully moved {built_so} to ember/")
 
-setup(
-    name=package_name,
-    version=version,
-    description=description,
-    author=author,
-    author_email=author_email,
-    # build/ext_modules is where we move the .so to both 
-    # in the build directory and the source directory 
-    ext_modules=[CMakeExtension('ember.aten')], 
-    cmdclass={
-      "build_ext" : CMakeBuildExt
-    },
-    zip_safe=False,
-    packages=find_packages(),
-    python_requires=">= 3.12.0",
-    install_requires=install_requires,
-    setup_requires=["pybind11>=2.10.0"]
+packages = ["ember"]
+
+ember_package_data = [
+  "ember/*", 
+  "ember/aten/*",
+  "ember/datasets/*", 
+  "ember/models/*", 
+  "ember/models/supervised/*", 
+  "ember/models/unsupervised/*", 
+  "ember/objectives/*", 
+  "ember/optimizers/*", 
+  "ember/samplers/*"
+]
+package_data = {
+  "ember" : ember_package_data
+}
+
+setup( 
+  packages = packages,
+  package_data = package_data, 
+  ext_modules = [CMakeExtension('ember.aten')], 
 )
