@@ -40,8 +40,8 @@ jobs:
             yum makecache && \
             yum install -y python3-devel
           CIBW_ENVIRONMENT_LINUX: >
-            Python_ROOT_DIR="/opt/python/$(python -c 'import sys; print(f\"cp{sys.version_info.major}{sys.version_info.minor}-cp{sys.version_info.major}{sys.version_info.minor}\")')"
-            CMAKE_PREFIX_PATH="/opt/python/$(python -c 'import sys; print(f\"cp{sys.version_info.major}{sys.version_info.minor}-cp{sys.version_info.major}{sys.version_info.minor}\")')"
+            Python_ROOT_DIR="/opt/python/cp38-cp38"
+            CMAKE_PREFIX_PATH="/opt/python/cp38-cp38"
             CMAKE_ARGS="-DPython_EXECUTABLE=$(which python)"
           CIBW_ENVIRONMENT_MACOS: >
             PYTHON_INCLUDE_DIR="$(python3-config --includes)"
