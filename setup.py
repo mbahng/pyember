@@ -62,17 +62,18 @@ class CMakeBuildExt(build_ext):
 packages = find_packages() 
 packages.append("ember.aten")
 
-ember_package_data = [
-  "ember/*", 
-  "ember/aten/*",
-  "ember/datasets/*", 
-  "ember/models/*", 
-  "ember/models/supervised/*", 
-  "ember/models/unsupervised/*", 
-  "ember/objectives/*", 
-  "ember/optimizers/*", 
-  "ember/samplers/*"
-]
+ember_package_data = ["*"]
+# [
+#   "ember/*", 
+#   "ember/aten/*",
+#   "ember/datasets/*", 
+#   "ember/models/*", 
+#   "ember/models/supervised/*", 
+#   "ember/models/unsupervised/*", 
+#   "ember/objectives/*", 
+#   "ember/optimizers/*", 
+#   "ember/samplers/*"
+# ]
 package_data = {
   "ember" : ember_package_data
 }
@@ -81,5 +82,7 @@ setup(
   packages = packages,
   package_data = package_data, 
   ext_modules = [CMakeExtension('ember.aten')], 
-  cmdclass={'build_ext': CMakeBuildExt}
+  cmdclass={'build_ext': CMakeBuildExt},
+  zip_safe = False, 
+  include_package_data = True
 )
