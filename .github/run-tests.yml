@@ -1,0 +1,167 @@
+name: run-tests
+on: 
+  push: 
+jobs:
+  run-macos-tests:
+    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+     
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+     
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]"
+      - name: Compile aten 
+        run: |
+          CMAKE_DEV=1 pip install . -vvv
+      - name: Run CPP tests 
+        run: | 
+          ./build/test/tests
+      - name: Run Python tests 
+        run: | 
+          python test/GradTensor/algebra_test.py
+          python test/GradTensor/constructor_test.py
+          python test/GradTensor/util_test.py
+          python test/Tensor/algebra_test.py
+          python test/Tensor/constructor_test.py
+          python test/Tensor/util_test.py
+  
+  run-win-tests:
+    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+    
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+    
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]"
+         
+      - name: Compile aten
+        shell: pwsh
+        run: |
+          $env:CMAKE_DEV = 1
+          pip install . -vvv
+        
+          # Debug: Check installation
+          Write-Host "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+        
+          # Get exact Python version
+          $pythonVersion = python -c "import sys; print(sys.version.split()[0])"
+          Write-Host "Exact Python version: $pythonVersion"
+        
+          Write-Host "Installed files:"
+          Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\$pythonVersion\x64\Lib\site-packages\ember"
+        
+          Write-Host "Checking installed package:"
+          pip list | findstr "pyember"
+        
+          Write-Host "Attempting import:"
+          python -c "from ember import aten; print('aten module contents:', dir(aten))"
+         
+      - name: Find and Run CPP tests
+        shell: pwsh
+        run: |
+          $testPaths = @(
+            ".\build\test\Debug\tests.exe",
+            ".\build\test\Release\tests.exe",
+            ".\build\test\tests.exe"
+          )
+         
+          $testPath = $null
+          foreach ($path in $testPaths) {
+            if (Test-Path $path) {
+              $testPath = $path
+              break
+            }
+          }
+         
+          if ($testPath) {
+            Write-Host "Found test executable at: $testPath"
+            & $testPath
+          } else {
+            Write-Host "Test executable not found. Directory contents:"
+            Get-ChildItem -Recurse .\build\test
+            exit 1
+          }
+         
+      - name: Run Python tests 
+        shell: pwsh
+        run: | 
+          $env:PYTHONPATH = "."
+         
+          python test/GradTensor/algebra_test.py
+          python test/GradTensor/constructor_test.py
+          python test/GradTensor/util_test.py
+          python test/Tensor/algebra_test.py
+          python test/Tensor/constructor_test.py
+          python test/Tensor/util_test.py
+
+  run-manylinux-tests:
+    name: Runs tests on manylinux_2_28_x86_64-cp${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11"] # development python not supported 
+    steps:
+      - uses: actions/checkout@v4 
+
+      - name: Run tests in manylinux container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: quay.io/pypa/manylinux_2_28_x86_64
+          options: -v ${{ github.workspace }}:/pyember
+          run: |
+            # Install development version of python 
+            yum install -y python3-devel 
+            yum install -y epel-release
+            yum install -y python3.11-devel 
+            
+            # Set python paths
+            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYSHORT="${{ matrix.python }}"
+            export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYROOT}/bin:$PATH"
+            
+            ${PYROOT}/bin/python -m pip install --upgrade pip
+            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
+            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
+            export Python_ROOT_DIR="${PYROOT}"
+            
+            ${PYROOT}/bin/pip install "pybind11[global]"
+            cd /pyember
+                        
+            CMAKE_DEV=1 ${PYROOT}/bin/pip install -e . -vv
+            
+            ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
+            
+            # Run CPP tests (must be put in here to keep environ variables) 
+            ./build/test/tests
+
+            # Run Python Tests 
+            ${PYROOT}/bin/python test/GradTensor/algebra_test.py
+            ${PYROOT}/bin/python test/GradTensor/constructor_test.py
+            ${PYROOT}/bin/python test/GradTensor/util_test.py
+            ${PYROOT}/bin/python test/Tensor/algebra_test.py
+            ${PYROOT}/bin/python test/Tensor/constructor_test.py
+            ${PYROOT}/bin/python test/Tensor/util_test.py

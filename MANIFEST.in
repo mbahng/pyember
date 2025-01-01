@@ -1,0 +1,11 @@
+include pyproject.toml
+include setup.py
+recursive-include ember *.py *.pyi
+recursive-include ember/datasets *.py
+recursive-include ember/models *.py
+recursive-include ember/models/supervised *.py
+recursive-include ember/models/unsupervised *.py
+recursive-include ember/objectives *.py
+recursive-include ember/optimizers *.py
+recursive-include ember/samplers *.py
+recursive-include aten *

@@ -44,7 +44,7 @@ This library supports both x86_64/amd64 and arm64/aarch64. Check if your system 
 |MacOS 10.9 Mavericks       | || | | | | |
 |MacOS 10.8 Mountain Lion   | || | | | | |
 |MacOS 10.7 Lion            | || | | | | |
-|Windows 11                 | || | | | | |
+|Windows 11                 | |✅| | | | | |
 |Windows 10                 | || | | | | |
 |Windows 8                  | || | | | | |
 |Windows 7                  | || | | | | |

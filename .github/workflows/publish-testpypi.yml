@@ -1,0 +1,43 @@
+name: publish-testpypi 
+on: 
+  workflow_run: 
+    workflows: ["build-wheels"]
+    types: 
+      - completed
+    branches: [main]
+jobs:
+  publish-to-testpypi:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/pyember/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download All Artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build-wheels
+          run_id: ${{ github.event.workflow_run.id }}
+          workflow_conclusion: success
+          path: dist/
+          skip_unpack: false
+          
+      - name: Organize wheels
+        run: |
+          # Move all .whl files to dist/ directory
+          find dist/ -name "*.whl" -exec mv {} dist/ \;
+          # Remove empty subdirectories
+          find dist/ -type d -empty -delete
+          
+      - name: List files to publish
+        run: |
+          echo "Contents of dist directory:"
+          tree dist
+        
+      - name: Publish wheels to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true

@@ -1,0 +1,33 @@
+[build-system]
+requires = [
+  "setuptools>=45", 
+  "wheel", 
+  "pybind11>=2.10"
+]
+# tells pip to use setuptools, which runs setup.py
+build-backend = "setuptools.build_meta"
+
+[project] 
+name = "pyember" 
+version = "0.0.10"
+description = "A statistics and machine learning package." 
+readme = "README.md" 
+authors = [{name = "Muchang Bahng", email = "bahngmc@gmail.com"}] 
+requires-python = ">=3.9" 
+dependencies = [
+  "pybind11>=2.10.0"
+]
+keywords = ["machine learning", "autograd", "deep learning", "statistics"] 
+
+[project.urls] 
+Homepage = "https://github.com/mbahng/pyember" 
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["ember*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"*" = ["*.py", "*.pyi", "*.so"]

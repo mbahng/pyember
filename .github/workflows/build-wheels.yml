@@ -1,0 +1,154 @@
+name: build-wheels
+on:
+  push:
+  # workflow_run:
+  #   workflows: ["run-tests"] 
+  #   types:
+  #     - completed
+  #   branches: [main] 
+jobs:
+  # build-macos-wheels: 
+  #   if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  #   name: Build wheels on ${{ matrix.os }}-cp${{ matrix.python }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os:  [macos-latest]
+  #       python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #    
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ matrix.python }}
+  #    
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install "pybind11[global]"
+  #         pip install cibuildwheel
+  #    
+  #     - name: Build wheels
+  #       run: |
+  #         PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+  #         export CIBW_BUILD="cp${PYTHON_VERSION}-*"
+  #         echo "CIBW_BUILD: $CIBW_BUILD"
+  #         python -m cibuildwheel
+  #       env:
+  #         CIBW_BUILD_VERBOSITY: 1
+  #         CIBW_SKIP: "*-win32 *-manylinux_i686 pp*"
+  #    
+  #     - name: Store the wheels
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: wheels-${{ matrix.os }}-${{ matrix.python }}
+  #         path: ./wheelhouse/*.whl
+  #         compression-level: 0
+  #        
+  #     - name: List uploaded artifacts
+  #       run: |
+  #         pwd
+  #         echo "Current directory contents:" 
+  #         ls -R ./wheelhouse/ 
+  #
+  # build-win-wheels:
+  #   name: Build wheels on ${{ matrix.os }}-cp${{ matrix.python }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [windows-latest]
+  #       python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #    
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: ${{ matrix.python }}
+  #    
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install "pybind11[global]"
+  #         pip install cibuildwheel
+  #    
+  #     - name: Build wheels
+  #       shell: pwsh
+  #       run: |
+  #         # Set Python version for CIBW_BUILD
+  #         $PYTHON_VERSION = "${{ matrix.python }}" -replace '\.'
+  #         $env:CIBW_BUILD = "cp${PYTHON_VERSION}-*"
+  #         Write-Host "CIBW_BUILD: $env:CIBW_BUILD"
+  #         python -m cibuildwheel
+  #       env:
+  #         CIBW_BUILD_VERBOSITY: 1
+  #         CIBW_SKIP: "*-win32 *-manylinux* *-musllinux* pp*"
+  #    
+  #     - name: Store the wheels
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: wheels-${{ matrix.os }}-${{ matrix.python }}
+  #         path: .\wheelhouse\*.whl
+  #         compression-level: 0
+  #        
+  #     - name: List uploaded artifacts
+  #       shell: pwsh
+  #       run: |
+  #         Write-Host "Current directory contents:"
+  #         Get-ChildItem -Recurse .\wheelhouse\
+
+  build-linux-wheels:
+    name: Build wheels on manylinux2_28-cp${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4 
+
+      - name: Build wheel in manylinux container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: quay.io/pypa/manylinux_2_28_x86_64
+          options: -v ${{ github.workspace }}:/work
+          run: |
+            # Install Python development files
+            yum install -y python3-devel epel-release
+            yum install -y python${{ matrix.python }}-devel
+            
+            # Set up Python paths
+            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYSHORT="${{ matrix.python }}"
+            export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYROOT}/bin:$PATH"
+            
+            # Install build dependencies
+            ${PYROOT}/bin/python -m pip install --upgrade pip
+            ${PYROOT}/bin/pip install "pybind11[global]"
+            ${PYROOT}/bin/pip install build auditwheel
+            
+            # Build the wheel
+            cd /work
+            mkdir -p wheelhouse
+            ${PYROOT}/bin/python -m build --wheel --outdir /tmp/dist/
+            
+            # Repair the wheel to make it manylinux compatible
+            auditwheel repair --plat manylinux_2_28_x86_64 /tmp/dist/*.whl -w /work/wheelhouse/
+
+            # test the built wheel 
+            ${PYROOT}/bin/pip install /work/wheelhouse/*.whl
+            ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
+          
+      - name: Store the wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-manylinux-${{ matrix.python }}
+          path: ./wheelhouse/*.whl
+          compression-level: 0
+          
+      - name: List uploaded artifacts
+        run: |
+          pwd
+          echo "Current directory contents:" 
+          ls -R ./wheelhouse/
