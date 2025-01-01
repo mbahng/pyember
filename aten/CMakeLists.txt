@@ -11,12 +11,6 @@ option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 option(BUILD_DEBUG "Enable debug build with -g flag" ON) 
 option(BUILD_DEV "Build developerment/testing files" ON)
 
-if(BUILD_PYTHON_BINDINGS)
-  find_package(Python 3.9 REQUIRED COMPONENTS Interpreter Development)
-  message(STATUS "Found Python: ${Python_VERSION}")
-  message(STATUS "Python Executable: ${Python_EXECUTABLE}")
-endif()
-
 add_subdirectory(src)
 
 if (BUILD_DEV) 

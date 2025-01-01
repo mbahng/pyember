@@ -1,5 +1,7 @@
 find_package(pybind11 REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
+  message(STATUS "Found Python: ${Python_VERSION}")
+  message(STATUS "Python Executable: ${Python_EXECUTABLE}")
 
 set(BINDING_SOURCES
     aten_binding.cpp
@@ -15,7 +17,7 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-message(STATUS "Python extension suffix: ${PYTHON_EXT_SUFFIX}")
+message(STATUS "Python extension suffix 1: ${PYTHON_EXT_SUFFIX}")
 
 pybind11_add_module(aten_python_module ${BINDING_SOURCES})
 target_link_libraries(aten_python_module PRIVATE aten)
@@ -25,12 +27,16 @@ target_include_directories(aten_python_module
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+message(STATUS "Python extension suffix 2: ${PYTHON_EXT_SUFFIX}")
+
 set_target_properties(aten_python_module PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     OUTPUT_NAME "aten"
     PREFIX ""
     SUFFIX "${PYTHON_EXT_SUFFIX}"
 )
+
+message(STATUS "Python extension suffix 3: ${PYTHON_EXT_SUFFIX}")
 
 set(BINDING_SOURCES
     aten_binding.cpp
@@ -39,8 +45,12 @@ set(BINDING_SOURCES
     Tensor/tensor_binding.cpp 
 )
 
+message(STATUS "Python extension suffix 4: ${PYTHON_EXT_SUFFIX}")
+
 # Create the Python module named 'aten'
 pybind11_add_module(aten_python ${BINDING_SOURCES})  
+
+message(STATUS "Python extension suffix 5: ${PYTHON_EXT_SUFFIX}")
 
 # Link with the C++ library
 target_link_libraries(aten_python PRIVATE aten)
