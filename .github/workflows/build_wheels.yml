@@ -33,7 +33,7 @@ jobs:
           # Optional: Skip 32-bit builds
           CIBW_SKIP: "*-win32 *-manylinux_i686"
           CIBW_BEFORE_ALL_LINUX: |
-            apt-get update && apt-get install -y python3-dev
+            apt update && apt install -y python3-dev
           CIBW_ENVIRONMENT: |
             PYTHON_INCLUDE_DIR=$(python3 -c "from sysconfig import get_paths; print(get_paths()['include'])")
             PYTHON_LIBRARY=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")
