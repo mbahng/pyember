@@ -22,14 +22,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install "pybind11[global]"
           
-      - name: Compile aten 
+      - name: Configure and Build
+        shell: pwsh
         run: |
-          set CMAKE_DEV=1
-          pip install . -vvv
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
           
       - name: Find and Run CPP tests
         shell: pwsh
         run: |
+          # First, let's see what we have in the build directory
+          Write-Host "Contents of build directory:"
+          Get-ChildItem -Recurse build
+          
           $testPaths = @(
             ".\build\test\Debug\tests.exe",
             ".\build\test\Release\tests.exe",
@@ -38,6 +45,7 @@ jobs:
           
           $testPath = $null
           foreach ($path in $testPaths) {
+            Write-Host "Checking for $path"
             if (Test-Path $path) {
               $testPath = $path
               break
