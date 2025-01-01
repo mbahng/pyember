@@ -50,7 +50,8 @@ jobs:
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
-        with:
+        with: 
+          name: pyember-0.0.3-${{ matrix.os }}-${{ matrix.python }}.whl
           path: ./wheelhouse/*.whl  # cibuildwheel puts wheels in wheelhouse/
           compression-level: 0
 
@@ -67,7 +68,7 @@ jobs:
       - name: Download all wheels
         uses: actions/download-artifact@v4
         with:
-          pattern: wheels-*  # Download wheels from all OS builds
+          pattern: *.whl  # Download wheels from all OS builds
           path: dist/
           merge-multiple: true  # Merge all wheels into dist directory
           
