@@ -12,7 +12,7 @@ option(BUILD_DEBUG "Enable debug build with -g flag" ON)
 option(BUILD_DEV "Build developerment/testing files" ON)
 
 if(BUILD_PYTHON_BINDINGS)
-  find_package(Python 3.9 REQUIRED COMPONENTS Interpreter Development)
+  find_package(Python3 3.9 REQUIRED COMPONENTS Interpreter Development)
   message(STATUS "Found Python: ${Python_VERSION}")
   message(STATUS "Python Executable: ${Python_EXECUTABLE}")
 endif()
@@ -44,7 +44,7 @@ if(BUILD_PYTHON_BINDINGS)
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_TAG v2.11 
+    GIT_TAG v2.13
   )
   FetchContent_MakeAvailable(pybind11)
   add_subdirectory(bindings)
