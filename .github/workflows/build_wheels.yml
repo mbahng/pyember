@@ -10,54 +10,38 @@ jobs:
     strategy:
       matrix:
         os:  [macos-latest]
-        python: ["3.9", "3.10", "3.11", "3.12"]
+        python: ["3.9"]
 
     steps:
-      - uses: actions/checkout@v4 # clone repo into workflow environment 
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
-          
+          channels: conda-forge
+          activate-environment: build-env
+          auto-activate-base: false
+
       - name: Install dependencies
+        shell: bash -l {0}  # Important: this makes conda activate work
         run: |
-          python -m pip install --upgrade pip
-          pip install "pybind11[global]"  
+          conda install pybind11 pip
           pip install cibuildwheel
-          
+
       - name: Build wheels
+        shell: bash -l {0}
         uses: pypa/cibuildwheel@v2.16.2
         env:
           CIBW_BUILD_VERBOSITY: 1
-          # Optional: Skip 32-bit builds
           CIBW_SKIP: "*-win32 *-manylinux_i686"
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-          CIBW_BEFORE_ALL_LINUX: |
-            sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-            sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
-            yum clean all && \
-            yum makecache && \
-            yum install -y python3-devel
-          CIBW_ENVIRONMENT_LINUX: >
-            Python_ROOT_DIR="/opt/hostedtoolcache/Python/3.12.8/x64"
-            CMAKE_PREFIX_PATH="/opt/hostedtoolcache/Python/3.12.8/x64"
-            PYTHON_INCLUDE_DIR="/opt/hostedtoolcache/Python/3.12.8/x64/include/python3.12"
-            PYTHON_LIBRARY="/opt/hostedtoolcache/Python/3.12.8/x64/lib/python3.12"
-            CMAKE_ARGS="-DPython_EXECUTABLE=/opt/hostedtoolcache/Python/3.12.8/x64/bin/python3.12"
-          CIBW_ENVIRONMENT_MACOS: >
-            Python_ROOT_DIR="${{ env.pythonLocation }}"
-            CMAKE_PREFIX_PATH="${{ env.pythonLocation }}"
-            PYTHON_INCLUDE_DIR="${{ env.pythonLocation }}/include/python${{ matrix.python }}"
-            PYTHON_LIBRARY="${{ env.pythonLocation }}/lib"
-            CMAKE_ARGS="-DPython_ROOT_DIR=${{ env.pythonLocation }} -DPython_EXECUTABLE=${{ env.pythonLocation }}/bin/python${{ matrix.python }}"
+          CIBW_ENVIRONMENT: PATH="$CONDA/bin:$PATH"
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
-        with: 
-          # temporary label, will be renamed according to PEP 427
+        with:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}
-          path: ./wheelhouse/*.whl  # cibuildwheel puts wheels in wheelhouse/
+          path: ./wheelhouse/*.whl
           compression-level: 0
 
   publish-to-testpypi:
