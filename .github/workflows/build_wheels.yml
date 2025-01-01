@@ -33,6 +33,12 @@ jobs:
           # Optional: Skip 32-bit builds
           CIBW_SKIP: "*-win32 *-manylinux_i686"
 
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: ./wheelhouse/*.whl  # cibuildwheel puts wheels in wheelhouse/
+
   publish:
     needs: build_wheels
     runs-on: ubuntu-latest
