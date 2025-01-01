@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.15)
 project(aten)
 include(FetchContent)
 
-# Set C++ standard
+# Set C++ standard and have it support both architectures
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 
 # add option 
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)

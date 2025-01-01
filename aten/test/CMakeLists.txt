@@ -1,6 +1,3 @@
-# Set up Google Test with specific options for ARM64
-set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
-
 # Configure GoogleTest build
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
