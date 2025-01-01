@@ -5,7 +5,6 @@ on:
     types:
       - completed
     branches: [main] 
-
 jobs:
   build_wheels: 
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -31,7 +30,6 @@ jobs:
       
       - name: Build wheels
         run: |
-          # Set Python version for CIBW_BUILD
           PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
           export CIBW_BUILD="cp${PYTHON_VERSION}-*"
           echo "CIBW_BUILD: $CIBW_BUILD"
@@ -43,11 +41,10 @@ jobs:
       - name: Store the wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.python }}
+          name: macos-wheels
           path: ./wheelhouse/*.whl
           compression-level: 0
-
       - name: List uploaded artifacts
         run: |
           echo "Current directory contents:"
-          ls -R ./wheelhouse/ 
+          ls -R ./wheelhouse/

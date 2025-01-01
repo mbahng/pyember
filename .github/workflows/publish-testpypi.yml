@@ -14,6 +14,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
+          name: macos-wheels
           workflow_conclusion: success
           path: dist/macos/
           skip_unpack: false
@@ -22,6 +23,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-win-amd64
+          name: macos-wheels
           workflow_conclusion: success
           path: dist/windows/
           skip_unpack: false
