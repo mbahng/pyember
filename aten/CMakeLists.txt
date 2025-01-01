@@ -12,17 +12,9 @@ option(BUILD_DEBUG "Enable debug build with -g flag" ON)
 option(BUILD_DEV "Build developerment/testing files" ON)
 
 if(BUILD_PYTHON_BINDINGS)
-  # Try to get Python executable from environment variables first
-  if(DEFINED ENV{CONDA_PREFIX})
-    set(Python_EXECUTABLE "$ENV{CONDA_PREFIX}/bin/python")
-    message(STATUS "Using Conda Python at: ${Python_EXECUTABLE}")
-  endif()
-  
-  find_package(Python3 3.9 REQUIRED COMPONENTS Interpreter Development)
+  find_package(Python 3.9 REQUIRED COMPONENTS Interpreter Development)
   message(STATUS "Found Python: ${Python_VERSION}")
   message(STATUS "Python Executable: ${Python_EXECUTABLE}")
-  message(STATUS "Python Include Dirs: ${Python_INCLUDE_DIRS}")
-  message(STATUS "Python Libraries: ${Python_LIBRARIES}")
 endif()
 
 add_subdirectory(src)
