@@ -13,7 +13,7 @@ jobs:
         python: ["3.12"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # clone repo into workflow environment 
       
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,17 +23,39 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install "pybind11[global]"  
+          pip install "pybind11[global]"
           pip install cibuildwheel
           
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.2
         env:
           CIBW_BUILD_VERBOSITY: 1
-          # Optional: Skip 32-bit builds
-          CIBW_SKIP: "*-win32 *-manylinux_i686"
-          
+          CIBW_SKIP: "*-win32 *-manylinux_i686"  # Skip 32-bit builds
+              
       - name: Upload wheels
         uses: actions/upload-artifact@v3
         with:
-          path: ./wheelhouse/*.whl
+          name: wheels
+          path: ./wheelhouse/*.whl  # cibuildwheel puts wheels in wheelhouse/
+
+      publish:
+        needs: build_wheels
+        runs-on: ubuntu-latest
+        environment:
+          name: testpypi
+          url: https://test.pypi.org/project/pyember/
+    
+    steps:
+      - name: Publish wheels to TestPyPI
+        uses: actions/download-artifact@v3
+        with:
+          name: wheels
+          path: dist
+      
+      - name: Publish to TestPyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        run: |
+          pip install twine
+          twine upload --repository testpypi dist/* 
