@@ -1,7 +1,13 @@
-include setup.py
-include pyproject.toml
 include README.md
+include pyproject.toml
+include setup.py
+recursive-include ember *.py *.pyi *.so
+recursive-include ember/datasets *.py
+recursive-include ember/models *.py
+recursive-include ember/models/supervised *.py
+recursive-include ember/models/unsupervised *.py
+recursive-include ember/objectives *.py
+recursive-include ember/optimizers *.py
+recursive-include ember/samplers *.py
 recursive-include aten *
-recursive-include ember *.py
-recursive-include ember *.pyi
-recursive-include ember *.so
+# global-exclude __pycache__ *.pyc *.pyo *.pyd

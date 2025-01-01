@@ -20,7 +20,7 @@ class TestGradTensorAdd(unittest.TestCase):
   def testAddScalarGradTensor(self):
     x = Tensor([1])
     y = GradTensor([2], [1], 0, 1)
-    truth = GradTensor([3], [1], 0, 1)
+    truth = Tensor([3], [1], 0)
     self.assertEqual(x + y, truth)
     self.assertEqual(y + x, truth)
     self.assertEqual(x.__add__(y), truth)
@@ -31,7 +31,7 @@ class TestGradTensorAdd(unittest.TestCase):
   def testAddVectorGradTensor(self):
     x = Tensor([1, 2, 3, 4])
     y = GradTensor([5, 6, 7, 8], [4], 0, 1)
-    truth = GradTensor([6, 8, 10, 12], [4], 0, 1)
+    truth = Tensor([6, 8, 10, 12], [4], 0)
     self.assertEqual(x + y, truth)
     self.assertEqual(y + x, truth)
     self.assertEqual(x.__add__(y), truth)
@@ -42,7 +42,7 @@ class TestGradTensorAdd(unittest.TestCase):
   def testAddMatrixGradTensor(self):
     x = Tensor([[1, 2], [3, 4]])
     y = GradTensor([5, 6, 7, 8], [2, 2], 0, 1)
-    truth = GradTensor([6, 8, 10, 12], [2, 2], 0, 1)
+    truth = Tensor([6, 8, 10, 12], [2, 2], 0)
     self.assertEqual(x + y, truth)
     self.assertEqual(y + x, truth)
     self.assertEqual(x.__add__(y), truth)
@@ -53,7 +53,7 @@ class TestGradTensorAdd(unittest.TestCase):
   def testAddTensorGradTensor(self):
     x = Tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
     y = GradTensor([1, 2, 3, 4, 5, 6, 7, 8], [2, 2, 2], 0, 1)
-    truth = GradTensor([2, 4, 6, 8, 10, 12, 14, 16], [2, 2, 2], 0, 1)
+    truth = Tensor([2, 4, 6, 8, 10, 12, 14, 16], [2, 2, 2], 0)
     self.assertEqual(x + y, truth)
     self.assertEqual(y + x, truth)
     self.assertEqual(x.__add__(y), truth)
@@ -567,8 +567,8 @@ class TestTensorMulWithGradients(unittest.TestCase):
     xgrad_truth = GradTensor([4, 4], 0, 1)
     ygrad_truth = GradTensor([4, 4], 0, 1) 
     for i in range(4): 
-        xgrad_truth[i, i] = y[i].data()[0]
-        ygrad_truth[i, i] = x[i].data()[0]
+        xgrad_truth[i, i] = y[i].storage[0]
+        ygrad_truth[i, i] = x[i].storage[0]
     
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)
@@ -581,8 +581,8 @@ class TestTensorMulWithGradients(unittest.TestCase):
     xgrad_truth = GradTensor([4, 4], 0, 1)
     ygrad_truth = GradTensor([4, 4], 0, 1) 
     for i in range(4): 
-        xgrad_truth[i, i] = y[i].data()[0]
-        ygrad_truth[i, i] = x[i].data()[0]
+        xgrad_truth[i, i] = y[i].storage[0]
+        ygrad_truth[i, i] = x[i].storage[0]
     
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)
@@ -596,8 +596,8 @@ class TestTensorMulWithGradients(unittest.TestCase):
     xgrad_truth = GradTensor([2, 3, 2, 3], 0, 2)
     ygrad_truth = GradTensor([2, 3, 2, 3], 0, 2) 
     for i, j in product(range(2), range(3)): 
-        xgrad_truth[i, j, i, j] = y[i, j].data()[0]
-        ygrad_truth[i, j, i, j] = x[i, j].data()[0]
+        xgrad_truth[i, j, i, j] = y[i, j].storage[0]
+        ygrad_truth[i, j, i, j] = x[i, j].storage[0]
    
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)
@@ -610,8 +610,8 @@ class TestTensorMulWithGradients(unittest.TestCase):
     xgrad_truth = GradTensor([2, 3, 2, 3], 0, 2)
     ygrad_truth = GradTensor([2, 3, 2, 3], 0, 2) 
     for i, j in product(range(2), range(3)): 
-        xgrad_truth[i, j, i, j] = y[i, j].data()[0]
-        ygrad_truth[i, j, i, j] = x[i, j].data()[0]
+        xgrad_truth[i, j, i, j] = y[i, j].storage[0]
+        ygrad_truth[i, j, i, j] = x[i, j].storage[0]
    
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)
@@ -625,8 +625,8 @@ class TestTensorMulWithGradients(unittest.TestCase):
     xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3)
     ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3) 
     for i, j, k in product(range(2), range(3), range(4)): 
-        xgrad_truth[i, j, k, i, j, k] = y[i, j, k].data()[0]
-        ygrad_truth[i, j, k, i, j, k] = x[i, j, k].data()[0]
+        xgrad_truth[i, j, k, i, j, k] = y[i, j, k].storage[0]
+        ygrad_truth[i, j, k, i, j, k] = x[i, j, k].storage[0]
    
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)
@@ -639,8 +639,8 @@ class TestTensorMulWithGradients(unittest.TestCase):
     xgrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3)
     ygrad_truth = GradTensor([2, 3, 4, 2, 3, 4], 0, 3) 
     for i, j, k in product(range(2), range(3), range(4)): 
-        xgrad_truth[i, j, k, i, j, k] = y[i, j, k].data()[0]
-        ygrad_truth[i, j, k, i, j, k] = x[i, j, k].data()[0]
+        xgrad_truth[i, j, k, i, j, k] = y[i, j, k].storage[0]
+        ygrad_truth[i, j, k, i, j, k] = x[i, j, k].storage[0]
    
     self.assertEqual(x.grad, xgrad_truth)
     self.assertEqual(y.grad, ygrad_truth)

@@ -1,5 +1,7 @@
 find_package(pybind11 REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
+message(STATUS "Found Python: ${Python_VERSION}")
+message(STATUS "Python Executable: ${Python_EXECUTABLE}")
 
 set(BINDING_SOURCES
     aten_binding.cpp
@@ -14,8 +16,6 @@ execute_process(
     OUTPUT_VARIABLE PYTHON_EXT_SUFFIX
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-
-message(STATUS "Python extension suffix: ${PYTHON_EXT_SUFFIX}")
 
 pybind11_add_module(aten_python_module ${BINDING_SOURCES})
 target_link_libraries(aten_python_module PRIVATE aten)

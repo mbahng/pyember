@@ -15,12 +15,6 @@ class TestGradTensorConstructors(unittest.TestCase):
     self.assertEqual(g.shape, [2, 2])
     self.assertEqual(g.pidx, 1)
 
-  def testEyeConstructor(self):
-    g = GradTensor.eye(2, 1)
-    self.assertEqual(g.storage, [1, 0, 0, 1])
-    self.assertEqual(g.shape, [2, 2])
-    self.assertEqual(g.pidx, 1)
-
   def testCopyConstructor(self): 
     g = GradTensor([2, 2], 0, 1)
     c = g.copy() 

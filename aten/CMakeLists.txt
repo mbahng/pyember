@@ -1,20 +1,17 @@
-cmake_minimum_required(VERSION 3.11)
+# should be >= 3.15 since it prioritizes finding python in current venv
+cmake_minimum_required(VERSION 3.15)
 project(aten)
 include(FetchContent)
 
-# Set C++ standard
+# Set C++ standard and have it support both architectures
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 
 # add option 
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
-option(BUILD_DEBUG "Enable debug build with -g flat" ON) 
+option(BUILD_DEBUG "Enable debug build with -g flag" ON) 
 option(BUILD_DEV "Build developerment/testing files" ON)
-
-if(BUILD_PYTHON_BINDINGS) 
-  find_package(Python 3.12 EXACT REQUIRED COMPONENTS Interpreter Development)
-  message(STATUS "Found Python: ${Python_VERSION}")
-endif() 
 
 add_subdirectory(src)
 
@@ -43,7 +40,7 @@ if(BUILD_PYTHON_BINDINGS)
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_TAG v2.11.1  
+    GIT_TAG v2.13
   )
   FetchContent_MakeAvailable(pybind11)
   add_subdirectory(bindings)

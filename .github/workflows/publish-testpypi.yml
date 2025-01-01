@@ -1,0 +1,32 @@
+name: publish-testpypi 
+on: 
+  workflow_run: 
+    workflows: ["build-wheels-macos-arm64"] 
+    types: 
+      - completed
+    branches: [main] 
+
+jobs: 
+  publish-to-testpypi:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/pyember/
+    permissions:
+      id-token: write
+  
+    steps:
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*  # Download wheels from all OS builds
+          path: dist/
+          merge-multiple: true  # Merge all wheels into dist directory
+        
+      - name: Publish wheels to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+
