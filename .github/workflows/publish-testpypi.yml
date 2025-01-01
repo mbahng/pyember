@@ -5,27 +5,36 @@ on:
     types: 
       - completed
     branches: [main]
-
 jobs:
   verify-artifacts:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifacts from build workflow
+      - name: Download macOS artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
-          run_id: ${{ github.event.workflow_run.id }}
           workflow_conclusion: success
-          path: dist/
-          skip_unpack: false  # Ensure artifacts are unpacked
+          path: dist/macos/
+          skip_unpack: false
 
-      # Add step to move wheels to correct location
-      - name: Organize wheels
+      - name: Download Windows artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build-wheels-win-amd64
+          workflow_conclusion: success
+          path: dist/windows/
+          skip_unpack: false
+
+      - name: Organize all wheels
         run: |
-          find dist -name "*.whl" -exec mv {} dist/ \;
-          echo "Contents of dist after organizing:"
-          ls -la dist/
+          mkdir -p dist/final
+          # Move macOS wheels
+          find dist/macos -name "*.whl" -exec mv {} dist/final/ \;
+          # Move Windows wheels
+          find dist/windows -name "*.whl" -exec mv {} dist/final/ \;
+          echo "Contents of dist/final:"
+          ls -la dist/final/
 
   publish-to-testpypi:
     needs: verify-artifacts
@@ -37,30 +46,35 @@ jobs:
       id-token: write
   
     steps:
-      - name: Download artifacts from build workflow
+      - name: Download macOS artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
-          run_id: ${{ github.event.workflow_run.id }}
           workflow_conclusion: success
-          path: dist/
+          path: dist/macos/
+          skip_unpack: false
+
+      - name: Download Windows artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build-wheels-win-amd64
+          workflow_conclusion: success
+          path: dist/windows/
           skip_unpack: false
 
       - name: Clean and organize wheels
         run: |
-          # Create a temporary directory
-          mkdir tmp_wheels
-          # Move only .whl files to tmp directory
-          find dist -name "*.whl" -exec mv {} tmp_wheels/ \;
-          # Clean dist directory
-          rm -rf dist
-          mkdir dist
-          # Move wheels back to dist
-          mv tmp_wheels/* dist/
-          # Remove temp directory
-          rm -rf tmp_wheels
-          # Show final contents
-          echo "Final contents of dist:"
+          # Create directories
+          mkdir -p dist/final
+          
+          # Move all wheels to final directory
+          find dist/macos dist/windows -name "*.whl" -exec mv {} dist/final/ \;
+          
+          # Clean up and reorganize
+          mv dist/final/* dist/
+          rm -rf dist/final dist/macos dist/windows
+          
+          echo "Final contents of dist directory:"
           ls -la dist/
         
       - name: Publish wheels to TestPyPI
