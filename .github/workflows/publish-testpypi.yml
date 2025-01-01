@@ -1,7 +1,7 @@
 name: publish-testpypi 
 on: 
   workflow_run: 
-    workflows: ["build-wheels-macos-arm64"] 
+    workflows: ["build-wheels-macos-arm64", "build-wheels-win-amd64"]
     types: 
       - completed
     branches: [main]

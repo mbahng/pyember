@@ -32,11 +32,18 @@ jobs:
           Write-Host "Python path:"
           python -c "import sys; print('\n'.join(sys.path))"
           
-          Write-Host "Installed files:"
-          Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\${{ matrix.python }}\x64\ember"
+          # Get exact Python version
+          $pythonVersion = python -c "import sys; print(sys.version.split()[0])"
+          Write-Host "Exact Python version: $pythonVersion"
           
-          Write-Host "Checking aten module:"
-          python -c "from ember import aten; print(dir(aten))"
+          Write-Host "Installed files:"
+          Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\$pythonVersion\x64\Lib\site-packages\ember"
+          
+          Write-Host "Checking installed package:"
+          pip list | findstr "pyember"
+          
+          Write-Host "Attempting import:"
+          python -c "from ember import aten; print('aten module contents:', dir(aten))"
           
       - name: Find and Run CPP tests
         shell: pwsh
