@@ -32,12 +32,13 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           # Optional: Skip 32-bit builds
           CIBW_SKIP: "*-win32 *-manylinux_i686"
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_BEFORE_ALL_LINUX: |
-            apt update && apt install -y python3-dev
-          CIBW_ENVIRONMENT: |
-            PYTHON_INCLUDE_DIR=$(python3 -c "from sysconfig import get_paths; print(get_paths()['include'])")
-            PYTHON_LIBRARY=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))")
-          CIBW_REPAIR_WHEEL_COMMAND: ""
+            yum install -y python3-devel
+          CIBW_ENVIRONMENT: >
+            PYTHON_INCLUDE_DIR="$(python3-config --include)"
+            PYTHON_LIBRARY="$(python3-config --prefix)/lib"
+            CMAKE_PREFIX_PATH="/opt/python/$(python -c 'import sys; print(f\"cp{sys.version_info.major}{sys.version_info.minor}-cp{sys.version_info.major}{sys.version_info.minor}\")')"
 
       - name: Store the wheels
         uses: actions/upload-artifact@v4
