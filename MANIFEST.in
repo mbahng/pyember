@@ -10,4 +10,4 @@ recursive-include ember/objectives *.py
 recursive-include ember/optimizers *.py
 recursive-include ember/samplers *.py
 recursive-include aten *
-global-exclude __pycache__ *.pyc *.pyo *.pyd
+# global-exclude __pycache__ *.pyc *.pyo *.pyd

@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.11)
+# should be >= 3.15 since it prioritizes finding python in current venv
+cmake_minimum_required(VERSION 3.15)
 project(aten)
 include(FetchContent)
 
