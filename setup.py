@@ -60,6 +60,7 @@ class CMakeBuildExt(build_ext):
     print(f"Successfully moved {built_so} to ember/")
 
 packages = find_packages() 
+packages.extend("ember.aten")
 print("===================")
 for p in packages: 
   print(p)
