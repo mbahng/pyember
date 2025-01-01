@@ -46,4 +46,8 @@ jobs:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}
           path: ./wheelhouse/*.whl
           compression-level: 0
-  
+
+      - name: List uploaded artifacts
+        run: |
+          echo "Current directory contents:"
+          ls -R ./wheelhouse/ 
