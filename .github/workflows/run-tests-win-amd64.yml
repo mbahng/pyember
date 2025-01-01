@@ -27,10 +27,31 @@ jobs:
           set CMAKE_DEV=1
           pip install . -vvv
           
-      - name: Run CPP tests 
-        run: | 
-          .\build\test\Debug\tests.exe
-          # or .\build\test\Release\tests.exe depending on your build configuration
+      - name: Find and Run CPP tests
+        shell: pwsh
+        run: |
+          $testPaths = @(
+            ".\build\test\Debug\tests.exe",
+            ".\build\test\Release\tests.exe",
+            ".\build\test\tests.exe"
+          )
+          
+          $testPath = $null
+          foreach ($path in $testPaths) {
+            if (Test-Path $path) {
+              $testPath = $path
+              break
+            }
+          }
+          
+          if ($testPath) {
+            Write-Host "Found test executable at: $testPath"
+            & $testPath
+          } else {
+            Write-Host "Test executable not found. Directory contents:"
+            Get-ChildItem -Recurse .\build\test
+            exit 1
+          }
           
       - name: Run Python tests 
         run: | 
