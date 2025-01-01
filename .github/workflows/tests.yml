@@ -27,14 +27,14 @@ jobs:
         run: |
           CMAKE_DEV=1 pip install . -vvv
 
-      - name: Run tests 
+      - name: Run CPP tests 
         run: | 
-          echo "Running CPP tests..."
           ./build/test/tests
-          echo "Running Python tests..."
+
+      - name: Run Python tests 
+        run: | 
           python test/BaseTensor/integrity_test.py
           python test/BaseTensor/util_test.py
-          python test/GradTensor/algebra_test.py
 
           python test/GradTensor/algebra_test.py
           python test/GradTensor/constructor_test.py
