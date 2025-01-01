@@ -1,6 +1,6 @@
-name: Run Tests
+name: run-tests-macos-arm64
 on: 
-  push:
+  push: 
 
 jobs:
   run_tests:
