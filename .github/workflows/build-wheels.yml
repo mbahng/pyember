@@ -99,11 +99,12 @@ jobs:
   #         Get-ChildItem -Recurse .\wheelhouse\
 
   build-linux-wheels:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Build wheels on manylinux2_28-cp${{ matrix.python }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.11"]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4 
 
@@ -126,17 +127,15 @@ jobs:
             # Install build dependencies
             ${PYROOT}/bin/python -m pip install --upgrade pip
             ${PYROOT}/bin/pip install "pybind11[global]"
-            ${PYROOT}/bin/pip install cibuildwheel
-            
-            # Set up build environment
-            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
-            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
-            export Python_ROOT_DIR="${PYROOT}"
-            export CIBW_BUILD="cp${PYTHON_VERSION}-*"
+            ${PYROOT}/bin/pip install build auditwheel
             
             # Build the wheel
             cd /work
-            ${PYROOT}/bin/python -m cibuildwheel
+            mkdir -p wheelhouse
+            ${PYROOT}/bin/python -m build --wheel --outdir /tmp/dist/
+            
+            # Repair the wheel to make it manylinux compatible
+            auditwheel repair /tmp/dist/*.whl -w /work/wheelhouse/
           
       - name: Store the wheels
         uses: actions/upload-artifact@v4
