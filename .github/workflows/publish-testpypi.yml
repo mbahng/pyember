@@ -18,13 +18,12 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
-          run_id
           name: macos-wheels-macos-latest-3
           name_is_regexp: true
           workflow_conclusion: success
-          path: dist/
+          path: dist/macos/
           skip_unpack: false
-
+          
       - name: Download Windows artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -34,7 +33,7 @@ jobs:
           workflow_conclusion: success
           path: dist/
           skip_unpack: false
-          
+
       - name: List downloaded files
         run: |
           echo "Contents of dist directory before organizing:"
