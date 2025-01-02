@@ -155,10 +155,19 @@ jobs:
             ${PYROOT}/bin/pip install "pybind11[global]"
             cd /pyember
             
-            # Print Python info for debugging
-            ${PYROOT}/bin/python -c "import sys; print(f'Building with Python {sys.version}')"
+            cmake --version
             
-            cd /pyember
+            # Try CMake directly first to see error
+            cmake -B build \
+                  -S aten \
+                  -DBUILD_PYTHON_BINDINGS=ON \
+                  -DBUILD_DEBUG=False \
+                  -DBUILD_DEV=True \
+                  -DPython_EXECUTABLE=${PYTHON_EXECUTABLE} \
+                  -DPython_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
+                  -DCMAKE_VERBOSE_MAKEFILE=ON
+            
+            # Then try pip install
             CMAKE_DEV=1 ${PYROOT}/bin/python -m pip install -e . -vv
             
             # Optional: verify installation
