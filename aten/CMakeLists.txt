@@ -49,13 +49,14 @@ if(DEFINED ENV{MY_PYTHON_EXECUTABLE})
 endif()
 
 if(BUILD_PYTHON_BINDINGS)
-  # Force Python paths before pybind11
-  set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
-  set(PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})  # pybind11 uses this variable
-  set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-  set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})  # pybind11 uses this variable
+  # Enable new CMake FindPython
+  set(PYBIND11_FINDPYTHON ON)
   
-  # Find Python before pybind11
+  # Force Python paths
+  set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+  set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  
+  # Find Python first
   find_package(Python REQUIRED COMPONENTS Interpreter Development)
   
   message(STATUS "Python executable: ${Python_EXECUTABLE}")
