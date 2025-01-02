@@ -14,29 +14,37 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
-          name: macos-wheels-*
+          pattern: macos-wheels-*
           workflow_conclusion: success
-          path: dist/macos/
+          path: dist/
           skip_unpack: false
 
       - name: Download Windows artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-win-amd64
-          name: windows-wheels-*
+          pattern: windows-wheels-*
           workflow_conclusion: success
-          path: dist/windows/
+          path: dist/
           skip_unpack: false
 
+      - name: List downloaded files
+        run: |
+          echo "Contents of dist directory before organizing:"
+          ls -R dist/
+          
       - name: Organize all wheels
         run: |
           mkdir -p dist/final
-          # Move macOS wheels
-          find dist/macos -name "*.whl" -exec mv {} dist/final/ \;
-          # Move Windows wheels
-          find dist/windows -name "*.whl" -exec mv {} dist/final/ \;
+          find dist -name "*.whl" -exec mv {} dist/final/ \;
           echo "Contents of dist/final:"
           ls -la dist/final/
+          
+      - name: Upload organized wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: organized-wheels
+          path: dist/final/*.whl
 
   publish-to-testpypi:
     needs: verify-artifacts
@@ -48,37 +56,15 @@ jobs:
       id-token: write
   
     steps:
-      - name: Download macOS artifacts
-        uses: dawidd6/action-download-artifact@v2
+      - name: Download organized wheels
+        uses: actions/download-artifact@v4
         with:
-          workflow: build-wheels-macos-arm64
-          name: macos-wheels-*
-          workflow_conclusion: success
-          path: dist/macos/
-          skip_unpack: false
-
-      - name: Download Windows artifacts
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build-wheels-win-amd64
-          name: windows-wheels-*
-          workflow_conclusion: success
-          path: dist/windows/
-          skip_unpack: false
-
-      - name: Clean and organize wheels
+          name: organized-wheels
+          path: dist/
+          
+      - name: List files to publish
         run: |
-          # Create directories
-          mkdir -p dist/final
-          
-          # Move all wheels to final directory
-          find dist/macos dist/windows -name "*.whl" -exec mv {} dist/final/ \;
-          
-          # Clean up and reorganize
-          mv dist/final/* dist/
-          rm -rf dist/final dist/macos dist/windows
-          
-          echo "Final contents of dist directory:"
+          echo "Contents of dist directory:"
           ls -la dist/
         
       - name: Publish wheels to TestPyPI
