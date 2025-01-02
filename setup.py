@@ -91,7 +91,7 @@ class CMakeBuildExt(build_ext):
     # this runs make, which builds main, test, and the .so file  
     subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release']) 
 
-    list_files(build_dir)
+    # list_files(build_dir)
 
     # This is where CMake puts it
     if os.name == 'nt':  # Windows
