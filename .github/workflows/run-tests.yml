@@ -140,18 +140,11 @@ jobs:
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
-            export Python_ROOT_DIR="${PYROOT}"
-
-            cd ${PYROOT}
-            ./configure --enable-shared
-            make -j$(nproc)
-            make install
 
             # Set explicit Python paths
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
-            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
 
             echo "=================="
             ls ${PYROOT}/lib
@@ -164,6 +157,4 @@ jobs:
             cd /pyember
             echo "bruh"
             which python 
-            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} \
-                       -DPYTHON_LIBRARY=${PYTHON_LIBRARY}"
             CMAKE_DEV=1 pip install . -vv
