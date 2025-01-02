@@ -12,7 +12,7 @@ execute_process(
 )
 
 pybind11_add_module(aten_python ${BINDING_SOURCES})
-target_link_libraries(aten_pythonPRIVATE aten)
+target_link_libraries(aten_python PRIVATE aten)
 target_include_directories(aten_python
   PRIVATE 
     ${CMAKE_SOURCE_DIR}/src 
