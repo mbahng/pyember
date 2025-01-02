@@ -160,7 +160,7 @@ jobs:
             cd /pyember
             
             # Install dependencies
-            pip install "pybind11[global]=2.11"
+            pip install "pybind11[global]==2.11"
             
             # Try compile with explicit CMake variables
             # CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} \
