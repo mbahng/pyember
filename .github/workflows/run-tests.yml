@@ -133,7 +133,7 @@ jobs:
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Install development version of python 
-            yum install -y python3-devel
+            yum install -y python-devel python3-devel
 
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')

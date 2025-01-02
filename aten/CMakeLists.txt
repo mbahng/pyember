@@ -45,7 +45,7 @@ if(BUILD_PYTHON_BINDINGS)
   set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
   set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
   set(Python_LIBRARY ${PYTHON_LIBRARY})
-  find_package(Python REQUIRED COMPONENTS Interpreter Development)
+  find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
 
   message(STATUS "Plz : ${Python_EXECUTABLE}")
   message(STATUS "Plz : ${PYTHON_EXT_SUFFIX}")
