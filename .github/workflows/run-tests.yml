@@ -118,14 +118,6 @@ jobs:
           python test/Tensor/util_test.py
 
   run-linux-tests:
-    name: Runs tests on manylinux2014-cp${{ matrix.python }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-    steps:
-      - uses: actions/checkout@v4
-
       - name: Run tests in manylinux container
         uses: addnab/docker-run-action@v3
         with:
@@ -134,15 +126,26 @@ jobs:
           run: |
             # Setup Python
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
-            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${{ matrix.python }}"
-            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${{ matrix.python }}.so"
+            
+            # Debug Python setup
+            echo "Checking Python paths:"
+            find ${PYROOT} -name "Python.h"
+            find ${PYROOT} -name "libpython*.so*"
+            
+            # Set explicit paths based on findings
+            export PYTHON_INCLUDE_DIR=$(find ${PYROOT} -name "Python.h" | head -n1 | xargs dirname)
+            export PYTHON_LIBRARY=$(find ${PYROOT} -name "libpython${PYSHORT}.so*" | head -n1)
+            export Python_ROOT_DIR=${PYROOT}
+            
+            echo "Using paths:"
+            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
+            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
+            echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
             
             cd /io
-            
-            # Install Python development headers
-            yum install -y python3-devel
             
             # Create and activate virtual environment
             python -m venv venv
@@ -153,19 +156,14 @@ jobs:
             pip install setuptools wheel
             pip install "pybind11[global]"
             
-            # Debug paths
-            echo "Python paths:"
-            echo "PYROOT: ${PYROOT}"
-            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
-            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
-            ls -l ${PYTHON_INCLUDE_DIR} || true
-            ls -l ${PYTHON_LIBRARY}* || true
-            
             # Try compile with explicit CMake variables
             CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \
                        -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
                        -DPYTHON_LIBRARY=${PYTHON_LIBRARY} \
-                       -DPython_ROOT_DIR=${PYROOT} \
+                       -DPython_ROOT_DIR=${Python_ROOT_DIR} \
+                       -DPython_EXECUTABLE=${PYROOT}/bin/python \
+                       -DPython_INCLUDE_DIRS=${PYTHON_INCLUDE_DIR} \
+                       -DPython_LIBRARIES=${PYTHON_LIBRARY} \
                        -DPython_FIND_STRATEGY=LOCATION" \
             CMAKE_DEV=1 pip install . -vvv
             
