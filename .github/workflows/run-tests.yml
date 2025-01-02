@@ -132,9 +132,10 @@ jobs:
           image: quay.io/pypa/manylinux2014_x86_64
           options: -v ${{ github.workspace }}:/pyember
           run: |
-            # Setup Python
-            cmake --version
+            # Install development version of python 
             yum install -y python-devel python3-devel
+
+            # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
@@ -143,29 +144,10 @@ jobs:
             # Set explicit Python paths
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
-            # export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
             export Python_ROOT_DIR="${PYROOT}"
-            
-            echo "Python paths:"
-            echo "PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}"
-            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
-            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
-            echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
-            which python
-            python --version
-            
-            # Verify paths exist
-            ls -l ${PYTHON_LIBRARY}
-            
-            cd /pyember
             
             # Install dependencies
             pip install "pybind11[global]==2.11"
             
-            # Try compile with explicit CMake variables
-            # CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} \
-            #            -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
-            #            -DPYTHON_LIBRARY=${PYTHON_LIBRARY} \
-            #            -DPython_ROOT_DIR=${Python_ROOT_DIR} \
-            #            -DPython_FIND_STRATEGY=LOCATION" \
+            cd /pyember
             CMAKE_DEV=1 pip install . -vv
