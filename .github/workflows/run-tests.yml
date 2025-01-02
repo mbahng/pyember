@@ -133,10 +133,10 @@ jobs:
           options: -v ${{ github.workspace }}:/io
           run: |
             # Setup Python
-            # PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-            # PYBIN="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}/bin"
-            # PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-            # export PATH="${PYBIN}:$PATH"
+            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYBIN="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}/bin"
+            PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYBIN}:$PATH"
             
             cd /io
             
