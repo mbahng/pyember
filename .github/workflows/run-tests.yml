@@ -154,7 +154,7 @@ jobs:
             export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
 
             echo "=================="
-            ls ${PYROOT}/lib/python3.10
+            ls ${PYROOT}/lib/python3.10/lib-dynload
             find ${PYROOT}/lib -name "libpython.so"
             echo "=================="
             find ${PYROOT} -type f -name "*.so*"
