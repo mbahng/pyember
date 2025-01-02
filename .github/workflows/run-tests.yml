@@ -132,39 +132,32 @@ jobs:
           image: quay.io/pypa/manylinux2014_x86_64
           options: -v ${{ github.workspace }}:/pyember
           run: |
-            yum install -y python3-devel
+            # Install development version of python 
+            yum install -y python3-devel libpython${{ matrix.python }}
+
+            # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
+
+            # Set explicit Python paths
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
-            
-            echo "=================="
-            ls ${PYROOT}/lib
-            find ${PYROOT}/lib -name "libpython.so"
-            find / -name "libpython.so" 2>/dev/null
-            echo "=================="
-
-            # Build Python with shared libraries
-            cd ${PYROOT}
-            ./configure --enable-shared
-            make -j$(nproc)
-            make install
+            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
 
             echo "=================="
             ls ${PYROOT}/lib
-            find ${PYROOT}/lib -name "libpython.so"
-            find / -name "libpython.so" 2>/dev/null
+            find ${PYROOT}/lib -name "libpython*.so*"
+            find / -name "libpython*.so*" 2>/dev/null
             echo "=================="
-            
-            # Update library path
-            export LD_LIBRARY_PATH="${PYROOT}/lib:$LD_LIBRARY_PATH"
-            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
+
+            pip install "pybind11[global]"
 
             cd /pyember
-            pip install "pybind11[global]"
+            echo "bruh"
+            which python 
             CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} \
-                        -DPYTHON_LIBRARY=${PYTHON_LIBRARY}"
+                       -DPYTHON_LIBRARY=${PYTHON_LIBRARY}"
             CMAKE_DEV=1 pip install . -vv
