@@ -132,16 +132,21 @@ jobs:
           image: quay.io/pypa/manylinux1_x86_64
           options: -v ${{ github.workspace }}:/pyember
           run: |
+            yum instal tree
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
+            tree /opt/python
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
+            which python
+            python --version
             # export PYTHON_LIBRARY="/lib64/libpython${PYTHON_VERSION}.so.1.0"
-            python -m pip install --upgrade pip
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python get-pip.py
 
             # echo "=================="
             # echo ${PYTHON_LIBRARY}
