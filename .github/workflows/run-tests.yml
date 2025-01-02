@@ -118,60 +118,68 @@ jobs:
           python test/Tensor/util_test.py
 
   run-linux-tests:
-    - name: Run tests in manylinux container
-      uses: addnab/docker-run-action@v3
-      with:
-        image: quay.io/pypa/manylinux2014_x86_64
-        options: -v ${{ github.workspace }}:/io
-        run: |
-          # Setup Python
-          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-          PYSHORT="${{ matrix.python }}"
-          export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-          export PATH="${PYROOT}/bin:$PATH"
-          
-          # Debug Python setup
-          echo "Checking Python paths:"
-          find ${PYROOT} -name "Python.h"
-          find ${PYROOT} -name "libpython*.so*"
-          
-          # Set explicit paths based on findings
-          export PYTHON_INCLUDE_DIR=$(find ${PYROOT} -name "Python.h" | head -n1 | xargs dirname)
-          export PYTHON_LIBRARY=$(find ${PYROOT} -name "libpython${PYSHORT}.so*" | head -n1)
-          export Python_ROOT_DIR=${PYROOT}
-          
-          echo "Using paths:"
-          echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
-          echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
-          echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
-          
-          cd /io
-          
-          # Create and activate virtual environment
-          python -m venv venv
-          . venv/bin/activate
-          
-          # Install dependencies
-          python -m pip install --upgrade pip
-          pip install setuptools wheel
-          pip install "pybind11[global]"
-          
-          # Try compile with explicit CMake variables
-          CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \
-                     -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
-                     -DPYTHON_LIBRARY=${PYTHON_LIBRARY} \
-                     -DPython_ROOT_DIR=${Python_ROOT_DIR} \
-                     -DPython_EXECUTABLE=${PYROOT}/bin/python \
-                     -DPython_INCLUDE_DIRS=${PYTHON_INCLUDE_DIR} \
-                     -DPython_LIBRARIES=${PYTHON_LIBRARY} \
-                     -DPython_FIND_STRATEGY=LOCATION" \
-          CMAKE_DEV=1 pip install . -vvv
-          
-          # Run tests
-          ./build/test/tests
-          python test/GradTensor/algebra_test.py
-          python test/GradTensor/constructor_test.py
-          python test/GradTensor/util_test.py
-          python test/Tensor/algebra_test.py
-          python test/Tensor/constructor_test.py
-          python test/Tensor/util_test.py
+    name: Runs tests on manylinux2014-cp${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests in manylinux container
+        uses: addnab/docker-run-action@v3
+        with:
+          image: quay.io/pypa/manylinux2014_x86_64
+          options: -v ${{ github.workspace }}:/io
+          run: |
+            # Setup Python
+            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYSHORT="${{ matrix.python }}"
+            export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYROOT}/bin:$PATH"
+            
+            # Debug Python setup
+            echo "Checking Python paths:"
+            find ${PYROOT} -name "Python.h"
+            find ${PYROOT} -name "libpython*.so*"
+            
+            # Set explicit paths based on findings
+            export PYTHON_INCLUDE_DIR=$(find ${PYROOT} -name "Python.h" | head -n1 | xargs dirname)
+            export PYTHON_LIBRARY=$(find ${PYROOT} -name "libpython${PYSHORT}.so*" | head -n1)
+            export Python_ROOT_DIR=${PYROOT}
+            
+            echo "Using paths:"
+            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
+            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
+            echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
+            
+            cd /io
+            
+            # Create and activate virtual environment
+            python -m venv venv
+            . venv/bin/activate
+            
+            # Install dependencies
+            python -m pip install --upgrade pip
+            pip install setuptools wheel
+            pip install "pybind11[global]"
+            
+            # Try compile with explicit CMake variables
+            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \
+                       -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
+                       -DPYTHON_LIBRARY=${PYTHON_LIBRARY} \
+                       -DPython_ROOT_DIR=${Python_ROOT_DIR} \
+                       -DPython_EXECUTABLE=${PYROOT}/bin/python \
+                       -DPython_INCLUDE_DIRS=${PYTHON_INCLUDE_DIR} \
+                       -DPython_LIBRARIES=${PYTHON_LIBRARY} \
+                       -DPython_FIND_STRATEGY=LOCATION" \
+            CMAKE_DEV=1 pip install . -vvv
+            
+            # Run tests
+            ./build/test/tests
+            python test/GradTensor/algebra_test.py
+            python test/GradTensor/constructor_test.py
+            python test/GradTensor/util_test.py
+            python test/Tensor/algebra_test.py
+            python test/Tensor/constructor_test.py
+            python test/Tensor/util_test.py
