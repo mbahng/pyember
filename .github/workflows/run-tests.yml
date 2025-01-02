@@ -117,7 +117,7 @@ jobs:
           python test/Tensor/constructor_test.py
           python test/Tensor/util_test.py
 
-  run-linux-tests:
+    run-linux-tests:
       - name: Run tests in manylinux container
         uses: addnab/docker-run-action@v3
         with:
