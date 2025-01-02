@@ -1,5 +1,5 @@
 # should be >= 3.15 since it prioritizes finding python in current venv
-cmake_minimum_required(VERSION 3.15..3.15)
+cmake_minimum_required(VERSION 3.15)
 project(aten)
 include(FetchContent)
 
@@ -42,6 +42,7 @@ else()
 endif()
 
 if(BUILD_PYTHON_BINDINGS) 
+  find_package(Python REQUIRED COMPONENTS Interpreter Development)
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
