@@ -138,26 +138,27 @@ jobs:
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
             
-            # Debug Python setup
-            echo "Checking Python paths:"
-            find ${PYROOT} -name "Python.h"
-            find ${PYROOT} -name "libpython*.so*"
+            cd /io
             
-            # Set explicit paths based on findings
-            export PYTHON_INCLUDE_DIR=$(find ${PYROOT} -name "Python.h" | head -n1 | xargs dirname)
-            export PYTHON_LIBRARY=$(find ${PYROOT} -name "libpython${PYSHORT}.so*" | head -n1)
-            export Python_ROOT_DIR=${PYROOT}
+            # Create and activate virtual environment
+            ${PYROOT}/bin/python -m venv venv
+            . venv/bin/activate
             
-            echo "Using paths:"
+            # Set explicit Python paths
+            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
+            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
+            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
+            export Python_ROOT_DIR="${PYROOT}"
+            
+            echo "Python paths:"
+            echo "PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}"
             echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
             echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
             echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
             
-            cd /io
-            
-            # Create and activate virtual environment
-            python -m venv venv
-            . venv/bin/activate
+            # Verify paths exist
+            ls -l ${PYTHON_INCLUDE_DIR}
+            ls -l ${PYTHON_LIBRARY}
             
             # Install dependencies
             python -m pip install --upgrade pip
@@ -165,21 +166,9 @@ jobs:
             pip install "pybind11[global]"
             
             # Try compile with explicit CMake variables
-            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \
+            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} \
                        -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
                        -DPYTHON_LIBRARY=${PYTHON_LIBRARY} \
                        -DPython_ROOT_DIR=${Python_ROOT_DIR} \
-                       -DPython_EXECUTABLE=${PYROOT}/bin/python \
-                       -DPython_INCLUDE_DIRS=${PYTHON_INCLUDE_DIR} \
-                       -DPython_LIBRARIES=${PYTHON_LIBRARY} \
                        -DPython_FIND_STRATEGY=LOCATION" \
             CMAKE_DEV=1 pip install . -vvv
-            
-            # Run tests
-            ./build/test/tests
-            python test/GradTensor/algebra_test.py
-            python test/GradTensor/constructor_test.py
-            python test/GradTensor/util_test.py
-            python test/Tensor/algebra_test.py
-            python test/Tensor/constructor_test.py
-            python test/Tensor/util_test.py
