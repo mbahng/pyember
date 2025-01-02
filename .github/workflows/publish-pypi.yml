@@ -10,8 +10,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
-      name: testpypi
-      url: https://test.pypi.org/project/pyember/
+      name: pypi
+      url: https://pypi.org/project/pyember/
     permissions:
       id-token: write
     steps:
@@ -39,5 +39,5 @@ jobs:
       - name: Publish wheels to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/
+          repository-url: https://pypi.org/legacy/
           verbose: true
