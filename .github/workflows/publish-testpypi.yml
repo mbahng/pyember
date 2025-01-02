@@ -14,21 +14,22 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Download Windows artifacts
+      - name: Download macOS artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: build-wheels-win-amd64
-          name: windows-wheels-windows-latest-3
+          workflow: build-wheels-macos-arm64
+          run_id
+          name: macos-wheels-macos-latest-3
           name_is_regexp: true
           workflow_conclusion: success
           path: dist/
           skip_unpack: false
 
-      - name: Download macOS artifacts
+      - name: Download Windows artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
-          workflow: build-wheels-macos-arm64
-          name: macos-wheels-macos-latest-3
+          workflow: build-wheels-win-amd64
+          name: windows-wheels-windows-latest-3
           name_is_regexp: true
           workflow_conclusion: success
           path: dist/
