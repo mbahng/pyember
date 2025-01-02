@@ -118,19 +118,24 @@ jobs:
           python test/Tensor/util_test.py
 
   run-linux-tests:
-    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
-    runs-on: ${{ matrix.os }}
+    name: Runs tests on manylinux2014-cp${{ matrix.python }}
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pypa/manylinux2014_x86_64
     strategy:
       matrix:
-        os: [ubuntu-latest]
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python }}
+      - name: Setup Python
+        run: |
+          # Convert Python version to format used in /opt/python
+          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+          PYTHON_PATH="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}/bin"
+          echo "Using Python from: ${PYTHON_PATH}"
+          export PATH="${PYTHON_PATH}:$PATH"
+          python --version
       
       - name: Install Python dependencies
         run: |
