@@ -2,18 +2,9 @@ from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools import Extension
 import subprocess
-import os, glob
+import os, glob, sys
 import shutil
 import sysconfig
-
-def list_files(startpath):
-    for root, dirs, files in os.walk(startpath):
-        level = root.replace(startpath, '').count(os.sep)
-        indent = ' ' * 4 * (level)
-        print('{}{}/'.format(indent, os.path.basename(root)))
-        subindent = ' ' * 4 * (level + 1)
-        for f in files:
-            print('{}{}'.format(subindent, f))
 
 class CMakeExtension(Extension):
     def __init__(self, name): 
@@ -84,14 +75,13 @@ class CMakeBuildExt(build_ext):
                   f'-DBUILD_DEBUG={debug}', 
                   f'-DBUILD_DEV={dev}'
     ]
+
+    print(sys.version)
     print("Building extension...")
-    # aten.cpython-37m-x86_64-linux-gnu.so
     # runs cmake for aten to construct the Makefile
     subprocess.check_call(['cmake'] + cmake_args)
     # this runs make, which builds main, test, and the .so file  
     subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release']) 
-
-    # list_files(build_dir)
 
     # This is where CMake puts it
     if os.name == 'nt':  # Windows
