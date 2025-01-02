@@ -103,41 +103,41 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.11"]
+        python: ["3.11"] # development python not supported 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Run tests in manylinux container
+        uses: addnab/docker-run-action@v3
         with:
-          python-version: ${{ matrix.python }}
+          image: quay.io/pypa/manylinux_2_28_x86_64
+          options: -v ${{ github.workspace }}:/pyember
+          run: |
+            yum install -y python3-devel 
+            yum install -y epel-release
+            yum install -y python3.11-devel 
+            
+            # Set python paths
+            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYSHORT="${{ matrix.python }}"
+            export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYROOT}/bin:$PATH"
+            
+            ${PYROOT}/bin/python -m pip install --upgrade pip
+            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
+            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
+            export Python_ROOT_DIR="${PYROOT}"
 
-      - name: Install dependencies
-        run: |
-          yum install -y python3-devel 
-          yum install -y epel-release
-          yum install -y python3.11-devel 
-          
-          # Set python paths
-          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-          PYSHORT="${{ matrix.python }}"
-          export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-          export PATH="${PYROOT}/bin:$PATH"
-          
-          ${PYROOT}/bin/python -m pip install --upgrade pip
-          export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
-          export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
-          export Python_ROOT_DIR="${PYROOT}"
+            ${PYROOT}/bin/pip install "pybind11[global]"
+            ${PYROOT}/bin/pip install cibuildwheel
+            export CIBW_BUILD="cp${PYTHON_VERSION}-*"
 
-          ${PYROOT}/bin/pip install "pybind11[global]"
-          ${PYROOT}/bin/pip install cibuildwheel
-          export CIBW_BUILD="cp${PYTHON_VERSION}-*"
-
-          cd /pyember
-          python -m cibuildwheel
+            cd /pyember
+            python -m cibuildwheel
           
       - name: List uploaded artifacts
         run: |
           pwd
           echo "Current directory contents:" 
           ls -R ./wheelhouse/
+
