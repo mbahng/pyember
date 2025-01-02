@@ -141,11 +141,23 @@ jobs:
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
             
+            echo "=================="
+            ls ${PYROOT}/lib
+            find ${PYROOT}/lib -name "libpython.so"
+            find / -name "libpython.so" 2>/dev/null
+            echo "=================="
+
             # Build Python with shared libraries
             cd ${PYROOT}
             ./configure --enable-shared
             make -j$(nproc)
             make install
+
+            echo "=================="
+            ls ${PYROOT}/lib
+            find ${PYROOT}/lib -name "libpython.so"
+            find / -name "libpython.so" 2>/dev/null
+            echo "=================="
             
             # Update library path
             export LD_LIBRARY_PATH="${PYROOT}/lib:$LD_LIBRARY_PATH"
