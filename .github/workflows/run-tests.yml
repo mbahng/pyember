@@ -122,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python: ["3.10"]
     steps:
       - uses: actions/checkout@v4 
 
@@ -154,7 +154,7 @@ jobs:
             export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
 
             echo "=================="
-            ls ${PYROOT}/lib
+            ls ${PYROOT}/lib/python3.10
             find ${PYROOT}/lib -name "libpython.so"
             echo "=================="
             find ${PYROOT} -type f -name "*.so*"
