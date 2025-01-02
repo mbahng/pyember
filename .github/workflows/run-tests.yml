@@ -122,31 +122,26 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.10"]
+        python: ["3.11"]
     steps:
       - uses: actions/checkout@v4 
 
       - name: Run tests in manylinux container
         uses: addnab/docker-run-action@v3
         with:
-          image: quay.io/pypa/manylinux2014_x86_64
+          image: quay.io/pypa/manylinux_2_28_x86_64
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Install development version of python 
-            yum install -y python3-devel python-devel
+            yum install -y python3-devel 
             yum install -y epel-release
-            yum install -y \
-              python3.10-devel \
-              python3.11-devel \
-              python3.12-devel \
-              python3.13-devel
+            yum install -y python3.11-devel 
 
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
-
             python -m pip install --upgrade pip
 
             # Set explicit Python paths
@@ -155,16 +150,10 @@ jobs:
             export Python_ROOT_DIR="${PYROOT}"
             export PYTHON_LIBRARY="/lib64/libpython${PYTHON_VERSION}.so.1.0"
 
+            echo "=================="
             echo ${PYTHON_LIBRARY}
             echo "=================="
             ldconfig -p | grep libpython
-            echo "=================="
-            ls ${PYROOT}/lib/python3.10/site-packages  
-            find ${PYROOT}/lib -name "libpython.so"
-            echo "=================="
-            find ${PYROOT} -type f -name "*.so*"
-            echo "=================="
-            find ${PYROOT} -type f -name "python*"
             echo "=================="
 
             pip install "pybind11[global]"
