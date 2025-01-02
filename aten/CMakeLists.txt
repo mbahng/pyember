@@ -48,7 +48,7 @@ if(DEFINED ENV{MY_PYTHON_EXECUTABLE})
 endif()
 
 if(BUILD_PYTHON_BINDINGS) 
-  find_package(Python REQUIRED COMPONENTS Interpreter)
+  find_package(Python REQUIRED COMPONENTS Interpreter Development Development.Embed)
 
   message(STATUS "Plz : ${Python_EXECUTABLE}")
   message(STATUS "Plz : ${PYTHON_EXT_SUFFIX}")

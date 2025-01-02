@@ -129,7 +129,7 @@ jobs:
       - name: Run tests in manylinux container
         uses: addnab/docker-run-action@v3
         with:
-          image: quay.io/pypa/manylinux2014_x86_64
+          image: quay.io/pypa/manylinux_2_28_x86_64
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Install development version of python 
