@@ -147,8 +147,9 @@ jobs:
             python -c "import sysconfig; print(sysconfig.get_paths())"
             
             # Install dependencies with verbose output
-            pip list
+            pip install setuptools wheel -v
             pip install "pybind11" -v
+            pip list
             
             # Try installing in develop mode first to see build output
             python setup.py develop -v
