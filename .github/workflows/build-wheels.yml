@@ -99,12 +99,11 @@ jobs:
   #         Get-ChildItem -Recurse .\wheelhouse\
 
   build-linux-wheels:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Build wheels on manylinux2_28-cp${{ matrix.python }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python: ["3.12"]
     steps:
       - uses: actions/checkout@v4 
 
