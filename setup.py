@@ -68,20 +68,21 @@ class CMakeBuildExt(build_ext):
     dev = os.environ.get('CMAKE_DEV', '').upper() in ('1', 'ON', 'TRUE', 'YES')
 
     # Configure CMake
-    cmake_args = [ 
-                  '-B', build_dir, 
-                  '-S', os.path.join(os.path.dirname(__file__), 'aten'),
-                  '-DBUILD_PYTHON_BINDINGS=ON', 
-                  f'-DBUILD_DEBUG={debug}', 
-                  f'-DBUILD_DEV={dev}'
+    cmake_args = [
+        '-B', build_dir,
+        '-S', os.path.join(os.path.dirname(__file__), 'aten'),
+        '-DBUILD_PYTHON_BINDINGS=ON',
+        f'-DBUILD_DEBUG={debug}',
+        f'-DBUILD_DEV={dev}',
+        f'-DPython_EXECUTABLE={sys.executable}'
     ]
 
-    print(sys.version)
     print("Building extension...")
     # runs cmake for aten to construct the Makefile
     subprocess.check_call(['cmake'] + cmake_args)
     # this runs make, which builds main, test, and the .so file  
-    subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release']) 
+    build_type = 'Debug' if debug or dev else 'Release'
+    subprocess.check_call(['cmake', '--build', build_dir, '--config', build_type])
 
     # This is where CMake puts it
     if os.name == 'nt':  # Windows
