@@ -151,7 +151,6 @@ jobs:
             ${PYROOT}/bin/pip install "pybind11[global]"
             cd /pyember
                         
-            # Then try pip install
             CMAKE_DEV=1 ${PYROOT}/bin/pip install -e . -vv
             
             ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
