@@ -157,7 +157,7 @@ jobs:
             ls ${PYROOT}/lib
             find ${PYROOT}/lib -name "libpython.so"
             echo "=================="
-            find / -name "libpython.so" 2>/dev/null
+            find ${PYROOT} -type f -name "*.so*"
             echo "=================="
             find ${PYROOT} -type f -name "python*"
             echo "=================="
