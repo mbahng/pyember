@@ -1,6 +1,8 @@
-find_package(pybind11 REQUIRED)
+set(Python_FIND_UNVERSIONED_NAMES OFF)
 set(Python_FIND_STRATEGY LOCATION)
-set(Python_FIND_UNVERSIONED_NAMES NEVER)
+find_package(Python ${PYTHON_VERSION} COMPONENTS Interpreter Development.Module Development.Embed REQUIRED)
+
+find_package(pybind11 REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
 message(STATUS "Found Python: ${Python_VERSION}")
 message(STATUS "Python Executable: ${Python_EXECUTABLE}")
