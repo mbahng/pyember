@@ -122,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.11"]
+        python: ["3.11"] # development python not supported 
     steps:
       - uses: actions/checkout@v4 
 
@@ -165,10 +165,10 @@ jobs:
           ./build/test/tests
       - name: Run Python tests 
         run: | 
-          python test/GradTensor/algebra_test.py
-          python test/GradTensor/constructor_test.py
-          python test/GradTensor/util_test.py
-          python test/Tensor/algebra_test.py
-          python test/Tensor/constructor_test.py
-          python test/Tensor/util_test.py
+          ${PYROOT}/bin/python test/GradTensor/algebra_test.py
+          ${PYROOT}/bin/python test/GradTensor/constructor_test.py
+          ${PYROOT}/bin/python test/GradTensor/util_test.py
+          ${PYROOT}/bin/python test/Tensor/algebra_test.py
+          ${PYROOT}/bin/python test/Tensor/constructor_test.py
+          ${PYROOT}/bin/python test/Tensor/util_test.py
 
