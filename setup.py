@@ -85,6 +85,7 @@ class CMakeBuildExt(build_ext):
                   f'-DBUILD_DEV={dev}'
     ]
     print("Building extension...")
+    # aten.cpython-37m-x86_64-linux-gnu.so
     # runs cmake for aten to construct the Makefile
     subprocess.check_call(['cmake'] + cmake_args)
     # this runs make, which builds main, test, and the .so file  

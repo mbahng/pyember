@@ -150,4 +150,6 @@ jobs:
             pip install "pybind11[global]==2.11"
             
             cd /pyember
+            echo "bruh"
+            which python 
             CMAKE_DEV=1 pip install . -vv
