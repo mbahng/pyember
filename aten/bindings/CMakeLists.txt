@@ -1,6 +1,3 @@
-set(Python_FIND_UNVERSIONED_NAMES OFF)
-set(Python_FIND_STRATEGY LOCATION)
-
 find_package(pybind11 REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
 message(STATUS "Found Python: ${Python_VERSION}")
