@@ -85,7 +85,11 @@ class CMakeBuildExt(build_ext):
 
     # This is where CMake puts it
     if os.name == 'nt':  # Windows
-        built_so = os.path.join(build_dir, 'Release', f"aten{sysconfig.get_config_var('EXT_SUFFIX')}") 
+        # For Debug builds
+        if debug or dev:
+            built_so = os.path.join(build_dir, 'Debug', f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
+        else:
+            built_so = os.path.join(build_dir, 'Release', f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
     else:  # Linux/Mac
         built_so = os.path.join(build_dir, f"aten{sysconfig.get_config_var('EXT_SUFFIX')}")
     
