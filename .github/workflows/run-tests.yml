@@ -1,14 +1,13 @@
 name: run-tests
 on: 
   push: 
-
 jobs:
   run-macos-tests:
     name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os:  [macos-latest]
+        os: [macos-latest]
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
@@ -22,21 +21,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install "pybind11[global]"
-
       - name: Compile aten 
         run: |
           CMAKE_DEV=1 pip install . -vvv
-
       - name: Run CPP tests 
         run: | 
           ./build/test/tests
-
       - name: Run Python tests 
         run: | 
           python test/GradTensor/algebra_test.py
           python test/GradTensor/constructor_test.py
           python test/GradTensor/util_test.py
-
           python test/Tensor/algebra_test.py
           python test/Tensor/constructor_test.py
           python test/Tensor/util_test.py
@@ -113,7 +108,6 @@ jobs:
       - name: Run Python tests 
         shell: pwsh
         run: | 
-          # Add PYTHONPATH to ensure tests can find the package
           $env:PYTHONPATH = "."
           
           python test/GradTensor/algebra_test.py
@@ -123,3 +117,39 @@ jobs:
           python test/Tensor/constructor_test.py
           python test/Tensor/util_test.py
 
+  run-linux-tests:
+    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]"
+          
+      - name: Compile aten 
+        run: |
+          CMAKE_DEV=1 pip install . -vvv
+          
+      - name: Run CPP tests 
+        run: | 
+          ./build/test/tests
+          
+      - name: Run Python tests 
+        run: | 
+          python test/GradTensor/algebra_test.py
+          python test/GradTensor/constructor_test.py
+          python test/GradTensor/util_test.py
+          python test/Tensor/algebra_test.py
+          python test/Tensor/constructor_test.py
+          python test/Tensor/util_test.py
