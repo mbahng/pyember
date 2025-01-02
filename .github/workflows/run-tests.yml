@@ -140,6 +140,7 @@ jobs:
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
+            python -m pip install --upgrade pip
 
             # Set explicit Python paths
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
@@ -149,7 +150,7 @@ jobs:
             pip install "pybind11[global]"
 
             cd /pyember
-            CMAKE_DEV=1 ${PYTHON_EXECUTABLE} -m pip install . -vv
+            CMAKE_DEV=1 pip install . -vv
 
             pip list | grep ember
             python -c "import ember; print(ember.__file__)"
