@@ -129,20 +129,13 @@ jobs:
           CIBW_SKIP: "*-win32 *-musllinux* pp*"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_ENVIRONMENT: |
-            PYTHON_EXECUTABLE="/opt/python/cp{py}/bin/python"
-            PYTHON_INCLUDE_DIR="/opt/python/cp{py}/include/python{py}"
-            PYTHON_LIBRARY="/opt/python/cp{py}/lib/python{py}"
-            CMAKE_ARGS="-DPYTHON_EXECUTABLE:FILEPATH=/opt/python/cp{py}/bin/python \
-                      -DPYTHON_INCLUDE_DIR=/opt/python/cp{py}/include/python{py} \
-                      -DPYTHON_LIBRARY=/opt/python/cp{py}/lib/python{py} \
-                      -DPython_EXECUTABLE=/opt/python/cp{py}/bin/python \
-                      -DPython_ROOT_DIR=/opt/python/cp{py} \
-                      -DPython_FIND_STRATEGY=LOCATION"
+            CMAKE_ARGS="-DPython_EXECUTABLE=/opt/python/cp{py}/bin/python \
+                       -DPython_ROOT_DIR=/opt/python/cp{py}"
           CIBW_BEFORE_BUILD: |
             pip install --upgrade pip
             pip install pybind11
             pip install "pybind11[global]"
-            python -c "import sys; print('Python version:', sys.version); import pybind11; print('pybind11 version:', pybind11.__version__)"
+            python -c "import sys; print('Python version:', sys.version)"
       
       - name: Store the wheels
         uses: actions/upload-artifact@v4
