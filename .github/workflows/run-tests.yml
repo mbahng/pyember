@@ -45,12 +45,12 @@ jobs:
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-     
+    
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-     
+    
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
@@ -61,21 +61,21 @@ jobs:
         run: |
           $env:CMAKE_DEV = 1
           pip install . -vvv
-         
+        
           # Debug: Check installation
           Write-Host "Python path:"
           python -c "import sys; print('\n'.join(sys.path))"
-         
+        
           # Get exact Python version
           $pythonVersion = python -c "import sys; print(sys.version.split()[0])"
           Write-Host "Exact Python version: $pythonVersion"
-         
+        
           Write-Host "Installed files:"
           Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\$pythonVersion\x64\Lib\site-packages\ember"
-         
+        
           Write-Host "Checking installed package:"
           pip list | findstr "pyember"
-         
+        
           Write-Host "Attempting import:"
           python -c "from ember import aten; print('aten module contents:', dir(aten))"
          
@@ -117,8 +117,8 @@ jobs:
           python test/Tensor/constructor_test.py
           python test/Tensor/util_test.py
 
-  run-linux-tests:
-    name: Runs tests on manylinux2014-cp${{ matrix.python }}
+  run-manylinux-tests:
+    name: Runs tests on manylinux_2_28_x86_64-cp${{ matrix.python }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -143,9 +143,6 @@ jobs:
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
             
-            rm -rf build/  
-            rm -rf *.so   
-            
             ${PYROOT}/bin/python -m pip install --upgrade pip
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
@@ -153,19 +150,7 @@ jobs:
             
             ${PYROOT}/bin/pip install "pybind11[global]"
             cd /pyember
-            
-            cmake --version
-            
-            # Try CMake directly first to see error
-            cmake -B build \
-                  -S aten \
-                  -DBUILD_PYTHON_BINDINGS=ON \
-                  -DBUILD_DEBUG=False \
-                  -DBUILD_DEV=True \
-                  -DPython_EXECUTABLE=${PYTHON_EXECUTABLE} \
-                  -DPython_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
-                  -DCMAKE_VERBOSE_MAKEFILE=ON
-            
+                        
             # Then try pip install
             CMAKE_DEV=1 ${PYROOT}/bin/pip install -e . -vv
             
