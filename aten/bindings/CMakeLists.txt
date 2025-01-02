@@ -1,14 +1,13 @@
 # Find interpreter first
-find_package(Python REQUIRED COMPONENTS Interpreter)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 message(STATUS "Found Python Interpreter: ${Python_VERSION}")
 
-# Set FindPython hints using Scikit-build variables
 set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
 set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
 set(Python_LIBRARY ${PYTHON_LIBRARY})
 
 # Then find development
-find_package(Python REQUIRED COMPONENTS Development)
+find_package(Python3 REQUIRED COMPONENTS Development)
 message(STATUS "Found Python Development")
 
 find_package(pybind11 REQUIRED)
