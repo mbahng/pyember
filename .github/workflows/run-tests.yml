@@ -133,7 +133,7 @@ jobs:
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Install development version of python 
-            yum install -y python-devel python3-devel
+            yum install -y python3-devel
 
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
@@ -145,14 +145,15 @@ jobs:
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
-            
-            # Install dependencies
+            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
+
+            ls ${PYROOT}/lib
+
             pip install "pybind11[global]"
-            
+
             cd /pyember
             echo "bruh"
             which python 
-            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \
+            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE} \
                        -DPYTHON_LIBRARY=${PYTHON_LIBRARY}"
-
             CMAKE_DEV=1 pip install . -vv
