@@ -49,12 +49,19 @@ if(DEFINED ENV{MY_PYTHON_EXECUTABLE})
 endif()
 
 if(BUILD_PYTHON_BINDINGS) 
-  find_package(Python REQUIRED COMPONENTS Interpreter Development Development.Embed)
-
-  message(STATUS "Plz : ${Python_EXECUTABLE}")
-  message(STATUS "Plz : ${PYTHON_EXT_SUFFIX}")
-  message(STATUS "Plz : ${PYTHON_LIBRARY}")
-
+  set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+  set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  # Force Python version to match the one we're using
+  set(Python_VERSION_MAJOR ${PYTHON_VERSION_MAJOR})
+  set(Python_VERSION_MINOR ${PYTHON_VERSION_MINOR})
+  
+  find_package(Python REQUIRED 
+    COMPONENTS Interpreter Development
+    EXACT VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+    
+  message(STATUS "Using Python: ${Python_EXECUTABLE}")
+  message(STATUS "Python version: ${Python_VERSION}")
+  
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
@@ -63,4 +70,3 @@ if(BUILD_PYTHON_BINDINGS)
   FetchContent_MakeAvailable(pybind11)
   add_subdirectory(bindings)
 endif()
-
