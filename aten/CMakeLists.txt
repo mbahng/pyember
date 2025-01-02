@@ -41,20 +41,13 @@ else()
     message(STATUS "Debug mode OFF")
 endif()
 
-# if(DEFINED ENV{MY_PYTHON_EXECUTABLE})
-#   set(Python_EXECUTABLE $ENV{MY_PYTHON_EXECUTABLE})
-#   set(Python_INCLUDE_DIR $ENV{MY_PYTHON_INCLUDE_DIR})
-#   set(Python_ROOT_DIR $ENV{MY_PYTHON_ROOT})
-#   set(Python_LIBRARY $ENV(MY_PYTHON))
-# endif()
-
 if(BUILD_PYTHON_BINDINGS)
   # Enable new CMake FindPython
   set(PYBIND11_FINDPYTHON ON)
   
   # Force Python paths
-  set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
-  set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  # set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+  # set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
   
   # Find Python first
   find_package(Python REQUIRED COMPONENTS Interpreter Development)

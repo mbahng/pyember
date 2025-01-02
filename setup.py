@@ -75,10 +75,7 @@ class CMakeBuildExt(build_ext):
         f'-DBUILD_DEBUG={debug}',
         f'-DBUILD_DEV={dev}'
     ]
-    print(f"Python exec: {sys.executable}")
-    print(f"PYROOT: {os.environ.get('PYROOT')}")
-    print(f"Python Include: {sysconfig.get_paths()['include']}")
-    print(f"Extension suffix: {sysconfig.get_config_var('EXT_SUFFIX')}")
+
     print("Building extension...")
     # runs cmake for aten to construct the Makefile
     subprocess.check_call(['cmake'] + cmake_args)
