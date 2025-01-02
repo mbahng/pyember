@@ -133,10 +133,9 @@ jobs:
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Install development version of python 
-            yum install -y python3-devel 
+            yum install -y python3-devel python-devel
             yum install -y epel-release
             yum install -y \
-              python39-devel \
               python3.10-devel \
               python3.11-devel \
               python3.12-devel \
@@ -147,6 +146,7 @@ jobs:
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
+
             python -m pip install --upgrade pip
 
             # Set explicit Python paths
