@@ -133,16 +133,33 @@ jobs:
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Setup Python
-            yum install -y python3-devel
+            yum install -y python-devel python3-devel
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
+
+            # Set explicit Python paths
+            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
+            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
+            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
+            export Python_ROOT_DIR="${PYROOT}"
+            
+            echo "Python paths:"
+            echo "PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}"
+            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
+            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
+            echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
+            which python
+            python --version
+            
+            # Verify paths exist
+            ls -l ${PYTHON_INCLUDE_DIR}
+            ls -l ${PYTHON_LIBRARY}
             
             cd /pyember
             
             # Install dependencies
-            python -m pip install --upgrade pip
             pip install setuptools wheel
             pip install "pybind11[global]"
             
