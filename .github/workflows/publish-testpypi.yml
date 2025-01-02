@@ -17,7 +17,7 @@ jobs:
           workflow: build-wheels-macos-arm64
           run_id: ${{ github.event.workflow_run.id }}
           workflow_conclusion: success
-          path: dist/macos/
+          path: dist/
           skip_unpack: false
           
       - name: Download Windows artifacts
