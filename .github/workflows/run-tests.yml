@@ -147,8 +147,8 @@ jobs:
             python -c "import sysconfig; print(sysconfig.get_paths())"
             
             # Install dependencies with verbose output
-            python -m pip install --upgrade pip -v
-            pip install "pybind11[global]" -v
+            pip list
+            pip install "pybind11" -v
             
             # Try installing in develop mode first to see build output
             python setup.py develop -v
