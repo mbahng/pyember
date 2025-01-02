@@ -118,38 +118,41 @@ jobs:
           python test/Tensor/util_test.py
 
   run-linux-tests:
-    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
-    runs-on: ${{ matrix.os }}
+    name: Runs tests on manylinux2014-cp${{ matrix.python }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
+
+      - name: Run tests in manylinux container
+        uses: addnab/docker-run-action@v3
         with:
-          python-version: ${{ matrix.python }}
-      
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install "pybind11[global]"
-          
-      - name: Compile aten 
-        run: |
-          CMAKE_DEV=1 pip install . -vvv
-          
-      - name: Run CPP tests 
-        run: | 
-          ./build/test/tests
-          
-      - name: Run Python tests 
-        run: | 
-          python test/GradTensor/algebra_test.py
-          python test/GradTensor/constructor_test.py
-          python test/GradTensor/util_test.py
-          python test/Tensor/algebra_test.py
-          python test/Tensor/constructor_test.py
-          python test/Tensor/util_test.py
+          image: quay.io/pypa/manylinux2014_x86_64
+          options: -v ${{ github.workspace }}:/io
+          run: |
+            # Setup Python
+            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+            PYTHON_PATH="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYTHON_PATH}/bin:$PATH"
+            python --version
+            
+            # Go to mounted directory
+            cd /io
+            
+            # Install dependencies
+            python -m pip install --upgrade pip
+            pip install "pybind11[global]"
+            
+            # Compile aten
+            CMAKE_DEV=1 pip install . -vvv
+            
+            # Run tests
+            ./build/test/tests
+            python test/GradTensor/algebra_test.py
+            python test/GradTensor/constructor_test.py
+            python test/GradTensor/util_test.py
+            python test/Tensor/algebra_test.py
+            python test/Tensor/constructor_test.py
+            python test/Tensor/util_test.py
