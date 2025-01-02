@@ -18,7 +18,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
-          name: macos-wheels.*
+          name: macos-wheels-macos-latest-3
           name_is_regexp: true
           workflow_conclusion: success
           path: dist/
@@ -28,12 +28,12 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-win-amd64
-          name: windows-wheels.*
+          name: windows-wheels-windows-latest-3
           name_is_regexp: true
           workflow_conclusion: success
           path: dist/
           skip_unpack: false
-          
+
       - name: List downloaded files
         run: |
           echo "Contents of dist directory before organizing:"
