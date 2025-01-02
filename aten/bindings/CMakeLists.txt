@@ -1,7 +1,3 @@
-find_package(Python REQUIRED COMPONENTS Interpreter Development)
-message(STATUS "Bruh : ${Python_EXECUTABLE}")
-message(STATUS "Bruh : ${PYTHON_EXT_SUFFIX}")
-find_package(pybind11 REQUIRED)
 message(STATUS "Bruh : ${Python_EXECUTABLE}")
 message(STATUS "Bruh : ${PYTHON_EXT_SUFFIX}")
 
@@ -23,6 +19,7 @@ execute_process(
 message(STATUS "Bruh : ${Python_EXECUTABLE}")
 message(STATUS "Bruh : ${PYTHON_EXT_SUFFIX}")
 message("Python version: ${Python_VERSION}")
+
 pybind11_add_module(aten_python_module ${BINDING_SOURCES})
 target_link_libraries(aten_python_module PRIVATE aten)
 target_include_directories(aten_python_module 

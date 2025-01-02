@@ -81,7 +81,6 @@ class CMakeBuildExt(build_ext):
                   '-B', build_dir, 
                   '-S', os.path.join(os.path.dirname(__file__), 'aten'),
                   '-DBUILD_PYTHON_BINDINGS=ON', 
-                  '-DPYBIND11_FINDPYTHON=ON',
                   f'-DBUILD_DEBUG={debug}', 
                   f'-DBUILD_DEV={dev}'
     ]
