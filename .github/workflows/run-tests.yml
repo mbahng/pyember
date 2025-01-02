@@ -134,25 +134,25 @@ jobs:
           run: |
             # Setup Python
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-            PYBIN="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}/bin"
-            PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-            export PATH="${PYBIN}:$PATH"
+            export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYROOT}/bin:$PATH"
             
             cd /io
             
-            # Debug Python environment
-            python --version
+            # Create and activate virtual environment
+            python -m venv venv
+            . venv/bin/activate
+            
+            # Verify we're in the virtual environment
             which python
-            python -c "import sys; print(sys.executable)"
-            python -c "import sysconfig; print(sysconfig.get_paths())"
+            python --version
             
-            # Install dependencies with verbose output
-            pip install python==${{ matrix.python }}
-            pip install setuptools wheel -v
-            pip install "pybind11[global]" -v
-            pip list
+            # Install dependencies in the virtual environment
+            python -m pip install --upgrade pip
+            pip install setuptools wheel
+            pip install "pybind11[global]"
             
-            # If that works, try the actual install
+            # Try compile
             CMAKE_DEV=1 pip install . -vvv
             
             # Run tests
