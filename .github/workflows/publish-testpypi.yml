@@ -1,13 +1,10 @@
 name: publish-testpypi 
 on: 
   workflow_run: 
-    workflows: ["build-wheels-win-amd64"]
+    workflows: ["build-wheels-macos-arm64"]
     types: 
       - completed
     branches: [main]
-
-permissions:
-  id-token: write
 
 jobs:
   verify-artifacts:
@@ -18,8 +15,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: build-wheels-macos-arm64
-          name: macos-wheels-macos-latest-3
-          name_is_regexp: true
+          run_id: ${{ github.event.workflow_run.id }}
           workflow_conclusion: success
           path: dist/macos/
           skip_unpack: false
