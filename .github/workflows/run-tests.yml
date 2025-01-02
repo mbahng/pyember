@@ -134,7 +134,12 @@ jobs:
           run: |
             # Install development version of python 
             yum install -y python3-devel 
-
+            yum install -y centos-release-scl
+            yum install -y rh-python39-python-devel \
+                           rh-python310-python-devel \
+                           rh-python311-python-devel \
+                           rh-python312-python-devel \
+                           python3.13-devel
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
