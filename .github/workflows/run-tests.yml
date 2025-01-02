@@ -134,18 +134,27 @@ jobs:
           run: |
             # Setup Python
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-            PYTHON_PATH="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-            export PATH="${PYTHON_PATH}/bin:$PATH"
-            python --version
+            PYBIN="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}/bin"
+            PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+            export PATH="${PYBIN}:$PATH"
             
-            # Go to mounted directory
             cd /io
             
-            # Install dependencies
-            pip install "pybind11[global]"
+            # Debug Python environment
+            python --version
+            which python
+            python -c "import sys; print(sys.executable)"
+            python -c "import sysconfig; print(sysconfig.get_paths())"
             
-            # Compile aten
-            CMAKE_DEV=1 pip install . -vvv
+            # Install dependencies with verbose output
+            python -m pip install --upgrade pip -v
+            pip install "pybind11[global]" -v
+            
+            # Try installing in develop mode first to see build output
+            python setup.py develop -v
+            
+            # If that works, try the actual install
+            CMAKE_DEV=1 pip install . -v
             
             # Run tests
             ./build/test/tests
