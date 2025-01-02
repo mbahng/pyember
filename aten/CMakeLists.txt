@@ -42,10 +42,10 @@ else()
 endif()
 
 if(BUILD_PYTHON_BINDINGS) 
-  set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
-  set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-  set(Python3_LIBRARY ${PYTHON_LIBRARY})
-  find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+  set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+  set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  set(Python_LIBRARY ${PYTHON_LIBRARY})
+  find_package(Python REQUIRED COMPONENTS Interpreter Development)
 
   FetchContent_Declare(
     pybind11

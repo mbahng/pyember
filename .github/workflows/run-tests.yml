@@ -143,7 +143,7 @@ jobs:
             # Set explicit Python paths
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
-            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
+            # export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
             export Python_ROOT_DIR="${PYROOT}"
             
             echo "Python paths:"
@@ -155,7 +155,7 @@ jobs:
             python --version
             
             # Verify paths exist
-            ls -l ${PYTHON_LIBRARY}/..
+            ls -l ${PYTHON_LIBRARY}
             
             cd /pyember
             
