@@ -1,4 +1,4 @@
-name: publish-testpypi 
+name: publish-wheels
 on: 
   workflow_run: 
     workflows: ["build-wheels"]
@@ -6,12 +6,21 @@ on:
       - completed
     branches: [main]
 jobs:
-  publish-to-testpypi:
+  publish-to-pypi:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - environment: testpypi
+            url: https://test.pypi.org/project/pyember/
+            registry: https://test.pypi.org/legacy/
+          - environment: pypi
+            url: https://pypi.org/project/pyember/
+            registry: https://upload.pypi.org/legacy/
     environment:
-      name: testpypi
-      url: https://test.pypi.org/project/pyember/
+      name: ${{ matrix.environment }}
+      url: ${{ matrix.url }}
     permissions:
       id-token: write
     steps:
@@ -26,9 +35,7 @@ jobs:
           
       - name: Organize wheels
         run: |
-          # Move all .whl files to dist/ directory
           find dist/ -name "*.whl" -exec mv {} dist/ \;
-          # Remove empty subdirectories
           find dist/ -type d -empty -delete
           
       - name: List files to publish
@@ -36,8 +43,8 @@ jobs:
           echo "Contents of dist directory:"
           tree dist
         
-      - name: Publish wheels to TestPyPI
+      - name: Publish wheels
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/
+          repository-url: ${{ matrix.registry }}
           verbose: true
