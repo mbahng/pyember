@@ -146,11 +146,10 @@ jobs:
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
 
-
             pip install "pybind11[global]"
 
             cd /pyember
-            CMAKE_DEV=1 pip install . -vv
+            CMAKE_DEV=1 ${PYTHON_EXECUTABLE} -m pip install . -vv
 
             pip list | grep ember
             python -c "import ember; print(ember.__file__)"
