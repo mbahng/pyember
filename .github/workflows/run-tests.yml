@@ -132,7 +132,7 @@ jobs:
           image: quay.io/pypa/manylinux1_x86_64
           options: -v ${{ github.workspace }}:/pyember
           run: |
-            yum instal tree
+            yum install tree
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
