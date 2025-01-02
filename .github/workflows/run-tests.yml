@@ -156,7 +156,10 @@ jobs:
             echo "=================="
             ls ${PYROOT}/lib
             find ${PYROOT}/lib -name "libpython.so"
+            echo "=================="
             find / -name "libpython.so" 2>/dev/null
+            echo "=================="
+            find ${PYROOT} -type f -name "python*"
             echo "=================="
 
             pip install "pybind11[global]"
