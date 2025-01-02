@@ -1,3 +1,4 @@
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
 message(STATUS "Bruh : ${Python_EXECUTABLE}")
 message(STATUS "Bruh : ${PYTHON_EXT_SUFFIX}")
 find_package(pybind11 REQUIRED)
