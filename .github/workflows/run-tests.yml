@@ -152,6 +152,9 @@ jobs:
             cd /pyember
             CMAKE_DEV=1 pip install . -vv
 
+            pip list | grep ember
+            python -c "import ember; print(ember.__file__)"
+
       - name: Run CPP tests 
         run: | 
           ./build/test/tests
