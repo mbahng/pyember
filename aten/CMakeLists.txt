@@ -48,20 +48,20 @@ if(DEFINED ENV{MY_PYTHON_EXECUTABLE})
   set(Python_LIBRARY $ENV(MY_PYTHON))
 endif()
 
-if(BUILD_PYTHON_BINDINGS) 
+if(BUILD_PYTHON_BINDINGS)
+  # Force Python paths before pybind11
   set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
+  set(PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})  # pybind11 uses this variable
   set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-  # Force Python version to match the one we're using
-  set(Python_VERSION_MAJOR ${PYTHON_VERSION_MAJOR})
-  set(Python_VERSION_MINOR ${PYTHON_VERSION_MINOR})
+  set(PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})  # pybind11 uses this variable
   
-  find_package(Python REQUIRED 
-    COMPONENTS Interpreter Development
-    EXACT VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
-    
-  message(STATUS "Using Python: ${Python_EXECUTABLE}")
+  # Find Python before pybind11
+  find_package(Python REQUIRED COMPONENTS Interpreter Development)
+  
+  message(STATUS "Python executable: ${Python_EXECUTABLE}")
   message(STATUS "Python version: ${Python_VERSION}")
-  
+  message(STATUS "Python include dir: ${Python_INCLUDE_DIR}")
+
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
