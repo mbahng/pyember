@@ -143,9 +143,8 @@ jobs:
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
             
-            # Force correct Python version
-            rm -rf build/  # Remove any previous builds
-            rm -rf *.so    # Remove any compiled modules
+            rm -rf build/  
+            rm -rf *.so   
             
             ${PYROOT}/bin/python -m pip install --upgrade pip
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
@@ -172,21 +171,13 @@ jobs:
             
             ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
             
-            # Run tests
+            # Run CPP tests (must be put in here to keep environ variables) 
+            ./build/test/tests
+
+            # Run Python Tests 
             ${PYROOT}/bin/python test/GradTensor/algebra_test.py
-            # ... rest of tests
-
-      - name: Run CPP tests 
-        run: | 
-          ./build/test/tests
-      - name: Run Python tests 
-        run: | 
-          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-          export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-          ${PYROOT}/bin/python test/GradTensor/algebra_test.py
-          ${PYROOT}/bin/python test/GradTensor/constructor_test.py
-          ${PYROOT}/bin/python test/GradTensor/util_test.py
-          ${PYROOT}/bin/python test/Tensor/algebra_test.py
-          ${PYROOT}/bin/python test/Tensor/constructor_test.py
-          ${PYROOT}/bin/python test/Tensor/util_test.py
-
+            ${PYROOT}/bin/python test/GradTensor/constructor_test.py
+            ${PYROOT}/bin/python test/GradTensor/util_test.py
+            ${PYROOT}/bin/python test/Tensor/algebra_test.py
+            ${PYROOT}/bin/python test/Tensor/constructor_test.py
+            ${PYROOT}/bin/python test/Tensor/util_test.py
