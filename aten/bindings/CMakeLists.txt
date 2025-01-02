@@ -1,27 +1,6 @@
-message(STATUS "Before find_package:")
-message(STATUS "Python_ROOT_DIR: $ENV{PYROOT}")
-message(STATUS "PYTHON_INCLUDE_DIR: $ENV{PYTHON_INCLUDE_DIR}")
-message(STATUS "PYTHON_LIBRARY: $ENV{PYTHON_LIBRARY}")
-
-set(Python_FIND_STRATEGY LOCATION)
-set(Python_ROOT_DIR $ENV{PYROOT})
-set(Python_EXECUTABLE $ENV{PYROOT}/bin/python)
-set(PYTHON_INCLUDE_DIR $ENV{PYTHON_INCLUDE_DIR})
-set(PYTHON_LIBRARY $ENV{PYTHON_LIBRARY})
-
-# Find interpreter first
-find_package(Python REQUIRED COMPONENTS Interpreter)
-message(STATUS "Found Python Interpreter: ${Python_VERSION}")
-
-# Then find development
-find_package(Python REQUIRED COMPONENTS Development)
-message(STATUS "Found Python Development")
-
-message(STATUS "After find_package:")
-message(STATUS "Python Version: ${Python_VERSION}")
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
+message(STATUS "Found Python: ${Python_VERSION}")
 message(STATUS "Python Executable: ${Python_EXECUTABLE}")
-message(STATUS "Python Include Dirs: ${Python_INCLUDE_DIRS}")
-message(STATUS "Python Libraries: ${Python_LIBRARIES}")
 
 find_package(pybind11 REQUIRED)
 
