@@ -141,26 +141,6 @@ jobs:
             
             cd /pyember
             
-            # Create and activate virtual environment
-            ${PYROOT}/bin/python -m venv venv
-            . venv/bin/activate
-            
-            # Set explicit Python paths
-            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
-            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
-            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"
-            export Python_ROOT_DIR="${PYROOT}"
-            
-            echo "Python paths:"
-            echo "PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}"
-            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
-            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
-            echo "Python_ROOT_DIR: ${Python_ROOT_DIR}"
-            
-            # Verify paths exist
-            ls -l ${PYTHON_INCLUDE_DIR}
-            ls -l ${PYTHON_LIBRARY}
-            
             # Install dependencies
             python -m pip install --upgrade pip
             pip install setuptools wheel
