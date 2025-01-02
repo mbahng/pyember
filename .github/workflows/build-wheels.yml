@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.12"]
+        python: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4 
 
@@ -134,7 +134,7 @@ jobs:
             ${PYROOT}/bin/python -m build --wheel --outdir /tmp/dist/
             
             # Repair the wheel to make it manylinux compatible
-            auditwheel repair /tmp/dist/*.whl -w /work/wheelhouse/
+            auditwheel repair --plat manylinux_2_28_x86_64 /tmp/dist/*.whl -w /work/wheelhouse/
           
       - name: Store the wheels
         uses: actions/upload-artifact@v4
