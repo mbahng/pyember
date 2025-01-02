@@ -11,15 +11,15 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-pybind11_add_module(aten_python_module ${BINDING_SOURCES})
-target_link_libraries(aten_python_module PRIVATE aten)
-target_include_directories(aten_python_module 
+pybind11_add_module(aten_python ${BINDING_SOURCES})
+target_link_libraries(aten_python PRIVATE aten)
+target_include_directories(aten_python 
   PRIVATE 
     ${CMAKE_SOURCE_DIR}/src 
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set_target_properties(aten_python_module PROPERTIES
+set_target_properties(aten_python PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     OUTPUT_NAME "aten"
     PREFIX ""
