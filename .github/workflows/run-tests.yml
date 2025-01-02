@@ -124,7 +124,7 @@ jobs:
       matrix:
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 
 
       - name: Run tests in manylinux container
         uses: addnab/docker-run-action@v3
