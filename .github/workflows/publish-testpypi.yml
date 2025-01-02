@@ -1,7 +1,7 @@
 name: publish-testpypi 
 on: 
   workflow_run: 
-    workflows: ["build-wheels-macos-arm64"]
+    workflows: ["build-wheels-win-amd64"]
     types: 
       - completed
     branches: [main]
@@ -11,6 +11,15 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Download Windows artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build-wheels-win-amd64
+          run_id: ${{ github.event.workflow_run.id }}
+          workflow_conclusion: success
+          path: dist/
+          skip_unpack: false
+
       - name: Download macOS artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -20,16 +29,6 @@ jobs:
           path: dist/
           skip_unpack: false
           
-      - name: Download Windows artifacts
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build-wheels-win-amd64
-          name: windows-wheels-windows-latest-3
-          name_is_regexp: true
-          workflow_conclusion: success
-          path: dist/
-          skip_unpack: false
-
       - name: List downloaded files
         run: |
           echo "Contents of dist directory before organizing:"
