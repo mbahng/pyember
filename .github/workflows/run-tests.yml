@@ -168,9 +168,8 @@ jobs:
                   -DCMAKE_VERBOSE_MAKEFILE=ON
             
             # Then try pip install
-            CMAKE_DEV=1 ${PYROOT}/bin/python -m pip install -e . -vv
+            CMAKE_DEV=1 ${PYROOT}/bin/pip install -e . -vv
             
-            # Optional: verify installation
             ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
             
             # Run tests
@@ -182,6 +181,8 @@ jobs:
           ./build/test/tests
       - name: Run Python tests 
         run: | 
+          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+          export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
           ${PYROOT}/bin/python test/GradTensor/algebra_test.py
           ${PYROOT}/bin/python test/GradTensor/constructor_test.py
           ${PYROOT}/bin/python test/GradTensor/util_test.py
