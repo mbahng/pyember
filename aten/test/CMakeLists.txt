@@ -31,7 +31,28 @@ target_link_libraries(tests
     gtest_main
 )
 
-# Add tests to CTest
+# Add tests to CTest with improved configuration
 include(GoogleTest)
-gtest_discover_tests(tests)
+set(DISCOVERY_TIMEOUT 120)  # Increase discovery timeout to 120 seconds
+set(TEST_TIMEOUT 300)       # Set individual test timeout to 300 seconds
 
+# Configure test discovery with timeouts and output
+gtest_discover_tests(tests
+    DISCOVERY_TIMEOUT ${DISCOVERY_TIMEOUT}
+    PROPERTIES 
+        TIMEOUT ${TEST_TIMEOUT}
+        ENVIRONMENT "GTEST_CATCH_EXCEPTIONS=1"
+    TEST_PREFIX "tensor_"
+    TEST_SUFFIX ""
+    NO_PRETTY_TYPES
+    NO_PRETTY_VALUES
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    DISCOVERY_MODE PRE_TEST
+)
+
+# Add a custom target for running tests directly
+add_custom_target(run_tests
+    COMMAND tests --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results.xml
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    DEPENDS tests
+)
