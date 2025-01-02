@@ -2,120 +2,120 @@ name: run-tests
 on: 
   push: 
 jobs:
-  # run-macos-tests:
-  #   name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     matrix:
-  #       os: [macos-latest]
-  #       python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #    
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: ${{ matrix.python }}
-  #    
-  #     - name: Install Python dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install "pybind11[global]"
-  #     - name: Compile aten 
-  #       run: |
-  #         CMAKE_DEV=1 pip install . -vvv
-  #     - name: Run CPP tests 
-  #       run: | 
-  #         ./build/test/tests
-  #     - name: Run Python tests 
-  #       run: | 
-  #         python test/GradTensor/algebra_test.py
-  #         python test/GradTensor/constructor_test.py
-  #         python test/GradTensor/util_test.py
-  #         python test/Tensor/algebra_test.py
-  #         python test/Tensor/constructor_test.py
-  #         python test/Tensor/util_test.py
-  #
-  # run-win-tests:
-  #   name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     matrix:
-  #       os: [windows-latest]
-  #       python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #    
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: ${{ matrix.python }}
-  #    
-  #     - name: Install Python dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install "pybind11[global]"
-  #        
-  #     - name: Compile aten
-  #       shell: pwsh
-  #       run: |
-  #         $env:CMAKE_DEV = 1
-  #         pip install . -vvv
-  #        
-  #         # Debug: Check installation
-  #         Write-Host "Python path:"
-  #         python -c "import sys; print('\n'.join(sys.path))"
-  #        
-  #         # Get exact Python version
-  #         $pythonVersion = python -c "import sys; print(sys.version.split()[0])"
-  #         Write-Host "Exact Python version: $pythonVersion"
-  #        
-  #         Write-Host "Installed files:"
-  #         Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\$pythonVersion\x64\Lib\site-packages\ember"
-  #        
-  #         Write-Host "Checking installed package:"
-  #         pip list | findstr "pyember"
-  #        
-  #         Write-Host "Attempting import:"
-  #         python -c "from ember import aten; print('aten module contents:', dir(aten))"
-  #        
-  #     - name: Find and Run CPP tests
-  #       shell: pwsh
-  #       run: |
-  #         $testPaths = @(
-  #           ".\build\test\Debug\tests.exe",
-  #           ".\build\test\Release\tests.exe",
-  #           ".\build\test\tests.exe"
-  #         )
-  #        
-  #         $testPath = $null
-  #         foreach ($path in $testPaths) {
-  #           if (Test-Path $path) {
-  #             $testPath = $path
-  #             break
-  #           }
-  #         }
-  #        
-  #         if ($testPath) {
-  #           Write-Host "Found test executable at: $testPath"
-  #           & $testPath
-  #         } else {
-  #           Write-Host "Test executable not found. Directory contents:"
-  #           Get-ChildItem -Recurse .\build\test
-  #           exit 1
-  #         }
-  #        
-  #     - name: Run Python tests 
-  #       shell: pwsh
-  #       run: | 
-  #         $env:PYTHONPATH = "."
-  #        
-  #         python test/GradTensor/algebra_test.py
-  #         python test/GradTensor/constructor_test.py
-  #         python test/GradTensor/util_test.py
-  #         python test/Tensor/algebra_test.py
-  #         python test/Tensor/constructor_test.py
-  #         python test/Tensor/util_test.py
+  run-macos-tests:
+    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+     
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+     
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]"
+      - name: Compile aten 
+        run: |
+          CMAKE_DEV=1 pip install . -vvv
+      - name: Run CPP tests 
+        run: | 
+          ./build/test/tests
+      - name: Run Python tests 
+        run: | 
+          python test/GradTensor/algebra_test.py
+          python test/GradTensor/constructor_test.py
+          python test/GradTensor/util_test.py
+          python test/Tensor/algebra_test.py
+          python test/Tensor/constructor_test.py
+          python test/Tensor/util_test.py
+  
+  run-win-tests:
+    name: Runs tests on ${{ matrix.os }}-cp${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+     
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+     
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "pybind11[global]"
+         
+      - name: Compile aten
+        shell: pwsh
+        run: |
+          $env:CMAKE_DEV = 1
+          pip install . -vvv
+         
+          # Debug: Check installation
+          Write-Host "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+         
+          # Get exact Python version
+          $pythonVersion = python -c "import sys; print(sys.version.split()[0])"
+          Write-Host "Exact Python version: $pythonVersion"
+         
+          Write-Host "Installed files:"
+          Get-ChildItem -Recurse "C:\hostedtoolcache\windows\Python\$pythonVersion\x64\Lib\site-packages\ember"
+         
+          Write-Host "Checking installed package:"
+          pip list | findstr "pyember"
+         
+          Write-Host "Attempting import:"
+          python -c "from ember import aten; print('aten module contents:', dir(aten))"
+         
+      - name: Find and Run CPP tests
+        shell: pwsh
+        run: |
+          $testPaths = @(
+            ".\build\test\Debug\tests.exe",
+            ".\build\test\Release\tests.exe",
+            ".\build\test\tests.exe"
+          )
+         
+          $testPath = $null
+          foreach ($path in $testPaths) {
+            if (Test-Path $path) {
+              $testPath = $path
+              break
+            }
+          }
+         
+          if ($testPath) {
+            Write-Host "Found test executable at: $testPath"
+            & $testPath
+          } else {
+            Write-Host "Test executable not found. Directory contents:"
+            Get-ChildItem -Recurse .\build\test
+            exit 1
+          }
+         
+      - name: Run Python tests 
+        shell: pwsh
+        run: | 
+          $env:PYTHONPATH = "."
+         
+          python test/GradTensor/algebra_test.py
+          python test/GradTensor/constructor_test.py
+          python test/GradTensor/util_test.py
+          python test/Tensor/algebra_test.py
+          python test/Tensor/constructor_test.py
+          python test/Tensor/util_test.py
 
   run-linux-tests:
     name: Runs tests on manylinux2014-cp${{ matrix.python }}
