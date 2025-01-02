@@ -42,7 +42,11 @@ else()
 endif()
 
 if(BUILD_PYTHON_BINDINGS) 
-  find_package(Python REQUIRED COMPONENTS Interpreter Development)
+  set(Python3_EXECUTABLE ${PYTHON_EXECUTABLE})
+  set(Python3_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
+  set(Python3_LIBRARY ${PYTHON_LIBRARY})
+  find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
