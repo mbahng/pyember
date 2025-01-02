@@ -133,13 +133,19 @@ jobs:
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Install development version of python 
-            yum install -y python3-devel libpython${{ matrix.python }}
+            yum install -y python3-devel 
 
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
+            export Python_ROOT_DIR="${PYROOT}"
+
+            cd ${PYROOT}
+            ./configure --enable-shared
+            make -j$(nproc)
+            make install
 
             # Set explicit Python paths
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
