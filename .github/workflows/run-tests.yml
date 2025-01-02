@@ -159,8 +159,9 @@ jobs:
             echo "PYROOT: ${PYROOT}"
             echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
             echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
-            ls -l ${PYTHON_INCLUDE_DIR} || true
-            ls -l ${PYTHON_LIBRARY}* || true
+            ls -l $PYROOT/bin/python
+            ls -l $PYTHON_INCLUDE_DIR
+            ls -l $PYTHON_LIBRARY
             
             # Try compile with explicit CMake variables
             CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \

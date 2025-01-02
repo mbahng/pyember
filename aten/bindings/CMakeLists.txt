@@ -9,14 +9,19 @@ set(Python_EXECUTABLE $ENV{PYROOT}/bin/python)
 set(PYTHON_INCLUDE_DIR $ENV{PYTHON_INCLUDE_DIR})
 set(PYTHON_LIBRARY $ENV{PYTHON_LIBRARY})
 
-find_package(Python REQUIRED COMPONENTS Interpreter Development)
+# Find interpreter first
+find_package(Python REQUIRED COMPONENTS Interpreter)
+message(STATUS "Found Python Interpreter: ${Python_VERSION}")
+
+# Then find development
+find_package(Python REQUIRED COMPONENTS Development)
+message(STATUS "Found Python Development")
 
 message(STATUS "After find_package:")
-message(STATUS "Found Python: ${Python_VERSION}")
+message(STATUS "Python Version: ${Python_VERSION}")
 message(STATUS "Python Executable: ${Python_EXECUTABLE}")
 message(STATUS "Python Include Dirs: ${Python_INCLUDE_DIRS}")
 message(STATUS "Python Libraries: ${Python_LIBRARIES}")
-message(STATUS "Python Development Found: ${Python_Development_FOUND}")
 
 find_package(pybind11 REQUIRED)
 
