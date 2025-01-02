@@ -47,6 +47,9 @@ if(BUILD_PYTHON_BINDINGS)
   set(Python_LIBRARY ${PYTHON_LIBRARY})
   find_package(Python REQUIRED COMPONENTS Interpreter Development)
 
+  message(STATUS "Plz : ${Python_EXECUTABLE}")
+  message(STATUS "Plz : ${PYTHON_EXT_SUFFIX}")
+
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
