@@ -156,8 +156,7 @@ jobs:
             ldconfig -p | grep libpython
             echo "=================="
 
-            pip install "pybind11[global]"
-
+            ${PYROOT}/bin/pip install "pybind11[global]"
             cd /pyember
             CMAKE_DEV=1 pip install . -vv
 
