@@ -6,6 +6,15 @@ import os, glob
 import shutil
 import sysconfig
 
+def list_files(startpath):
+    for root, dirs, files in os.walk(startpath):
+        level = root.replace(startpath, '').count(os.sep)
+        indent = ' ' * 4 * (level)
+        print('{}{}/'.format(indent, os.path.basename(root)))
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            print('{}{}'.format(subindent, f))
+
 class CMakeExtension(Extension):
     def __init__(self, name): 
         super().__init__(name, sources=[])
@@ -79,7 +88,9 @@ class CMakeBuildExt(build_ext):
     # runs cmake for aten to construct the Makefile
     subprocess.check_call(['cmake'] + cmake_args)
     # this runs make, which builds main, test, and the .so file  
-    subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release'])
+    subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release']) 
+
+    list_files(build_dir)
 
     # This is where CMake puts it
     if os.name == 'nt':  # Windows
