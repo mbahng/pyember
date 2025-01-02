@@ -134,12 +134,14 @@ jobs:
           run: |
             # Install development version of python 
             yum install -y python3-devel 
-            yum install -y centos-release-scl
-            yum install -y rh-python39-python-devel \
-                           rh-python310-python-devel \
-                           rh-python311-python-devel \
-                           rh-python312-python-devel \
-                           python3.13-devel
+            yum install -y epel-release
+            yum install -y \
+              python39-devel \
+              python3.10-devel \
+              python3.11-devel \
+              python3.12-devel \
+              python3.13-devel
+
             # Set python paths
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
@@ -151,8 +153,9 @@ jobs:
             export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
             export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
             export Python_ROOT_DIR="${PYROOT}"
-            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
+            export PYTHON_LIBRARY="/lib64/libpython${PYTHON_VERSION}.so.1.0"
 
+            echo ${PYTHON_LIBRARY}
             echo "=================="
             ldconfig -p | grep libpython
             echo "=================="

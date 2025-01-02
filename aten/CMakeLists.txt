@@ -41,12 +41,6 @@ else()
     message(STATUS "Debug mode OFF")
 endif()
 
-if(DEFINED ENV{MY_PYTHON_EXECUTABLE})
-    set(Python_EXECUTABLE $ENV{MY_PYTHON_EXECUTABLE})
-    set(Python_INCLUDE_DIR $ENV{MY_PYTHON_INCLUDE_DIR})
-    set(Python_ROOT_DIR $ENV{MY_PYTHON_ROOT})
-endif()
-
 if(BUILD_PYTHON_BINDINGS) 
   find_package(Python REQUIRED COMPONENTS Interpreter Development Development.Embed)
 
