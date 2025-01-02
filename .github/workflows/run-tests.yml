@@ -136,6 +136,8 @@ jobs:
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
             export PATH="${PYROOT}/bin:$PATH"
+            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${{ matrix.python }}"
+            export PYTHON_LIBRARY="${PYROOT}/lib/libpython${{ matrix.python }}.so"
             
             cd /io
             
@@ -152,7 +154,20 @@ jobs:
             pip install setuptools wheel
             pip install "pybind11[global]"
             
-            # Try compile
+            # Debug paths
+            echo "Python paths:"
+            echo "PYROOT: ${PYROOT}"
+            echo "PYTHON_INCLUDE_DIR: ${PYTHON_INCLUDE_DIR}"
+            echo "PYTHON_LIBRARY: ${PYTHON_LIBRARY}"
+            ls -l ${PYTHON_INCLUDE_DIR} || true
+            ls -l ${PYTHON_LIBRARY}* || true
+            
+            # Try compile with explicit CMake variables
+            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python \
+                       -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR} \
+                       -DPYTHON_LIBRARY=${PYTHON_LIBRARY} \
+                       -DPython_ROOT_DIR=${PYROOT} \
+                       -DPython_FIND_STRATEGY=LOCATION" \
             CMAKE_DEV=1 pip install . -vvv
             
             # Run tests
