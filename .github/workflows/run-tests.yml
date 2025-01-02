@@ -147,7 +147,7 @@ jobs:
             export Python_ROOT_DIR="${PYROOT}"
             export PYTHON_LIBRARY="${PYROOT}/lib/libpython${PYSHORT}.so"  # Added this line 
 
-            ls ${PYROOT}/lib
+            tree ${PYROOT}/lib
 
             pip install "pybind11[global]"
 
