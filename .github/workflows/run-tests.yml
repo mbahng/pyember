@@ -152,4 +152,6 @@ jobs:
             cd /pyember
             echo "bruh"
             which python 
+            CMAKE_ARGS="-DPYTHON_EXECUTABLE=${PYROOT}/bin/python"
+
             CMAKE_DEV=1 pip install . -vv
