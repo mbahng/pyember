@@ -73,8 +73,7 @@ class CMakeBuildExt(build_ext):
         '-S', os.path.join(os.path.dirname(__file__), 'aten'),
         '-DBUILD_PYTHON_BINDINGS=ON',
         f'-DBUILD_DEBUG={debug}',
-        f'-DBUILD_DEV={dev}',
-        f'-DPython_EXECUTABLE={sys.executable}'
+        f'-DBUILD_DEV={dev}'
     ]
     print(f"Python exec: {sys.executable}")
     print(f"PYROOT: {os.environ.get('PYROOT')}")
