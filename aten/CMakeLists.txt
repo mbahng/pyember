@@ -8,6 +8,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 
+if(UNIX AND NOT APPLE)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  add_compile_options(-fPIC)
+endif()
+
 # add option 
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 option(BUILD_DEBUG "Enable debug build with -g flag" ON) 
