@@ -133,7 +133,7 @@ jobs:
           options: -v ${{ github.workspace }}:/pyember
           run: |
             # Setup Python
-            yum install -y python3-devel
+            yum install -y python-devel
             PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
             PYSHORT="${{ matrix.python }}"
             export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
