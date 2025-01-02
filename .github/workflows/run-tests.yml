@@ -158,9 +158,15 @@ jobs:
             # Print Python info for debugging
             ${PYROOT}/bin/python -c "import sys; print(f'Building with Python {sys.version}')"
             
-            # Force use of specific Python version for build
-            CMAKE_DEV=1 ${PYROOT}/bin/python setup.py clean --all
-            CMAKE_DEV=1 ${PYROOT}/bin/python -m pip install . -vv
+            cd /pyember
+            CMAKE_DEV=1 ${PYROOT}/bin/python -m pip install -e . -vv
+            
+            # Optional: verify installation
+            ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
+            
+            # Run tests
+            ${PYROOT}/bin/python test/GradTensor/algebra_test.py
+            # ... rest of tests
 
       - name: Run CPP tests 
         run: | 
