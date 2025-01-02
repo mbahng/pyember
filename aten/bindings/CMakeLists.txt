@@ -1,3 +1,5 @@
+set(Python_FIND_STRATEGY LOCATION)
+set(Python_ROOT_DIR $ENV{PYROOT})
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
 message(STATUS "Found Python: ${Python_VERSION}")
 message(STATUS "Python Executable: ${Python_EXECUTABLE}")
