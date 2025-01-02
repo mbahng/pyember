@@ -1,6 +1,5 @@
 name: build-wheels
 on:
-  push:
   workflow_run:
     workflows: ["run-tests"] 
     types:
