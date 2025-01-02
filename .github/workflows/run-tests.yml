@@ -158,7 +158,9 @@ jobs:
 
             ${PYROOT}/bin/pip install "pybind11[global]"
             cd /pyember
-            CMAKE_DEV=1 pip install . -vv
+            CMAKE_DEV=1 ${PYROOT}/bin/pip install . -vv
+
+            python -c "import ember; print(ember.__file__)"
 
       - name: Run CPP tests 
         run: | 
