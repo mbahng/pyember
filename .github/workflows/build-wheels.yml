@@ -99,45 +99,46 @@ jobs:
 
   build-linux-wheels:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    name: Build wheels on manylinux_2_28_x86_64-cp${{ matrix.python }}
+    name: Build wheels on manylinux2_28-cp${{ matrix.python }}
     runs-on: ubuntu-latest
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64
     strategy:
       matrix:
-        python: ["3.11"] # development python not supported 
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
     steps:
-      - uses: actions/checkout@v4 
-
-      - name: Run tests in manylinux container
-        uses: addnab/docker-run-action@v3
+      - uses: actions/checkout@v4
+      
+      - name: Build wheel
+        run: |
+          # Set up Python paths
+          PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
+          PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
+          export PATH="${PYROOT}/bin:$PATH"
+          
+          # Install build dependencies
+          "${PYROOT}/bin/pip" install --upgrade pip
+          "${PYROOT}/bin/pip" install "pybind11[global]"
+          "${PYROOT}/bin/pip" install cibuildwheel
+          
+          # Build the wheel
+          export CIBW_BUILD="cp${PYTHON_VERSION}-*"
+          echo "CIBW_BUILD: $CIBW_BUILD"
+          "${PYROOT}/bin/python" -m cibuildwheel
+        env:
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_SKIP: "*-win32 *-manylinux_i686 pp* *-musllinux*"
+      
+      - name: Store the wheels
+        uses: actions/upload-artifact@v4
         with:
-          image: quay.io/pypa/manylinux_2_28_x86_64
-          options: -v ${{ github.workspace }}:/pyember
-          run: |
-            yum install -y python3-devel 
-            yum install -y epel-release
-            yum install -y python3.11-devel 
-            
-            # Set python paths
-            PYTHON_VERSION=$(echo "${{ matrix.python }}" | tr -d '.')
-            PYSHORT="${{ matrix.python }}"
-            export PYROOT="/opt/python/cp${PYTHON_VERSION}-cp${PYTHON_VERSION}"
-            export PATH="${PYROOT}/bin:$PATH"
-            
-            ${PYROOT}/bin/python -m pip install --upgrade pip
-            export PYTHON_EXECUTABLE="${PYROOT}/bin/python"
-            export PYTHON_INCLUDE_DIR="${PYROOT}/include/python${PYSHORT}"
-            export Python_ROOT_DIR="${PYROOT}"
-
-            ${PYROOT}/bin/pip install "pybind11[global]"
-            ${PYROOT}/bin/pip install cibuildwheel
-            export CIBW_BUILD="cp${PYTHON_VERSION}-*"
-
-            cd /pyember
-            python -m cibuildwheel
+          name: wheels-manylinux-${{ matrix.python }}
+          path: ./wheelhouse/*.whl
+          compression-level: 0
           
       - name: List uploaded artifacts
         run: |
           pwd
           echo "Current directory contents:" 
           ls -R ./wheelhouse/
-
