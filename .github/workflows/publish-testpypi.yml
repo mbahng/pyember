@@ -1,67 +1,28 @@
 name: publish-testpypi 
 on: 
   workflow_run: 
-    workflows: ["build-wheels-win-amd64"]
+    workflows: ["build-wheels"]
     types: 
       - completed
     branches: [main]
-
 jobs:
-  verify-artifacts:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Windows artifacts
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build-wheels-win-amd64
-          run_id: ${{ github.event.workflow_run.id }}
-          workflow_conclusion: success
-          path: dist/
-          skip_unpack: false
-
-      - name: Download macOS artifacts
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: build-wheels-macos-arm64
-          run_id: ${{ github.event.workflow_run.id }}
-          workflow_conclusion: success
-          path: dist/
-          skip_unpack: false
-          
-      - name: List downloaded files
-        run: |
-          echo "Contents of dist directory before organizing:"
-          ls -R dist/
-          
-      - name: Organize all wheels
-        run: |
-          mkdir -p dist/final
-          find dist -name "*.whl" -exec mv {} dist/final/ \;
-          echo "Contents of dist/final:"
-          ls -la dist/final/
-          
-      - name: Upload organized wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: organized-wheels
-          path: dist/final/*.whl
-          
   publish-to-testpypi:
-    needs: verify-artifacts
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
       name: testpypi
       url: https://test.pypi.org/project/pyember/
     permissions:
       id-token: write
-  
     steps:
-      - name: Download organized wheels
-        uses: actions/download-artifact@v4
+      - name: Download All Artifacts
+        uses: dawidd6/action-download-artifact@v2
         with:
-          name: organized-wheels
+          workflow: build-wheels
+          run_id: ${{ github.event.workflow_run.id }}
+          workflow_conclusion: success
           path: dist/
+          skip_unpack: false
           
       - name: List files to publish
         run: |
