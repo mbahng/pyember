@@ -135,6 +135,10 @@ jobs:
             
             # Repair the wheel to make it manylinux compatible
             auditwheel repair --plat manylinux_2_28_x86_64 /tmp/dist/*.whl -w /work/wheelhouse/
+
+            # test the built wheel 
+            ${PYROOT}/bin/pip install /work/wheelhouse/*.whl
+            ${PYROOT}/bin/python -c "import ember; print(ember.__file__)"
           
       - name: Store the wheels
         uses: actions/upload-artifact@v4
