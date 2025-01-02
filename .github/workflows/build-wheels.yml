@@ -128,6 +128,8 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_SKIP: "*-win32 *-musllinux* pp*"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_ENVIRONMENT: |
+            CMAKE_ARGS="-DPYTHON_EXECUTABLE:FILEPATH=/opt/python/cp{py}/bin/python"
           CIBW_BEFORE_BUILD: |
             pip install --upgrade pip
             pip install pybind11
