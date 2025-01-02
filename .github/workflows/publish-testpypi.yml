@@ -27,7 +27,7 @@ jobs:
       - name: List files to publish
         run: |
           echo "Contents of dist directory:"
-          ls -la dist/
+          tree dist
         
       - name: Publish wheels to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
