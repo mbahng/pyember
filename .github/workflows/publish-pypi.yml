@@ -1,43 +1,49 @@
-name: publish-pypi 
+name: Publish to PyPI
 on: 
   workflow_run: 
     workflows: ["build-wheels"]
     types: 
       - completed
     branches: [main]
+
 jobs:
   publish-to-pypi:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/pyember/
+      url: https://pypi.org/p/pyember
     permissions:
       id-token: write
+
     steps:
-      - name: Download All Artifacts
-        uses: dawidd6/action-download-artifact@v2
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
-          workflow: build-wheels
-          run_id: ${{ github.event.workflow_run.id }}
-          workflow_conclusion: success
-          path: dist/
-          skip_unpack: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          path: dist
+          merge-multiple: true
           
       - name: Organize wheels
         run: |
-          # Move all .whl files to dist/ directory
-          find dist/ -name "*.whl" -exec mv {} dist/ \;
-          # Remove empty subdirectories
-          find dist/ -type d -empty -delete
+          # Show initial structure
+          echo "Initial directory structure:"
+          find dist -type f
           
-      - name: List files to publish
-        run: |
-          echo "Contents of dist directory:"
-          tree dist
-        
-      - name: Publish wheels to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+          # Move all wheels to dist directory
+          find dist -type f -name "*.whl" -exec mv {} dist/ \;
+          
+          # Clean up empty directories
+          find dist -type d -empty -delete
+          
+          # Show final structure
+          echo "Final directory structure:"
+          find dist -type f
+          
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.8.14
         with:
-          repository-url: https://pypi.org/legacy/
           verbose: true
+          packages-dir: dist/
+          print-hash: true
