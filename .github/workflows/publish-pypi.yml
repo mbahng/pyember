@@ -24,12 +24,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           path: dist
           merge-multiple: true
-      - name: Sign the dists with Sigstore
-        uses: sigstore/gh-action-sigstore-python@v3.0.0
-        with:
-          inputs: >-
-            ./dist/*.whl 
-
+          
       - name: Organize wheels
         run: |
           # Show initial structure
@@ -53,21 +48,40 @@ jobs:
           packages-dir: dist/
           print-hash: true
 
-      - name: Create GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create
-          "$GITHUB_REF_NAME"
-          --repo "$GITHUB_REPOSITORY"
-          --notes ""
-      - name: Upload artifact signatures to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        # Upload to GitHub Release using the `gh` CLI.
-        # `dist/` contains the built packages, and the
-        # sigstore-produced signatures and certificates.
-        run: >-
-          gh release upload
-          "$GITHUB_REF_NAME" dist/**
-          --repo "$GITHUB_REPOSITORY"
+  create-github-release:
+    needs: publish-to-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          path: dist
+          merge-multiple: true
+          
+      - name: Get version
+        id: get_version
+        run: |
+          # Get version from setup.py or pyproject.toml
+          VERSION=$(python setup.py --version 2>/dev/null || python -c "from setuptools_scm import get_version; print(get_version())")
+          echo "version=v${VERSION}" >> $GITHUB_OUTPUT
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
+          files: dist/*.whl
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
