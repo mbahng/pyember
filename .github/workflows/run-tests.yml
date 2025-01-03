@@ -11,16 +11,15 @@ jobs:
         python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-     
+    
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-     
+    
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install "pybind11[global]"
       - name: Compile aten 
         run: |
           CMAKE_DEV=1 pip install . -vvv
