@@ -1,4 +1,4 @@
-name: publish-testpypi 
+name: publish-pypi 
 on: 
   workflow_run: 
     workflows: ["build-wheels"]
@@ -6,7 +6,7 @@ on:
       - completed
     branches: [main]
 jobs:
-  publish-to-testpypi:
+  publish-to-pypi:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
@@ -36,7 +36,7 @@ jobs:
           echo "Contents of dist directory:"
           tree dist
         
-      - name: Publish wheels to TestPyPI
+      - name: Publish wheels to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://pypi.org/legacy/
