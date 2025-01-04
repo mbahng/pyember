@@ -25,7 +25,6 @@ bool BaseTensor::operator!=(BaseTensor& other) const {
 
 bool BaseTensor::operator>(BaseTensor& other) const{
   if (this->is_scalar() && other.is_scalar()) { 
-    std::cout << this->item() << " > " << other.item() << "\n"; 
     return this->item() > other.item(); 
   }
 
@@ -42,7 +41,6 @@ bool BaseTensor::operator>(BaseTensor& other) const{
 
 bool BaseTensor::operator<(BaseTensor& other) const{
   if (this->is_scalar() && other.is_scalar()) {
-    std::cout << this->item() << " < " << other.item() << "\n"; 
     return this->item() < other.item(); 
   }
 

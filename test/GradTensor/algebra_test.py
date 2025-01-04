@@ -2,9 +2,14 @@ import unittest
 from ember import GradTensor, Tensor
 
 
-class TestNeg(unittest.TestCase):
+class TestEqNeg(unittest.TestCase):
 
-  pass
+  def testEqNeq(self): 
+    x = GradTensor([1, 2, 3, 4], [2, 2], 0, 1) 
+    y = GradTensor([1, 2, 3, 4], [2, 2], 0, 1)  
+    z = GradTensor([2, 3, 4, 5], [2, 2], 0, 1)
+    self.assertEqual(x, y)
+    self.assertNotEqual(x, z) 
 
 # gradtensors with different pivots should not be added, 
 # These are covered in the C++ tests 

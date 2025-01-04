@@ -3,8 +3,11 @@
 run_python_tests() {
     echo "Running Python tests..."
     python test/GradTensor/algebra_test.py
+    python test/GradTensor/comparison_test.py
     python test/GradTensor/constructor_test.py
-    python test/GradTensor/util_test.py
+    python test/GradTensor/index_test.py
+    python test/GradTensor/shape_test.py
+    python test/GradTensor/string_test.py
 
     python test/Tensor/algebra_test.py
     python test/Tensor/constructor_test.py
