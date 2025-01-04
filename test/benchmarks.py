@@ -43,8 +43,14 @@ def np_matmul(): return x @ y
 @profile
 def em_matmul(): return a @ b 
 
+@profile 
+def np_add_scalar(): return x + 1
+@profile 
+def em_add_scalar(): return a + 1
+
 print(f"Constructor     Runtime Multiplier : {em_constructor() / np_constructor()}")  # type: ignore
-print(f"Addition        Runtime Multiplier : {em_add() / np_add()}")  # type: ignore
+print(f"Addition Scalar Runtime Multiplier : {em_add_scalar() / np_add_scalar()}")  # type: ignore
+print(f"Addition Tensor Runtime Multiplier : {em_add() / np_add()}")  # type: ignore
 print(f"Subtraction     Runtime Multiplier : {em_diff() / np_diff()}")  # type: ignore
 print(f"Multiplication  Runtime Multiplier : {em_mul() / np_mul()}")  # type: ignore
 print(f"Mat Multiply    Runtime Multiplier : {em_matmul() / np_matmul()}")  # type: ignore
