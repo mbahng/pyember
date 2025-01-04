@@ -16,6 +16,9 @@ void init_gradtensor_binding(py::module_ &m) {
     .def(py::init([](std::vector<size_t> shape, size_t bidx, size_t pidx) {
         return new GradTensor(shape, bidx, pidx);
       }))
+    .def(py::init([](double scalar) {
+        return new GradTensor(scalar);
+      }))
     .def_static("eye", &GradTensor::eye, 
       py::arg("n"), py::arg("bidx"), py::arg("pidx"))
 

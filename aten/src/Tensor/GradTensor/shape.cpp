@@ -3,7 +3,11 @@
 
 GradTensor* GradTensor::shallowcopy() const {
   // creates a shallow copy 
-  return new GradTensor(this->_storage, this->_shape, this->bidx, this->pidx()); 
+  const std::vector<double>& new_storage =  this->_storage; 
+  const std::vector<size_t>& new_shape = this->_shape;
+  const size_t& new_bidx = this->bidx; 
+  const size_t& new_pidx = this->_pidx; 
+  return new GradTensor(new_storage, new_shape, new_bidx, new_pidx); 
 }
 
 GradTensor* GradTensor::deepcopy() const {
@@ -80,6 +84,10 @@ GradTensor* GradTensor::transpose(size_t d1, size_t d2) {
 }
 
 GradTensor* GradTensor::transpose() { 
+  // if this has rank 1, this is equivalent to just reshaping it  
+  if (this->rank() == 1) {
+    return this->reshape(std::vector<size_t>{this->shape()[0], 1});
+  }
   return this->transpose(this->rank() - 2, this->rank() - 1);  
 }
 
