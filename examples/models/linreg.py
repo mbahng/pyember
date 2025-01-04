@@ -13,10 +13,6 @@ for epoch in range(1000):
     loss = mse(y, y_)
     loss.backprop()
     optim.step()
-  #
   if epoch % 100 == 0: 
     print("========================================")
     print(loss)
-    print(ds.truth_param.reshape([15])) 
-    print(model.W) 
-    print(model.b)

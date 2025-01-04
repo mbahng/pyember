@@ -4,9 +4,9 @@
 
 This library supports both x86_64/amd64 and arm64/aarch64. Check if your system is supported out of the box in the table below. The library requires very few dependencies, so as long as your machine supports a C++ compiler and python, you should be able to get it working by fiddling with the CMake and setuptools files. 
 
-| OS + Arch | Python | Latest Release Directly Tested |
+| OS + Arch | Python | Latest Release Personally Tested |
 |-|-|-|
-|Ubuntu 24.04 AMD64     | Python 3.9+ ||
+|Ubuntu 24.04 AMD64     | Python 3.9+ | v0.0.17 |
 |Ubuntu 22.04 AMD64     | Python 3.9+ ||
 |Ubuntu 20.04 AMD64     | Python 3.9+ ||
 |Ubuntu 24.04 ARM64     | TBD | |
@@ -27,7 +27,7 @@ This library supports both x86_64/amd64 and arm64/aarch64. Check if your system 
 
 ## Compiling the `aten` Library  
 
-Your machine will need system dependencies such as CMake, a C++ compiler, and pybind11. The library uses C++17. Preferably you will have git and conda installed already. For more specific instructions on installing these on your system, refer to the more detailed installation guide. 
+Your machine will need system dependencies such as CMake, a C++ compiler, and pybind11. The library uses C++17. Preferably you will have git and conda installed already. 
 
 Git clone the repo, then pip install, which will run `setup.py`. 
 
@@ -39,7 +39,7 @@ pip install .
 
 This runs `cmake` on `aten/CMakeLists.txt`, which calls the following. 
 1. It always calls `aten/src/CMakeLists.txt` that compiles and links the source files in the C++ tensor library. 
-2. If `BUILD_PYTHON_BINDINGS=ON` (always on by default), it further calls `aten/bindings/CMakeLists.txt` to further generate a `.so` file that can be imported into `ember`. 
+2. If `BUILD_PYTHON_BINDINGS=ON` (always on by default), it further calls `aten/bindings/CMakeLists.txt` to further generate a `.so`/`.pyd` file that can be imported into `ember`. 
 3. If `BUILD_DEV=ON`, it calls `aten/test/CMakeLists.txt` to further compile the C++ unit testing suite. 
 
 If there are problems with building, you should check, in order, 
