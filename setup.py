@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
 from setuptools import Extension
 import subprocess
-import os, glob, sys
+import os, glob
 import shutil
 import sysconfig
 
@@ -124,17 +124,6 @@ setup(
     packages=packages,
     package_data=package_data,
     include_package_data=True,
-    # data_files=[
-    #     ('ember', ['ember/__init__.py']),
-    #     ('ember/aten', ['ember/aten/__init__.pyi']),
-    #     ('ember/datasets', glob.glob('ember/datasets/*.py')),
-    #     ('ember/models', glob.glob('ember/models/*.py')),
-    #     ('ember/models/supervised', glob.glob('ember/models/supervised/*.py')),
-    #     ('ember/models/unsupervised', glob.glob('ember/models/unsupervised/*.py')),
-    #     ('ember/objectives', glob.glob('ember/objectives/*.py')),
-    #     ('ember/optimizers', glob.glob('ember/optimizers/*.py')),
-    #     ('ember/samplers', glob.glob('ember/samplers/*.py'))
-    # ],
     ext_modules=[CMakeExtension('ember.aten')],
     cmdclass={'build_ext': CMakeBuildExt},
     zip_safe=False
