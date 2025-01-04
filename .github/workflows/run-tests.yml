@@ -20,6 +20,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install numpy
       - name: Compile aten 
         run: |
           CMAKE_DEV=1 pip install . -vvv
@@ -57,6 +58,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install "pybind11[global]"
+          pip install numpy
          
       - name: Compile aten
         shell: pwsh
@@ -153,6 +155,7 @@ jobs:
             export Python_ROOT_DIR="${PYROOT}"
             
             ${PYROOT}/bin/pip install "pybind11[global]"
+            ${PYROOT}/bin/pip install numpy
             cd /pyember
                         
             CMAKE_DEV=1 ${PYROOT}/bin/pip install -e . -vv
