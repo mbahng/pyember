@@ -8,7 +8,7 @@ Tensor* Tensor::operator+(double other) {
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
 
-  for (int bi = 0; bi < this->size(); ++bi) {
+  for (int bi = 0; bi < this->_storage.size(); ++bi) {
     res->_storage[bi] += other;
   } 
 
@@ -52,7 +52,7 @@ Tensor* Tensor::operator-(double other) {
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
 
-  for (int bi = 0; bi < this->size(); ++bi) {
+  for (int bi = 0; bi < this->_storage.size(); ++bi) {
     res->_storage[bi] -= other;
   } 
 
@@ -96,7 +96,7 @@ Tensor* Tensor::operator*(double other) {
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
 
-  for (int bi = 0; bi < this->size(); ++bi) {
+  for (int bi = 0; bi < this->_storage.size(); ++bi) {
     res->_storage[bi] *= other;
   } 
 
