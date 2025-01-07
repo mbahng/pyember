@@ -4,7 +4,6 @@
 #include "../../Util/utils.h"
 
 Tensor* Tensor::operator+(double other) {
-  // initialize scalar tensor so we can work with gradients
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
 
@@ -48,7 +47,6 @@ Tensor* Tensor::operator+(double other) {
 }
 
 Tensor* Tensor::operator-(double other) {
-  // initialize scalar tensor so we can work with gradients
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
 
@@ -92,7 +90,6 @@ Tensor* Tensor::operator-(double other) {
 }
 
 Tensor* Tensor::operator*(double other) {
-  // initialize scalar tensor so we can work with gradients
   Tensor* scalar = new Tensor(other);
   Tensor* res = this->copy(); 
 
