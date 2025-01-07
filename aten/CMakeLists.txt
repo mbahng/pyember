@@ -42,14 +42,7 @@ else()
 endif()
 
 if(BUILD_PYTHON_BINDINGS)
-  # Enable new CMake FindPython
   set(PYBIND11_FINDPYTHON ON)
-  
-  # Force Python paths
-  # set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
-  # set(Python_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
-  
-  # Find Python first
   find_package(Python REQUIRED COMPONENTS Interpreter Development)
   
   message(STATUS "Python executable: ${Python_EXECUTABLE}")
