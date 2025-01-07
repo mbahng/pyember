@@ -17,7 +17,50 @@ void init_gradtensor_binding(py::module_ &m) {
         return new GradTensor(shape, bidx, pidx);
       }))
     .def_static("eye", &GradTensor::eye, 
-      py::arg("n"), py::arg("bidx"), py::arg("pidx"))
+        py::arg("n"), 
+        py::arg("bidx"), 
+        py::arg("pidx")
+      )
+    .def_static("gaussian", &GradTensor::gaussian, 
+        py::arg("shape") = std::vector<size_t>{1, 1}, 
+        py::arg("mean") = 0.0, 
+        py::arg("stddev") = 1.0,
+        py::arg("bidx") = 0,
+        py::arg("pidx") = 1
+      )
+    .def_static("gaussian_like", &GradTensor::gaussian_like, 
+        py::arg("input"), 
+        py::arg("mean") = 0.0, 
+        py::arg("stddev") = 1.0
+      )
+    .def_static("uniform", &GradTensor::uniform, 
+        py::arg("shape") = std::vector<size_t>{1, 1}, 
+        py::arg("min") = 0.0, 
+        py::arg("max") = 1.0,
+        py::arg("bidx") = 0,
+        py::arg("pidx") = 1
+      )
+    .def_static("uniform_like", &GradTensor::uniform_like, 
+        py::arg("input"), 
+        py::arg("min") = 0.0, 
+        py::arg("max") = 1.0
+      )
+    .def_static("ones", &GradTensor::ones, 
+        py::arg("shape") = std::vector<size_t>{1, 1},
+        py::arg("bidx") = 0,
+        py::arg("pidx") = 1
+      )
+    .def_static("ones_like", &GradTensor::ones_like, 
+        py::arg("input")
+      )
+    .def_static("zeros", &GradTensor::zeros, 
+        py::arg("shape") = std::vector<size_t>{1, 1},
+        py::arg("bidx") = 0,  
+        py::arg("pidx") = 1 
+      )
+    .def_static("zeros_like", &GradTensor::zeros_like, 
+        py::arg("input")
+      )
 
     // string 
     .def("__repr__", &GradTensor::operator std::string, py::is_operator())

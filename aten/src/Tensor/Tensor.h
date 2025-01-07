@@ -94,7 +94,15 @@ class GradTensor : public BaseTensor {
     GradTensor(std::vector<double> storage, std::vector<size_t> shape, size_t bidx, size_t pidx); 
     GradTensor(std::vector<size_t> shape, size_t bidx, size_t pidx); 
     static GradTensor* eye(size_t n, size_t bidx, size_t pidx); 
-    // zeros, ones, zeros_like, ones_like, uninitialized (requires not vector but array), random ones
+    // uninitialized (requires not vector but array)
+    static GradTensor* gaussian(std::vector<size_t> shape, double mean, double stddev, size_t bidx, size_t pidx); 
+    static GradTensor* gaussian_like(GradTensor* input, double mean, double stddev);
+    static GradTensor* uniform(std::vector<size_t> shape, double min, double max, size_t bidx, size_t pidx); 
+    static GradTensor* uniform_like(GradTensor* input, double min, double max);
+    static GradTensor* ones(std::vector<size_t> shape, size_t bidx, size_t pidx); 
+    static GradTensor* ones_like(GradTensor* input); 
+    static GradTensor* zeros(std::vector<size_t> shape, size_t bidx, size_t pidx); 
+    static GradTensor* zeros_like(GradTensor* input); 
 
     // string.cpp 
     operator std::string() const override; 
@@ -168,9 +176,13 @@ class Tensor : public BaseTensor {
     static Tensor* arange(int start, int stop, int step = 1, bool requires_grad = true);
     static Tensor* linspace(double start, double stop, int numsteps, bool requires_grad = true);
     static Tensor* gaussian(std::vector<size_t> shape, double mean = 0.0, double stddev = 1.0, size_t bidx = 0, bool requires_grad = true);
+    static Tensor* gaussian_like(Tensor* input, double mean, double stddev); 
     static Tensor* uniform(std::vector<size_t> shape, double min = 0.0, double max = 1.0, size_t bidx = 0, bool requires_grad = true);
+    static Tensor* uniform_like(Tensor* input, double min, double max);
     static Tensor* ones(std::vector<size_t> shape, size_t bidx = 0, bool requires_grad = true);
+    static Tensor* ones_like(Tensor* input); 
     static Tensor* zeros(std::vector<size_t> shape, size_t bidx = 0, bool requires_grad = true); 
+    static Tensor* zeros_like(Tensor* input);
     ~Tensor() { _prev.clear(); }
 
     // string.cpp 

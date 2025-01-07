@@ -71,6 +71,11 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("bidx") = 0,
         py::arg("requires_grad") = true
       )
+    .def_static("gaussian_like", &Tensor::gaussian_like, 
+        py::arg("input"),
+        py::arg("mean") = 0.0, 
+        py::arg("stddev") = 1.0
+      )
     .def_static("uniform", &Tensor::uniform, 
         py::arg("shape") = std::vector<size_t>{1}, 
         py::arg("min") = 0.0, 
@@ -78,15 +83,26 @@ void init_tensor_binding(py::module_ &m) {
         py::arg("bidx") = 0,
         py::arg("requires_grad") = true
       )
+    .def_static("uniform_like", &Tensor::uniform_like, 
+        py::arg("input"),
+        py::arg("min") = 0.0, 
+        py::arg("max") = 1.0
+      )
     .def_static("ones", &Tensor::ones, 
         py::arg("shape") = std::vector<size_t>{1},
         py::arg("bidx") = 0,
         py::arg("requires_grad") = true
       )
+    .def_static("ones_like", &Tensor::ones_like, 
+        py::arg("input")
+      )
     .def_static("zeros", &Tensor::zeros, 
         py::arg("shape") = std::vector<size_t>{1},
         py::arg("bidx") = 0,  
         py::arg("requires_grad") = true
+      )
+    .def_static("zeros_like", &Tensor::zeros_like, 
+        py::arg("input")
       )
 
     // string

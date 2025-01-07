@@ -51,6 +51,54 @@ class GradTensor(BaseTensor):
   def __init__(self, shape: List[int], bidx: int, pidx: int) -> None: ...
   @staticmethod
   def eye(n: int, pidx: int = 1) -> 'GradTensor': ...
+  @staticmethod
+  def gaussian(
+    shape: List[int] = [1, 1], 
+    mean: float = 0.0, 
+    stddev: float = 1.0, 
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def gaussian_like(
+    input: 'GradTensor',
+    mean: float = 0.0, 
+    stddev: float = 1.0
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def uniform(
+    shape: List[int] = [1, 1], 
+    min: float = 0.0, 
+    max: float = 1.0, 
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def uniform_like(
+    input: 'GradTensor', 
+    min: float = 0.0, 
+    max: float = 1.0
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def ones(
+    shape: List[int] = [1, 1],
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def ones_like(
+    input: 'GradTensor'
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def zeros(
+    shape: List[int] = [1, 1],
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+  @staticmethod
+  def zeros_like(
+    input: 'GradTensor'
+  ) -> 'GradTensor': ...
 
   # string
   def __str__(self) -> str: ...
@@ -179,7 +227,7 @@ class Tensor(BaseTensor):
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> None: ...
-  
+
   @staticmethod
   def arange(
     start: int, 
@@ -187,7 +235,6 @@ class Tensor(BaseTensor):
     step: int = 1,
     requires_grad: bool = True
   ) -> 'Tensor': ...
-
   @staticmethod
   def linspace(
     start: float, 
@@ -195,7 +242,6 @@ class Tensor(BaseTensor):
     numsteps: int, 
     requires_grad: bool = True
   ) -> 'Tensor': ...
-
   @staticmethod
   def gaussian(
     shape: List[int], 
@@ -204,7 +250,12 @@ class Tensor(BaseTensor):
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> 'Tensor': ...
-
+  @staticmethod
+  def gaussian_like(
+    input: 'Tensor', 
+    mean: float = 0.0, 
+    stddev: float = 1.0
+  ) -> 'Tensor': ...
   @staticmethod
   def uniform(
     shape: List[int], 
@@ -213,19 +264,31 @@ class Tensor(BaseTensor):
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> 'Tensor': ...
-
+  @staticmethod
+  def uniform_like(
+    input: 'Tensor',
+    min: float = 0.0, 
+    max: float = 1.0
+  ) -> 'Tensor': ...
   @staticmethod
   def ones(
     shape: List[int],
     bidx: int = 0, 
     requires_grad: bool = True
   ) -> 'Tensor': ...
-
+  @staticmethod
+  def ones_like(
+    input: 'Tensor'
+  ) -> 'Tensor': ...
   @staticmethod
   def zeros(
     shape: List[int],
     bidx: int = 0, 
     requires_grad: bool = True
+  ) -> 'Tensor': ...
+  @staticmethod
+  def zeros_like(
+    input: 'Tensor'
   ) -> 'Tensor': ...
 
   # string
