@@ -108,10 +108,6 @@ print(f.grad) # [165]
 print(g.grad) # [1]
 ```
 
-Finally, we can visualize this using the `networkx` package. (Outdated gradients, but idea is still the same.)
-
-![Alt text](docs/img/computational_graph.png)
-
 ## Data
 
 ### Datasets 
@@ -130,25 +126,27 @@ To perform linear regression, use the `LinearRegression` model.
 ```
 import ember 
 
-ds = ember.datasets.LinearDataset(N=20, D=14)
+ds = ember.datasets.LinearDataset(N=20, D=15)
 dl = ember.datasets.Dataloader(ds, batch_size=2)
 model = ember.models.LinearRegression(15) 
-mse = ember.objectives.MSELoss()
+mse = ember.objectives.MSELoss() 
+optim = ember.optimizers.SGDOptimizer(model, 1e-4)
 
-for epoch in range(500): 
+for epoch in range(1000): 
   loss = None
   for x, y in dl: 
     y_ = model.forward(x)  
     loss = mse(y, y_)
     loss.backprop()
-    model.step(1e-5) 
-
-  print(loss)
+    optim.step()
+  
+  if epoch % 100 == 0: 
+    print(loss)
 ``` 
 
 ### K Nearest Neighbors 
 
-To do a simple K Nearest Neighbors regressor, use the following model. The forward method scans over the whole dataset, so we must input it to the model during instantiation. Note that we do not need a dataloader or a backpropagation method since we aren't iteratively updating gradients, though we want to show the loss. 
+To do a simple K Nearest Neighbors regressor, use the following model. The forward method scans over the whole dataset, so we must input it to the model during instantiation. Note that we do not need a dataloader or a backpropagation method since we aren't iteratively updating gradients, though we want to show the loss. We simply evaluate this model over the hyperparameter $K$. 
 
 ```
 import ember
@@ -159,16 +157,15 @@ ds = LinearDataset(N=20, D=3)
 model = KNearestRegressor(dataset=ds, K=1)
 mse = ember.objectives.MSELoss() 
 
-for k in range(1, 21): # hyperparameter tuning
+for k in range(1, 21):
   model.K = k
-  print(f"{k} ===") 
-  loss = 0
+  loss = ember.Tensor(0)
   for i in range(len(ds)): 
     x, y = ds[i] 
     y_ = model.forward(x) 
     loss = loss + mse(y, y_) 
 
-  print(loss)
+  print(f"{k} : {float(loss)}")  # type: ignore
 ```
 
 ### Multilayer Perceptrons 
@@ -177,10 +174,11 @@ To instantiate a MLP, just call it from models. In here we make a 2-layer MLP wi
 ```
 import ember 
 
-ds = ember.datasets.LinearDataset(N=20, D=14)
+ds = ember.datasets.LinearDataset(N=20, D=15)
 dl = ember.datasets.Dataloader(ds, batch_size=2)
 model = ember.models.MultiLayerPerceptron(15, 10) 
 mse = ember.objectives.MSELoss()
+optim = ember.optimizers.SGDOptimizer(model, 1e-5)
 
 for epoch in range(500):  
   loss = None
@@ -188,9 +186,10 @@ for epoch in range(500):
     y_ = model.forward(x) 
     loss = mse(y, y_)
     loss.backprop() 
-    model.step(1e-5)
+    optim.step()
 
-  print(loss)
+  if epoch % 25 == 0: 
+    print(loss)
 ```
 
 ## Objectives
