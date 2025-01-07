@@ -51,7 +51,7 @@ void init_gradtensor_binding(py::module_ &m) {
         py::arg("pidx") = 1
       )
     .def_static("ones_like", &GradTensor::ones_like, 
-        py::arg("shape")
+        py::arg("input")
       )
     .def_static("zeros", &GradTensor::zeros, 
         py::arg("shape") = std::vector<size_t>{1, 1},
@@ -59,7 +59,7 @@ void init_gradtensor_binding(py::module_ &m) {
         py::arg("pidx") = 1 
       )
     .def_static("zeros_like", &GradTensor::zeros_like, 
-        py::arg("shape")
+        py::arg("input")
       )
 
     // string 
