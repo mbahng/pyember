@@ -1,5 +1,9 @@
 #include <vector> 
+#include <random> 
 #include <ctime>
+#include <chrono>
+#include <atomic>
+#include <numeric>
 #include "../Tensor.h"
 #include "../../Util/utils.h"
 
@@ -48,3 +52,72 @@ GradTensor* GradTensor::eye(size_t n, size_t bidx, size_t pidx) {
   return new GradTensor(storage, shape, bidx, pidx);
 }
 
+GradTensor* GradTensor::gaussian(std::vector<size_t> shape, double mean, double stddev, size_t bidx, size_t pidx) {
+  // Create a unique seed by combining high-resolution time and a counter
+  static std::atomic<unsigned long long> seed_counter{0};
+
+  auto now = std::chrono::high_resolution_clock::now();
+  auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+  unsigned long long unique_seed = nanos ^ (seed_counter.fetch_add(1, std::memory_order_relaxed) << 32);
+
+  // Create a generator with the unique seed
+  std::mt19937 generator(unique_seed);
+
+  // Create a distribution
+  std::normal_distribution<double> distribution(mean, stddev);
+
+  // Calculate total number of elements
+  int length = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
+
+  // Create and fill the vector
+  std::vector<double> result(length);
+  for (int i = 0; i < length; ++i) {
+    result[i] = distribution(generator);
+  }
+
+  return new GradTensor(result, shape, bidx, pidx);
+}
+
+GradTensor* GradTensor::gaussian_like(GradTensor* input, double mean, double stddev) {
+  return GradTensor::gaussian(input->shape(), mean, stddev, input->bidx, input->pidx());
+}
+
+GradTensor* GradTensor::uniform(std::vector<size_t> shape, double min, double max, size_t bidx, size_t pidx) {
+  // (Use the same unique seeding method as in the gaussian function)
+  static std::atomic<unsigned long long> seed_counter{0};
+
+  auto now = std::chrono::high_resolution_clock::now();
+  auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+  unsigned long long unique_seed = nanos ^ (seed_counter.fetch_add(1, std::memory_order_relaxed) << 32);
+
+  std::mt19937 generator(unique_seed);
+  std::uniform_real_distribution<double> distribution(min, max);
+
+  int length = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
+  std::vector<double> result(length);
+  for (int i = 0; i < length; ++i) {
+    result[i] = distribution(generator);
+  }
+
+  return new GradTensor(result, shape, bidx, pidx);
+}
+
+GradTensor* GradTensor::uniform_like(GradTensor* input, double min, double max) {
+  return GradTensor::uniform(input->shape(), min, max, input->bidx, input->pidx());
+}
+
+GradTensor* GradTensor::ones(std::vector<size_t> shape, size_t bidx, size_t pidx) {
+  return new GradTensor(std::vector<double> (CIntegrity::prod(shape), 1.0), shape, bidx, pidx); 
+}
+
+GradTensor* GradTensor::ones_like(GradTensor* input) {
+  return GradTensor::ones(input->shape(), input->bidx, input->pidx());
+}
+
+GradTensor* GradTensor::zeros(std::vector<size_t> shape, size_t bidx, size_t pidx) {
+  return new GradTensor(std::vector<double> (CIntegrity::prod(shape), 0.0), shape, bidx, pidx); 
+}
+
+GradTensor* GradTensor::zeros_like(GradTensor* input) {
+  return GradTensor::zeros(input->shape(), input->bidx, input->pidx());
+}

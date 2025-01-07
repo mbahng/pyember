@@ -51,6 +51,37 @@ class GradTensor(BaseTensor):
   def __init__(self, shape: List[int], bidx: int, pidx: int) -> None: ...
   @staticmethod
   def eye(n: int, pidx: int = 1) -> 'GradTensor': ...
+  @staticmethod
+  def gaussian(
+    shape: List[int] = [1, 1], 
+    mean: float = 0.0, 
+    stddev: float = 1.0, 
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+
+  @staticmethod
+  def uniform(
+    shape: List[int] = [1, 1], 
+    min: float = 0.0, 
+    max: float = 1.0, 
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+
+  @staticmethod
+  def ones(
+    shape: List[int] = [1, 1],
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
+
+  @staticmethod
+  def zeros(
+    shape: List[int] = [1, 1],
+    bidx: int = 0, 
+    pidx: int = 1
+  ) -> 'GradTensor': ...
 
   # string
   def __str__(self) -> str: ...

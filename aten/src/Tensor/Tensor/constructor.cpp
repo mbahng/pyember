@@ -8,7 +8,6 @@
 #include "../../Util/utils.h"
 
 Tensor::Tensor(double scalar, bool requires_grad) {
-  // Scalar tensor 
   this->_storage = std::vector<double>{scalar}; 
   this->_shape = std::vector<size_t>{1}; 
   this->bidx = 0;  
@@ -126,6 +125,10 @@ Tensor* Tensor::gaussian(std::vector<size_t> shape, double mean, double stddev, 
   return new Tensor(result, shape, bidx, requires_grad);
 }
 
+Tensor* Tensor::gaussian_like(Tensor* input, double mean, double stddev) {
+  return Tensor::gaussian(input->shape(), mean, stddev, input->bidx, input->requires_grad);
+}
+
 Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, size_t bidx, bool requires_grad) {
   // (Use the same unique seeding method as in the gaussian function)
   static std::atomic<unsigned long long> seed_counter{0};
@@ -146,11 +149,23 @@ Tensor* Tensor::uniform(std::vector<size_t> shape, double min, double max, size_
   return new Tensor(result, shape, bidx, requires_grad);
 }
 
+Tensor* Tensor::uniform_like(Tensor* input, double min, double max) {
+  return Tensor::uniform(input->shape(), min, max, input->bidx, input->requires_grad);
+}
+
 Tensor* Tensor::ones(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
   return new Tensor(std::vector<double> (CIntegrity::prod(shape), 1.0), shape, bidx, requires_grad); 
 }
 
+Tensor* Tensor::ones_like(Tensor* input) {
+  return Tensor::ones(input->shape(), input->bidx, input->requires_grad);
+}
+
 Tensor* Tensor::zeros(std::vector<size_t> shape, size_t bidx, bool requires_grad) {
   return new Tensor(std::vector<double>(CIntegrity::prod(shape), 0.0), shape, bidx, requires_grad); 
+}
+
+Tensor* Tensor::zeros_like(Tensor* input) {
+  return Tensor::zeros(input->shape(), input->bidx, input->requires_grad);
 }
 
