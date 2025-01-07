@@ -1,13 +1,31 @@
 #include <vector>
 #include <cassert>
+#include <thread>
 #include "../Tensor.h" 
 #include "../../Util/utils.h"
 
 // Scalar Operations
 GradTensor* GradTensor::operator+(double other) {
   GradTensor* res = this->copy(); 
-  for (int bi = 0; bi < (this->_storage).size(); ++bi) {
-    res->_storage[bi] += other;
+  size_t threads = std::thread::hardware_concurrency();  
+  std::vector<std::thread> thread_pool; 
+  size_t chunk = _storage.size() / threads; 
+  for (size_t i = 0; i < threads; i++) {
+    size_t start = i * chunk; 
+    size_t end = (i == threads-1) ? _storage.size() : (i + 1) * chunk; 
+
+    thread_pool.push_back(
+      std::thread(
+        [&res, start, end, other]() {
+        for (size_t j = start; j < end; j++) {
+          res->_storage[j] += other;
+          }
+        }
+      )
+    );
+  }
+  for (auto& t : thread_pool) {
+    t.join();
   }
   return res;
 }
