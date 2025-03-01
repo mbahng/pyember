@@ -25,7 +25,7 @@ From a statistical learning theory perspective, let's consider the essential bui
 4. Using the empirical risk, in practice we must find the optimal model using some **optimizer** (e.g. SGD). 
 
 This is generally how the library is structured, and generally, every training model will look something like this. 
-```
+```python
 import ember 
 
 ds = ember.datasets.Dataset(...) 
