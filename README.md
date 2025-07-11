@@ -37,7 +37,7 @@ for epoch in range(500):
   loss = None
   for x, y in dl: 
     y_ = model.forward(x)  
-    loss = mse(y, y_)
+    loss = objective(y, y_)
     loss.backprop()
     model.step(1e-5) 
 
